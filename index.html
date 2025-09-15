@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Калькулятор норм расхода электроэнергии - РЖД</title>
+    <meta name="description" content="Калькулятор для расчета норм расхода электроэнергии в грузовом движении на тягу поездов">
+    <meta name="keywords" content="РЖД, калькулятор, электроэнергия, локомотив, грузовое движение">
+    <meta name="author" content="РЖД Калькулятор">
+    <meta name="theme-color" content="#ffffff">
+    <link rel="icon" type="image/x-icon" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiByeD0iNiIgZmlsbD0iIzAwN2JmZiIvPgo8cGF0aCBkPSJNOCAxNmMwLTQuNDE4IDMuNTgyLTggOC04czggMy41ODIgOCA4LTMuNTgyIDgtOCA4LTgtMy41ODItOC04eiIgZmlsbD0iIzRkYWJmNyIvPgo8cGF0aCBkPSJNMTIgMTJoOHY4aC04VjEyeiIgZmlsbD0iI2ZmZiIvPgo8L3N2Zz4K">
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/themes.css">
+    <link rel="stylesheet" href="styles/components.css">
+</head>
+<body class="theme-light">
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <h1 class="header-title">
+                    <span class="header-icon">🚂</span>
+                    Калькулятор норм расхода электроэнергии
+                </h1>
+                <p class="header-subtitle">Расчет энергопотребления в грузовом движении</p>
+                <button class="theme-toggle" id="themeToggle" aria-label="Переключить тему">
+                    <span class="theme-icon">🌙</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Calculator -->
+        <main class="main">
+            <div class="calculator-card">
+                <form class="calculator-form" id="calculatorForm">
+                    <!-- Locomotive Selection -->
+                    <div class="form-section">
+                        <h2 class="section-title">Выбор локомотива</h2>
+                        <div class="locomotive-grid">
+                            <div class="locomotive-option">
+                                <input type="radio" id="vl10u" name="locomotive" value="vl10u" checked>
+                                <label for="vl10u" class="locomotive-card locomotive-vl10u">
+                                    <div class="locomotive-info">
+                                        <h3>ВЛ10У</h3>
+                                        <p>Длина: 32м</p>
+                                    </div>
+                                </label>
+                            </div>
+                            <div class="locomotive-option">
+                                <input type="radio" id="es6" name="locomotive" value="es6">
+                                <label for="es6" class="locomotive-card locomotive-es6">
+                                    <div class="locomotive-info">
+                                        <h3>2ЭС6</h3>
+                                        <p>Длина: 34м</p>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="input-group">
+                            <label for="locomotiveCount">Количество локомотивов</label>
+                            <input type="number" id="locomotiveCount" name="locomotiveCount" min="1" max="3" value="1" required>
+                        </div>
+                    </div>
+
+                    <!-- Train Parameters -->
+                    <div class="form-section">
+                        <h2 class="section-title">Параметры поезда</h2>
+                        <div class="input-grid">
+                            <div class="input-group">
+                                <label for="trainWeight">Вес поезда (тонн)</label>
+                                <input type="number" id="trainWeight" name="trainWeight" min="100" max="10000" step="10" required>
+                            </div>
+                            <div class="input-group">
+                                <label for="axleCount">Количество осей</label>
+                                <input type="number" id="axleCount" name="axleCount" min="10" max="500" step="1" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Route Selection -->
+                    <div class="form-section">
+                        <h2 class="section-title">Маршрут</h2>
+                        <div class="input-group">
+                            <label for="route">Выберите маршрут</label>
+                            <select id="route" name="route" required>
+                                <option value="">-- Выберите маршрут --</option>
+                                <option value="abdulino-kinel">Абдулино - Кинель (233 км)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Optional: Train Length Calculation -->
+                    <div class="form-section">
+                        <h2 class="section-title">Дополнительно</h2>
+                        <div class="input-group">
+                            <label for="wagonCount">Количество вагонов (для расчета длины состава)</label>
+                            <input type="number" id="wagonCount" name="wagonCount" min="0" max="100" step="1" placeholder="Необязательно">
+                            <small class="input-hint">Длина вагона: 14м</small>
+                        </div>
+                    </div>
+
+                    <!-- Calculate Button -->
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary btn-calculate">
+                            <span class="btn-icon">⚡</span>
+                            Рассчитать норму расхода
+                        </button>
+                    </div>
+                </form>
+
+                <!-- Results Section -->
+                <div class="results-section" id="resultsSection" style="display: none;">
+                    <h2 class="section-title">Результаты расчета</h2>
+                    <div class="results-grid">
+                        <div class="result-card">
+                            <h3>Норма расхода за поездку</h3>
+                            <div class="result-value" id="consumptionResult">0 кВт⋅ч</div>
+                        </div>
+                        <div class="result-card">
+                            <h3>Нагрузка на ось</h3>
+                            <div class="result-value" id="axleLoadResult">0 т/ось</div>
+                        </div>
+                        <div class="result-card" id="trainLengthCard" style="display: none;">
+                            <h3>Длина состава</h3>
+                            <div class="result-value" id="trainLengthResult">0 м</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Export and Actions -->
+                    <div class="result-actions">
+                        <button type="button" class="btn btn-secondary" id="exportBtn">
+                            <span class="btn-icon">📊</span>
+                            Экспорт результата
+                        </button>
+                        <button type="button" class="btn btn-secondary" id="saveToHistoryBtn">
+                            <span class="btn-icon">💾</span>
+                            Сохранить в историю
+                        </button>
+                        <button type="button" class="btn btn-secondary" id="showInfoBtn">
+                            <span class="btn-icon">ℹ️</span>
+                            Справка
+                        </button>
+                    </div>
+                </div>
+
+                <!-- History Section -->
+                <div class="history-section" id="historySection" style="display: none;">
+                    <h2 class="section-title">История расчетов</h2>
+                    <div id="historyList" class="history-list"></div>
+                    <div class="history-actions">
+                        <button type="button" class="btn btn-secondary" id="clearHistoryBtn">
+                            <span class="btn-icon">🗑️</span>
+                            Очистить историю
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Info Modal -->
+                <div class="modal" id="infoModal" style="display: none;">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h2>Справочная информация</h2>
+                            <button class="modal-close" id="closeModalBtn">&times;</button>
+                        </div>
+                        <div class="modal-body">
+                            <h3>Локомотивы</h3>
+                            <div class="info-grid">
+                                <div class="info-card">
+                                    <h4>ВЛ10У</h4>
+                                    <p><strong>Длина:</strong> 32 м</p>
+                                    <p><strong>Коэффициенты:</strong> 89.5-65.15</p>
+                                    <p><strong>Нагрузка на ось:</strong> 6-14 т/ось</p>
+                                </div>
+                                <div class="info-card">
+                                    <h4>2ЭС6</h4>
+                                    <p><strong>Длина:</strong> 34 м</p>
+                                    <p><strong>Коэффициенты:</strong> 82.0-59.73</p>
+                                    <p><strong>Нагрузка на ось:</strong> 6-14 т/ось</p>
+                                </div>
+                            </div>
+                            
+                            <h3>Формула расчета</h3>
+                            <div class="formula-card">
+                                <code>Норма = (Вес × Коэффициент × Расстояние) / 10000 / 100</code>
+                                <p>где:</p>
+                                <ul>
+                                    <li>Вес - вес поезда в тоннах</li>
+                                    <li>Коэффициент - зависит от типа локомотива и нагрузки на ось</li>
+                                    <li>Расстояние - расстояние маршрута в км</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>&copy; 2024 РЖД Калькулятор энергопотребления</p>
+        </footer>
+    </div>
+
+    <script src="scripts/data.js"></script>
+    <script src="scripts/calculator.js"></script>
+    <script src="scripts/themes.js"></script>
+</body>
+</html>

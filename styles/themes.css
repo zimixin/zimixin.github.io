@@ -1,0 +1,106 @@
+/* Theme Variables */
+:root {
+    /* Light Theme */
+    --bg-primary: #ffffff;
+    --bg-secondary: #f8f9fa;
+    --card-bg: #ffffff;
+    --input-bg: #ffffff;
+    --result-bg: #f8f9fa;
+    --text-primary: #212529;
+    --text-secondary: #6c757d;
+    --border-color: #dee2e6;
+    --accent-color: #007bff;
+    --accent-hover: #0056b3;
+    --accent-light: rgba(0, 123, 255, 0.1);
+    --success-color: #28a745;
+    --warning-color: #ffc107;
+    --danger-color: #dc3545;
+    --shadow: rgba(0, 0, 0, 0.1);
+}
+
+/* Light Theme Class */
+.theme-light {
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+}
+
+.theme-light .header {
+    background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-primary) 100%);
+}
+
+.theme-light .theme-toggle {
+    border-color: var(--border-color);
+    color: var(--text-primary);
+    background: var(--card-bg);
+}
+
+.theme-light .theme-toggle:hover {
+    background: var(--accent-light);
+    border-color: var(--accent-color);
+}
+
+/* Dark Theme Variables */
+.theme-dark {
+    --bg-primary: #1a1a1a;
+    --bg-secondary: #2d2d2d;
+    --card-bg: #2d2d2d;
+    --input-bg: #3d3d3d;
+    --result-bg: #3d3d3d;
+    --text-primary: #f8f9fa;
+    --text-secondary: #adb5bd;
+    --border-color: #495057;
+    --accent-color: #4dabf7;
+    --accent-hover: #339af0;
+    --accent-light: rgba(77, 171, 247, 0.1);
+    --success-color: #51cf66;
+    --warning-color: #ffd43b;
+    --danger-color: #ff6b6b;
+    --shadow: rgba(0, 0, 0, 0.3);
+    
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+}
+
+.theme-dark .header {
+    background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-primary) 100%);
+}
+
+.theme-dark .theme-toggle {
+    border-color: var(--border-color);
+    color: var(--text-primary);
+    background: var(--card-bg);
+}
+
+.theme-dark .theme-toggle:hover {
+    background: var(--accent-light);
+    border-color: var(--accent-color);
+}
+
+/* Theme-specific locomotive cards */
+.theme-dark .locomotive-vl10u.locomotive-card {
+    background: linear-gradient(135deg, #fd7e14 0%, #e55c00 100%);
+}
+
+.theme-dark .locomotive-es6.locomotive-card {
+    background: linear-gradient(135deg, #4dabf7 0%, #339af0 100%);
+}
+
+/* Smooth transitions for theme switching */
+body,
+.calculator-card,
+.locomotive-card,
+.result-card,
+input,
+select,
+.theme-toggle {
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+/* Theme icons */
+.theme-light .theme-icon::before {
+    content: "🌙";
+}
+
+.theme-dark .theme-icon::before {
+    content: "☀️";
+}
