@@ -825,10 +825,22 @@ ${routeLines}
 
     // Initialize routes from file system
     async initializeRoutes() {
-        // Wait a bit for routes to load from files
+        // Wait for routes to load from files
         setTimeout(() => {
             this.updateRouteSelectWithFileRoutes();
-        }, 100);
+        }, 500); // Increased wait time to ensure files are loaded
+        
+        // Also try to reload after 2 seconds if no routes were found
+        setTimeout(() => {
+            if (Object.keys(ROUTE_DATA).length === 0) {
+                console.log('No routes loaded, attempting to reload...');
+                if (typeof loadRoutesFromFiles === 'function') {
+                    loadRoutesFromFiles().then(() => {
+                        this.updateRouteSelectWithFileRoutes();
+                    });
+                }
+            }
+        }, 2000);
     }
 
     updateRouteSelectWithFileRoutes() {

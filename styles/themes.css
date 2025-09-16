@@ -95,12 +95,3 @@ select,
 .theme-toggle {
     transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
 }
-
-/* Theme icons */
-.theme-light .theme-icon::before {
-    content: "🌙";
-}
-
-.theme-dark .theme-icon::before {
-    content: "☀️";
-}

@@ -4,16 +4,7 @@
 // Dynamic route data loaded from files
 let ROUTE_DATA = {};
 
-// Initialize with default route for backward compatibility
-ROUTE_DATA['abdulino-kinel'] = {
-    name: 'Абдулино - Кинель',
-    distance: 233,
-    description: 'Основной маршрут грузового движения',
-    coefficients: {
-        vl10u: { 6: 89.5, 7: 83.41, 8: 78.85, 9: 75.29, 10: 72.45, 11: 70.13, 12: 68.19, 13: 66.55, 14: 65.15 },
-        es6: { 6: 82.0, 7: 76.43, 8: 72.26, 9: 69.01, 10: 66.41, 11: 64.29, 12: 62.52, 13: 61.02, 14: 59.73 }
-    }
-};
+// No default routes - all routes are loaded from /data folder
 
 const LOCOMOTIVE_DATA = {
     vl10u: {
@@ -94,12 +85,13 @@ async function discoverDataFiles() {
             return await discoverFilesViaGitHubAPI();
         }
         
-        // For local development, try common route files
+        // For local development, try to discover files by attempting to fetch known files
         const commonFiles = [
             'Абдулино - Кинель.md',
-            'Москва - СПб.md',
-            'Казань - ННовгород.md',
-            'Екатеринбург - Омск.md'
+            'Абдулино - Октябрьск.md',
+            'Абдулино - Сызрань.md',
+            'Кинель - Абдулино.md',
+            'Москва - Санкт-Петербург.md'
         ];
         
         // Check which files actually exist
@@ -197,18 +189,20 @@ function parseRouteFromMarkdown(content, filename) {
                     
                     if (locomotiveType.includes('ВЛ10У')) {
                         // Parse ВЛ10У coefficients
-                        for (let j = 1; j < cells.length && j <= 9; j++) {
+                        for (let j = 1; j < cells.length; j++) {
                             const coeff = parseFloat(cells[j]);
                             if (!isNaN(coeff)) {
-                                route.coefficients.vl10u[j + 5] = coeff;
+                                const axleLoad = j + 5; // Start from 6 t/axle
+                                route.coefficients.vl10u[axleLoad] = coeff;
                             }
                         }
                     } else if (locomotiveType.includes('2ЭС6')) {
                         // Parse 2ЭС6 coefficients
-                        for (let j = 1; j < cells.length && j <= 9; j++) {
+                        for (let j = 1; j < cells.length; j++) {
                             const coeff = parseFloat(cells[j]);
                             if (!isNaN(coeff)) {
-                                route.coefficients.es6[j + 5] = coeff;
+                                const axleLoad = j + 5; // Start from 6 t/axle
+                                route.coefficients.es6[axleLoad] = coeff;
                             }
                         }
                     }
