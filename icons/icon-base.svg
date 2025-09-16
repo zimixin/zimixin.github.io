@@ -1,0 +1,38 @@
+<!-- Train Icon SVG for PWA Icons -->
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="512" height="512" rx="80" fill="#007bff"/>
+  
+  <!-- Train body -->
+  <rect x="80" y="180" width="352" height="180" rx="20" fill="#ffffff"/>
+  <rect x="90" y="190" width="332" height="160" rx="15" fill="#f8f9fa"/>
+  
+  <!-- Train windows -->
+  <rect x="120" y="220" width="60" height="60" rx="8" fill="#007bff"/>
+  <rect x="200" y="220" width="60" height="60" rx="8" fill="#007bff"/>
+  <rect x="280" y="220" width="60" height="60" rx="8" fill="#007bff"/>
+  <rect x="360" y="220" width="40" height="60" rx="8" fill="#007bff"/>
+  
+  <!-- Train front -->
+  <path d="M80 180 L80 360 L50 340 L50 200 Z" fill="#cccccc"/>
+  
+  <!-- Train wheels -->
+  <circle cx="140" cy="380" r="20" fill="#333333"/>
+  <circle cx="200" cy="380" r="20" fill="#333333"/>
+  <circle cx="260" cy="380" r="20" fill="#333333"/>
+  <circle cx="320" cy="380" r="20" fill="#333333"/>
+  <circle cx="380" cy="380" r="20" fill="#333333"/>
+  
+  <!-- Wheel spokes -->
+  <circle cx="140" cy="380" r="8" fill="#666666"/>
+  <circle cx="200" cy="380" r="8" fill="#666666"/>
+  <circle cx="260" cy="380" r="8" fill="#666666"/>
+  <circle cx="320" cy="380" r="8" fill="#666666"/>
+  <circle cx="380" cy="380" r="8" fill="#666666"/>
+  
+  <!-- Lightning bolt (electricity symbol) -->
+  <path d="M240 120 L280 120 L260 150 L290 150 L240 190 L250 160 L220 160 Z" fill="#ffd700" stroke="#ffcc00" stroke-width="2"/>
+  
+  <!-- Text "РЖД" -->
+  <text x="256" y="450" text-anchor="middle" fill="#007bff" font-family="Arial, sans-serif" font-size="32" font-weight="bold">РЖД</text>
+</svg>

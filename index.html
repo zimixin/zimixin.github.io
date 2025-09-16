@@ -7,11 +7,26 @@
     <meta name="description" content="Калькулятор для расчета норм расхода электроэнергии в грузовом движении на тягу поездов">
     <meta name="keywords" content="РЖД, калькулятор, электроэнергия, локомотив, грузовое движение">
     <meta name="author" content="РЖД Калькулятор">
-    <meta name="theme-color" content="#ffffff">
-    <link rel="icon" type="image/x-icon" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiByeD0iNiIgZmlsbD0iIzAwN2JmZiIvPgo8cGF0aCBkPSJNOCAxNmMwLTQuNDE4IDMuNTgyLTggOC04czggMy41ODIgOCA4LTMuNTgyIDgtOCA4LTgtMy41ODItOC04eiIgZmlsbD0iIzRkYWJmNyIvPgo8cGF0aCBkPSJNMTIgMTJoOHY4aC04VjEyeiIgZmlsbD0iI2ZmZiIvPgo8L3N2Zz4K">
+    <meta name="theme-color" content="#007bff">
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json">
+    
+    <!-- Icons -->
+    <link rel="icon" type="image/svg+xml" href="icons/icon.svg">
+    <link rel="apple-touch-icon" href="icons/icon.svg">
+    
+    <!-- iOS PWA Support -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="РЖД Калькулятор">
+    
+    <!-- Android PWA Support -->
+    <meta name="mobile-web-app-capable" content="yes">
     <link rel="stylesheet" href="styles/main.css">
     <link rel="stylesheet" href="styles/themes.css">
     <link rel="stylesheet" href="styles/components.css">
+    <link rel="stylesheet" href="styles/pwa.css">
 </head>
 <body class="theme-light">
     <div class="container">
@@ -320,5 +335,49 @@
     <script src="scripts/data.js"></script>
     <script src="scripts/calculator.js"></script>
     <script src="scripts/themes.js"></script>
+    <script src="scripts/pwa.js"></script>
+    
+    <!-- PWA Service Worker Registration -->
+    <script>
+        // Register service worker for PWA functionality
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then((registration) => {
+                        console.log('SW registered: ', registration);
+                    })
+                    .catch((registrationError) => {
+                        console.log('SW registration failed: ', registrationError);
+                    });
+            });
+        }
+        
+        // PWA Install Prompt
+        let deferredPrompt;
+        
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            
+            // Create install button
+            const installButton = document.createElement('button');
+            installButton.className = 'btn btn-secondary';
+            installButton.innerHTML = '<span class="btn-icon">📱</span> Установить приложение';
+            installButton.style.cssText = 'position: fixed; bottom: 20px; right: 20px; z-index: 1000; box-shadow: 0 4px 16px rgba(0,0,0,0.2);';
+            
+            installButton.addEventListener('click', async () => {
+                if (deferredPrompt) {
+                    deferredPrompt.prompt();
+                    const { outcome } = await deferredPrompt.userChoice;
+                    console.log(`Install prompt result: ${outcome}`);
+                    deferredPrompt = null;
+                    installButton.remove();
+                }
+            });
+            
+            document.body.appendChild(installButton);
+        });
+    </script>
+
 </body>
 </html>

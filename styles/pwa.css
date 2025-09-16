@@ -1,0 +1,291 @@
+/* PWA Specific Styles for RZD Calculator */
+
+/* PWA Mode Adjustments */
+.pwa-mode {
+    /* Styles when running as PWA */
+}
+
+.pwa-mode .header {
+    padding-top: max(1rem, env(safe-area-inset-top)); /* Account for mobile notch */
+}
+
+/* PWA Install Button Animation */
+@keyframes pulse {
+    0% {
+        box-shadow: 0 4px 16px rgba(0, 123, 255, 0.3);
+        transform: scale(1);
+    }
+    50% {
+        box-shadow: 0 6px 20px rgba(0, 123, 255, 0.5);
+        transform: scale(1.02);
+    }
+    100% {
+        box-shadow: 0 4px 16px rgba(0, 123, 255, 0.3);
+        transform: scale(1);
+    }
+}
+
+/* PWA Install Button */
+.pwa-install-button {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000;
+    animation: pulse 2s infinite;
+    transition: all 0.3s ease;
+}
+
+.pwa-install-button:hover {
+    animation-play-state: paused;
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 8px 24px rgba(0, 123, 255, 0.4) !important;
+}
+
+/* PWA Update Notification */
+.pwa-update-notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: var(--accent-color);
+    color: white;
+    padding: 1rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+    z-index: 10000;
+    max-width: 300px;
+    animation: slideInRight 0.3s ease-out;
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+/* PWA Status Indicator */
+.pwa-status {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    background: var(--success-color);
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    z-index: 1000;
+    opacity: 0.8;
+}
+
+/* Offline Status */
+.offline-status {
+    position: fixed;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--warning-color);
+    color: var(--text-primary);
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    z-index: 10000;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    animation: slideInDown 0.3s ease-out;
+}
+
+@keyframes slideInDown {
+    from {
+        transform: translate(-50%, -100%);
+        opacity: 0;
+    }
+    to {
+        transform: translate(-50%, 0);
+        opacity: 1;
+    }
+}
+
+/* PWA Splash Screen Styles */
+@media (display-mode: standalone) {
+    body {
+        /* Prevent overscroll bounce on iOS */
+        overflow-x: hidden;
+        /* Add PWA class automatically */
+    }
+    
+    .header {
+        /* Safe area for notched devices */
+        padding-top: max(1rem, env(safe-area-inset-top));
+    }
+    
+    .container {
+        /* Safe area adjustments */
+        padding-left: env(safe-area-inset-left);
+        padding-right: env(safe-area-inset-right);
+        padding-bottom: env(safe-area-inset-bottom);
+    }
+    
+    .theme-toggle {
+        top: max(1rem, env(safe-area-inset-top) + 0.5rem);
+    }
+}
+
+/* iOS PWA specific styles */
+@media (display-mode: standalone) and (max-device-width: 428px) {
+    .calculator-card {
+        margin: 0.5rem;
+        padding: 1rem;
+    }
+    
+    .locomotive-grid {
+        grid-template-columns: 1fr;
+        gap: 0.5rem;
+    }
+    
+    .input-grid {
+        grid-template-columns: 1fr;
+        gap: 0.5rem;
+    }
+}
+
+/* PWA Loading State */
+.pwa-loading {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--bg-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    flex-direction: column;
+}
+
+.pwa-loading .loader {
+    width: 60px;
+    height: 60px;
+    border: 4px solid var(--border-color);
+    border-top: 4px solid var(--accent-color);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 1rem;
+}
+
+.pwa-loading .loading-text {
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* PWA Cache Status */
+.cache-status {
+    position: fixed;
+    bottom: 10px;
+    left: 10px;
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.7rem;
+    z-index: 1000;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.cache-status.show {
+    opacity: 1;
+}
+
+/* PWA Network Status */
+.network-status {
+    position: fixed;
+    top: 50px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    z-index: 10000;
+    transition: all 0.3s ease;
+}
+
+.network-status.online {
+    background: var(--success-color);
+    color: white;
+}
+
+.network-status.offline {
+    background: var(--danger-color);
+    color: white;
+}
+
+/* PWA Fullscreen Button */
+.pwa-fullscreen {
+    position: fixed;
+    top: 60px;
+    right: 20px;
+    background: var(--bg-secondary);
+    border: 2px solid var(--border-color);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 1.2rem;
+    transition: all 0.3s ease;
+    z-index: 1000;
+}
+
+.pwa-fullscreen:hover {
+    background: var(--accent-light);
+    border-color: var(--accent-color);
+}
+
+/* Hide certain elements in PWA mode */
+@media (display-mode: standalone) {
+    .pwa-install-button {
+        display: none !important;
+    }
+}
+
+/* PWA Orientation Lock */
+@media (orientation: landscape) and (max-height: 500px) {
+    .header-title {
+        font-size: 1.5rem;
+    }
+    
+    .calculator-card {
+        padding: 1rem;
+    }
+    
+    .form-section {
+        margin-bottom: 1rem;
+    }
+}
+
+/* PWA Keyboard Adjustments */
+@media (max-height: 600px) {
+    .calculator-card {
+        margin-bottom: 1rem;
+    }
+    
+    .form-section {
+        margin-bottom: 1rem;
+    }
+    
+    .section-title {
+        font-size: 1.2rem;
+        margin-bottom: 0.5rem;
+    }
+}
