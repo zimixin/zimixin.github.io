@@ -383,3 +383,115 @@
         color: black;
     }
 }
+
+/* Route Information Display */
+.route-info-display {
+    margin-top: 1.5rem;
+    animation: fadeIn 0.5s ease-out;
+}
+
+.route-info-card {
+    background: var(--card-bg);
+    border: 2px solid var(--accent-color);
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 16px var(--shadow);
+}
+
+.route-info-card h3 {
+    margin: 0 0 1rem 0;
+    color: var(--accent-color);
+    font-size: 1.3rem;
+}
+
+.route-distance {
+    font-size: 1.1rem;
+    margin-bottom: 1.5rem;
+    padding: 0.75rem;
+    background: var(--accent-light);
+    border-radius: 8px;
+    border-left: 4px solid var(--accent-color);
+}
+
+.coefficients-section {
+    margin-top: 1rem;
+}
+
+.coefficients-section h4 {
+    margin: 0 0 1rem 0;
+    color: var(--text-primary);
+    font-size: 1.1rem;
+}
+
+.coefficients-table-container {
+    overflow-x: auto;
+    margin: 1rem 0;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+}
+
+.coefficients-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+    background: var(--bg-secondary);
+}
+
+.coefficients-table th,
+.coefficients-table td {
+    padding: 0.5rem 0.3rem;
+    text-align: center;
+    border: 1px solid var(--border-color);
+}
+
+.coefficients-table th {
+    background: var(--accent-color);
+    color: white;
+    font-weight: 600;
+    font-size: 0.75rem;
+}
+
+.coefficients-table .table-subheader th {
+    background: var(--accent-light);
+    color: var(--text-primary);
+    font-size: 0.7rem;
+    font-weight: 500;
+}
+
+.coefficients-table tbody td:first-child {
+    background: var(--accent-light);
+    font-weight: 600;
+    color: var(--text-primary);
+    text-align: left;
+    padding-left: 1rem;
+}
+
+.coefficients-table tbody tr:hover {
+    background: var(--input-bg);
+}
+
+.no-coefficients {
+    padding: 1rem;
+    text-align: center;
+    color: var(--text-secondary);
+    font-style: italic;
+    background: var(--bg-secondary);
+    border-radius: 8px;
+    border: 1px dashed var(--border-color);
+}
+
+/* Responsive table */
+@media (max-width: 768px) {
+    .coefficients-table {
+        font-size: 0.7rem;
+    }
+    
+    .coefficients-table th,
+    .coefficients-table td {
+        padding: 0.3rem 0.2rem;
+    }
+    
+    .route-info-card {
+        padding: 1rem;
+    }
+}

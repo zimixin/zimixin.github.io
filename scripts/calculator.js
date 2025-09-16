@@ -66,10 +66,13 @@ class EnergyCalculator {
             });
         }
 
-        // Route selection change
+    // Route selection change
         const routeSelect = document.getElementById('route');
         if (routeSelect) {
-            routeSelect.addEventListener('change', () => this.handleRouteChange());
+            routeSelect.addEventListener('change', () => {
+                this.handleRouteChange();
+                this.displayRouteInformation();
+            });
         }
 
         // Custom routes management
@@ -473,12 +476,14 @@ class EnergyCalculator {
         const routeSelect = document.getElementById('route');
         const customRouteGroup = document.getElementById('customRouteGroup');
         const customRouteDistanceGroup = document.getElementById('customRouteDistanceGroup');
+        const routeInfoDisplay = document.getElementById('routeInfoDisplay');
 
         if (routeSelect.value === 'custom') {
             customRouteGroup.style.display = 'block';
             customRouteDistanceGroup.style.display = 'block';
             customRouteGroup.classList.add('show');
             customRouteDistanceGroup.classList.add('show');
+            routeInfoDisplay.style.display = 'none';
         } else {
             customRouteGroup.style.display = 'none';
             customRouteDistanceGroup.style.display = 'none';
@@ -663,6 +668,10 @@ class EnergyCalculator {
         // Restore selection if still valid
         if (currentValue && [...routeSelect.options].some(opt => opt.value === currentValue)) {
             routeSelect.value = currentValue;
+            // Trigger route information display if a route is selected
+            if (currentValue && currentValue !== 'custom') {
+                this.displayRouteInformation();
+            }
         }
     }
 
@@ -823,6 +832,108 @@ ${routeLines}
         }
     }
 
+    // Route Information Display
+    displayRouteInformation() {
+        const routeSelect = document.getElementById('route');
+        const routeInfoDisplay = document.getElementById('routeInfoDisplay');
+        const selectedRouteName = document.getElementById('selectedRouteName');
+        const selectedRouteDistance = document.getElementById('selectedRouteDistance');
+        const coefficientsSection = document.getElementById('coefficientsSection');
+        const noCoefficients = document.getElementById('noCoefficients');
+        const coefficientsTableBody = document.getElementById('coefficientsTableBody');
+        
+        if (!routeSelect.value || routeSelect.value === 'custom') {
+            routeInfoDisplay.style.display = 'none';
+            return;
+        }
+        
+        // Get route data
+        let routeData;
+        if (this.customRoutes[routeSelect.value]) {
+            routeData = this.customRoutes[routeSelect.value];
+        } else {
+            routeData = getRouteData(routeSelect.value) || ROUTE_DATA[routeSelect.value];
+        }
+        
+        if (!routeData) {
+            routeInfoDisplay.style.display = 'none';
+            return;
+        }
+        
+        // Display route information
+        selectedRouteName.textContent = routeData.name;
+        selectedRouteDistance.textContent = `${routeData.distance} км`;
+        
+        // Check if route has custom coefficients
+        const hasCoefficients = routeData.coefficients && 
+            (Object.keys(routeData.coefficients.vl10u || {}).length > 0 || 
+             Object.keys(routeData.coefficients['2es6'] || {}).length > 0);
+        
+        if (hasCoefficients) {
+            coefficientsSection.style.display = 'block';
+            noCoefficients.style.display = 'none';
+            this.populateCoefficientsTable(routeData.coefficients, coefficientsTableBody);
+        } else {
+            coefficientsSection.style.display = 'none';
+            noCoefficients.style.display = 'block';
+        }
+        
+        routeInfoDisplay.style.display = 'block';
+        routeInfoDisplay.classList.add('fade-in');
+    }
+    
+    populateCoefficientsTable(coefficients, tableBody) {
+        tableBody.innerHTML = '';
+        
+        // Get all available axle loads
+        const allAxleLoads = new Set();
+        if (coefficients.vl10u) {
+            Object.keys(coefficients.vl10u).forEach(load => allAxleLoads.add(parseInt(load)));
+        }
+        if (coefficients['2es6']) {
+            Object.keys(coefficients['2es6']).forEach(load => allAxleLoads.add(parseInt(load)));
+        }
+        
+        const sortedAxleLoads = Array.from(allAxleLoads).sort((a, b) => a - b);
+        
+        // Create rows for each locomotive type
+        if (coefficients.vl10u && Object.keys(coefficients.vl10u).length > 0) {
+            const vl10uRow = document.createElement('tr');
+            vl10uRow.innerHTML = '<td>ВЛ10У</td>';
+            
+            // Add coefficients for axle loads 6-23
+            for (let axle = 6; axle <= 23; axle++) {
+                const cell = document.createElement('td');
+                const value = coefficients.vl10u[axle];
+                cell.textContent = value ? value.toString() : '-';
+                if (!value) {
+                    cell.style.opacity = '0.3';
+                }
+                vl10uRow.appendChild(cell);
+            }
+            
+            tableBody.appendChild(vl10uRow);
+        }
+        
+        if (coefficients['2es6'] && Object.keys(coefficients['2es6']).length > 0) {
+            const es6Row = document.createElement('tr');
+            es6Row.innerHTML = '<td>2ЭС6</td>';
+            
+            // Add coefficients for axle loads 6-23
+            for (let axle = 6; axle <= 23; axle++) {
+                const cell = document.createElement('td');
+                const value = coefficients['2es6'][axle];
+                cell.textContent = value ? value.toString() : '-';
+                if (!value) {
+                    cell.style.opacity = '0.3';
+                }
+                es6Row.appendChild(cell);
+            }
+            
+            tableBody.appendChild(es6Row);
+        }
+    }
+    
     // Initialize routes from file system
     async initializeRoutes() {
         // Wait a bit for routes to load from files
@@ -850,6 +961,11 @@ ${routeLines}
             const customOption = routeSelect.querySelector('option[value="custom"]');
             routeSelect.insertBefore(option, customOption);
         });
+        
+        // If a route is currently selected, update its information display
+        if (routeSelect.value && routeSelect.value !== 'custom' && routeSelect.value !== '') {
+            this.displayRouteInformation();
+        }
     }
 }
 
