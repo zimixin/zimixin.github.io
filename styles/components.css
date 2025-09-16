@@ -184,6 +184,76 @@
     font-size: 0.9rem;
 }
 
+/* Custom Routes Section */
+.custom-routes-editor {
+    background: var(--bg-secondary);
+    padding: 1.5rem;
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+}
+
+.custom-routes-editor label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: var(--text-primary);
+}
+
+#customRoutesText {
+    width: 100%;
+    padding: 1rem;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    font-family: 'Courier New', monospace;
+    font-size: 0.9rem;
+    background: var(--input-bg);
+    color: var(--text-primary);
+    resize: vertical;
+    min-height: 150px;
+    margin-bottom: 1rem;
+}
+
+#customRoutesText:focus {
+    outline: none;
+    border-color: var(--accent-color);
+}
+
+.custom-routes-actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+}
+
+.custom-routes-actions .btn {
+    font-size: 0.9rem;
+    padding: 0.5rem 1rem;
+}
+
+.custom-routes-help {
+    padding: 1rem;
+    background: var(--accent-light);
+    border-radius: 6px;
+    border-left: 4px solid var(--accent-color);
+}
+
+.custom-routes-help small {
+    color: var(--text-secondary);
+    line-height: 1.4;
+}
+
+/* Custom Route Input Groups */
+#customRouteGroup,
+#customRouteDistanceGroup {
+    transition: all 0.3s ease;
+}
+
+#customRouteGroup.show,
+#customRouteDistanceGroup.show {
+    display: block;
+    animation: slideIn 0.3s ease-out;
+}
+
 /* Loading States */
 .loading {
     opacity: 0.6;

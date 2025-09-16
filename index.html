@@ -69,7 +69,7 @@
                         <div class="input-grid">
                             <div class="input-group">
                                 <label for="trainWeight">Вес поезда (тонн)</label>
-                                <input type="number" id="trainWeight" name="trainWeight" min="100" max="10000" step="10" required>
+                                <input type="number" id="trainWeight" name="trainWeight" min="100" max="10000" step="1" required>
                             </div>
                             <div class="input-group">
                                 <label for="axleCount">Количество осей</label>
@@ -85,8 +85,66 @@
                             <label for="route">Выберите маршрут</label>
                             <select id="route" name="route" required>
                                 <option value="">-- Выберите маршрут --</option>
-                                <option value="abdulino-kinel">Абдулино - Кинель (233 км)</option>
+                                <option value="custom">Пользовательский маршрут...</option>
                             </select>
+                        </div>
+                        
+                        <!-- Custom Route Input -->
+                        <div class="input-group" id="customRouteGroup" style="display: none;">
+                            <label for="customRouteName">Название маршрута</label>
+                            <input type="text" id="customRouteName" name="customRouteName" placeholder="Например: Москва - Питер">
+                        </div>
+                        
+                        <div class="input-group" id="customRouteDistanceGroup" style="display: none;">
+                            <label for="customRouteDistance">Расстояние (км)</label>
+                            <input type="number" id="customRouteDistance" name="customRouteDistance" min="1" max="10000" step="1" placeholder="635">
+                        </div>
+                    </div>
+
+                    <!-- Custom Routes Management -->
+                    <div class="form-section" id="customRoutesSection">
+                        <h2 class="section-title">Пользовательские маршруты</h2>
+                        
+                        <div class="custom-routes-editor">
+                            <label for="customRoutesText">Редактирование маршрутов (Markdown формат):</label>
+                            <textarea id="customRoutesText" rows="12" placeholder="Полный формат маршрута с коэффициентами:
+
+# Москва - СПб
+## 635 км
+
+| нагрузка на ось | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 |
+| ВЛ10У | 89.5 | 83.41 | 78.85 | 75.29 | 72.45 | 70.13 | 68.19 | 66.55 | 65.15 |
+| 2ЭС6 | 82.0 | 76.43 | 72.26 | 69.01 | 66.41 | 64.29 | 62.52 | 61.02 | 59.73 |
+
+Или простой формат:
+Москва - СПб | 635"></textarea>
+                            
+                            <div class="custom-routes-actions">
+                                <button type="button" class="btn btn-secondary" id="loadCustomRoutesBtn">
+                                    <span class="btn-icon">🔄</span>
+                                    Загрузить маршруты
+                                </button>
+                                <button type="button" class="btn btn-secondary" id="saveCustomRoutesBtn">
+                                    <span class="btn-icon">💾</span>
+                                    Сохранить
+                                </button>
+                                <button type="button" class="btn btn-secondary" id="exportCustomRoutesBtn">
+                                    <span class="btn-icon">📤</span>
+                                    Экспорт
+                                </button>
+                                <button type="button" class="btn btn-secondary" id="shareCustomRoutesBtn">
+                                    <span class="btn-icon">📤</span>
+                                    Предложить
+                                </button>
+                            </div>
+                            
+                            <div class="custom-routes-help">
+                                <small>
+                                    <strong>Поддерживаемые форматы:</strong><br>
+                                    1. <strong>Полный формат:</strong> # Название, ## Расстояние, таблица коэффициентов<br>
+                                    2. <strong>Простой формат:</strong> Название | Расстояние (использует стандартные коэффициенты)
+                                </small>
+                            </div>
                         </div>
                     </div>
 
