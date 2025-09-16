@@ -13,14 +13,7 @@ const LOCOMOTIVE_DATA = {
         coefficients: {
             // Axle load (tons/axle) -> Energy coefficient
             6: 89.5,
-            7: 83.41,
-            8: 78.85,
-            9: 75.29,
-            10: 72.45,
-            11: 70.13,
-            12: 68.19,
-            13: 66.55,
-            14: 65.15
+            7: 83.41
         }
     },
     es6: {
@@ -29,14 +22,7 @@ const LOCOMOTIVE_DATA = {
         coefficients: {
             // Axle load (tons/axle) -> Energy coefficient
             6: 82.0,
-            7: 76.43,
-            8: 72.26,
-            9: 69.01,
-            10: 66.41,
-            11: 64.29,
-            12: 62.52,
-            13: 61.02,
-            14: 59.73
+            7: 76.43
         }
     }
 };
@@ -48,99 +34,53 @@ const WAGON_LENGTH = 14; // meters per wagon
 // Function to discover and load all .md files from data directory
 async function loadRoutesFromFiles() {
     try {
-        // Get list of files in data directory
-        const files = await discoverDataFiles();
+        console.log('Starting route loading...');
         
-        // Load each .md file
-        for (const filename of files) {
-            if (filename.endsWith('.md') && filename !== 'README.md') {
-                try {
-                    const response = await fetch(`data/${filename}`);
-                    if (response.ok) {
-                        const content = await response.text();
-                        const route = parseRouteFromMarkdown(content, filename);
-                        if (route) {
-                            const routeId = generateRouteId(route.name);
-                            ROUTE_DATA[routeId] = route;
-                            console.log(`Loaded route: ${route.name} from ${filename}`);
-                        }
-                    } else {
-                        console.warn(`Could not load route file: ${filename}`);
-                    }
-                } catch (error) {
-                    console.error(`Error loading route file ${filename}:`, error);
-                }
-            }
-        }
-    } catch (error) {
-        console.error('Error discovering route files:', error);
-    }
-}
-
-// Discover .md files in data directory
-async function discoverDataFiles() {
-    try {
-        // Try to get directory listing via GitHub API if hosted on GitHub Pages
-        if (window.location.hostname.includes('github.io')) {
-            return await discoverFilesViaGitHubAPI();
-        }
-        
-        // For local development, try to discover files by attempting to fetch known files
-        const commonFiles = [
-            'Абдулино - Кинель.md',
-            'Абдулино - Октябрьск.md',
-            'Абдулино - Сызрань.md',
-            'Кинель - Абдулино.md',
-            'Москва - Санкт-Петербург.md'
+        // Simple list of known route files - no dynamic discovery needed
+        const routeFiles = [
+            'abdulino-kinel.md',
+            'abdulino-oktyabrsk.md',
+            'abdulino-syzran.md',
+            'kinel-abdulino.md',
+            'moscow-spb.md'
         ];
         
-        // Check which files actually exist
-        const existingFiles = [];
-        for (const filename of commonFiles) {
+        console.log(`Attempting to load ${routeFiles.length} route files...`);
+        
+        // Load each .md file
+        for (const filename of routeFiles) {
             try {
-                const response = await fetch(`data/${filename}`, { method: 'HEAD' });
+                console.log(`Loading route file: ${filename}`);
+                const response = await fetch(`data/${filename}`);
                 if (response.ok) {
-                    existingFiles.push(filename);
+                    const content = await response.text();
+                    const route = parseRouteFromMarkdown(content, filename);
+                    if (route) {
+                        const routeId = generateRouteId(route.name);
+                        ROUTE_DATA[routeId] = route;
+                        console.log(`✓ Loaded route: ${route.name} (${route.distance} км)`);
+                    } else {
+                        console.warn(`✗ Failed to parse route from ${filename}`);
+                    }
+                } else {
+                    console.warn(`✗ Could not load route file: ${filename} (HTTP ${response.status})`);
                 }
             } catch (error) {
-                // File doesn't exist, continue
+                console.error(`✗ Error loading route file ${filename}:`, error);
             }
         }
         
-        return existingFiles;
-    } catch (error) {
-        console.error('Error in file discovery:', error);
-        return [];
-    }
-}
-
-// Get files via GitHub API for GitHub Pages
-async function discoverFilesViaGitHubAPI() {
-    try {
-        // Extract repo info from hostname
-        const hostname = window.location.hostname;
-        const pathname = window.location.pathname;
+        const routeCount = Object.keys(ROUTE_DATA).length;
+        console.log(`Route loading completed. Total routes loaded: ${routeCount}`);
+        console.log('Available routes:', Object.keys(ROUTE_DATA).map(id => ROUTE_DATA[id].name));
         
-        if (hostname.includes('github.io')) {
-            const parts = hostname.split('.');
-            const username = parts[0];
-            const repoName = pathname.split('/')[1] || hostname.split('.')[0];
-            
-            const apiUrl = `https://api.github.com/repos/${username}/${repoName}/contents/data`;
-            const response = await fetch(apiUrl);
-            
-            if (response.ok) {
-                const files = await response.json();
-                return files
-                    .filter(file => file.type === 'file' && file.name.endsWith('.md'))
-                    .map(file => file.name);
-            }
+        // Trigger UI update if calculator is ready
+        if (typeof window !== 'undefined' && window.calculator && window.calculator.updateRouteSelectWithFileRoutes) {
+            window.calculator.updateRouteSelectWithFileRoutes();
         }
         
-        return [];
     } catch (error) {
-        console.error('Error fetching files via GitHub API:', error);
-        return [];
+        console.error('Error loading route files:', error);
     }
 }
 

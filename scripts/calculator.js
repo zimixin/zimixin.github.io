@@ -825,22 +825,10 @@ ${routeLines}
 
     // Initialize routes from file system
     async initializeRoutes() {
-        // Wait for routes to load from files
+        // Wait a bit for routes to load from files
         setTimeout(() => {
             this.updateRouteSelectWithFileRoutes();
-        }, 500); // Increased wait time to ensure files are loaded
-        
-        // Also try to reload after 2 seconds if no routes were found
-        setTimeout(() => {
-            if (Object.keys(ROUTE_DATA).length === 0) {
-                console.log('No routes loaded, attempting to reload...');
-                if (typeof loadRoutesFromFiles === 'function') {
-                    loadRoutesFromFiles().then(() => {
-                        this.updateRouteSelectWithFileRoutes();
-                    });
-                }
-            }
-        }, 2000);
+        }, 100); // Minimal wait time
     }
 
     updateRouteSelectWithFileRoutes() {
@@ -868,5 +856,7 @@ ${routeLines}
 // Initialize calculator when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
     const calculator = new EnergyCalculator();
+    // Make calculator globally available for route updates
+    window.calculator = calculator;
     console.log('Energy Calculator initialized');
 });
