@@ -9,21 +9,11 @@ let ROUTE_DATA = {};
 const LOCOMOTIVE_DATA = {
     vl10u: {
         name: 'ВЛ10У',
-        length: 32, // meters
-        coefficients: {
-            // Axle load (tons/axle) -> Energy coefficient
-            6: 89.5,
-            7: 83.41
-        }
+        length: 32 // meters
     },
-    es6: {
+    '2es6': {
         name: '2ЭС6',
-        length: 34, // meters
-        coefficients: {
-            // Axle load (tons/axle) -> Energy coefficient
-            6: 82.0,
-            7: 76.43
-        }
+        length: 34 // meters
     }
 };
 
@@ -94,7 +84,7 @@ function parseRouteFromMarkdown(content, filename) {
             description: `Маршрут из файла ${filename}`,
             coefficients: {
                 vl10u: {},
-                es6: {}
+                '2es6': {}
             }
         };
         
@@ -142,7 +132,7 @@ function parseRouteFromMarkdown(content, filename) {
                             const coeff = parseFloat(cells[j]);
                             if (!isNaN(coeff)) {
                                 const axleLoad = j + 5; // Start from 6 t/axle
-                                route.coefficients.es6[axleLoad] = coeff;
+                                route.coefficients['2es6'][axleLoad] = coeff;
                             }
                         }
                     }
@@ -212,35 +202,8 @@ function getEnergyCoefficient(locomotiveType, axleLoad, routeData = null) {
         }
     }
     
-    // Fallback to standard coefficients
-    const locomotive = getLocomotiveData(locomotiveType);
-    if (!locomotive) return null;
-    
-    // Round axle load to nearest integer for coefficient lookup
-    const roundedAxleLoad = Math.round(axleLoad);
-    
-    // Find the closest coefficient
-    const coefficients = locomotive.coefficients;
-    const availableLoads = Object.keys(coefficients).map(Number).sort((a, b) => a - b);
-    
-    // If exact match exists
-    if (coefficients[roundedAxleLoad]) {
-        return coefficients[roundedAxleLoad];
-    }
-    
-    // Find closest match
-    let closestLoad = availableLoads[0];
-    let minDiff = Math.abs(roundedAxleLoad - closestLoad);
-    
-    for (const load of availableLoads) {
-        const diff = Math.abs(roundedAxleLoad - load);
-        if (diff < minDiff) {
-            minDiff = diff;
-            closestLoad = load;
-        }
-    }
-    
-    return coefficients[closestLoad];
+    // Fallback - no standard coefficients available
+    return null;
 }
 
 // Export for use in other scripts (if needed)

@@ -554,7 +554,7 @@ class EnergyCalculator {
                     description: 'Пользовательский маршрут с коэффициентами',
                     coefficients: {
                         vl10u: {},
-                        es6: {}
+                        '2es6': {}
                     }
                 };
                 parsingTable = false;
@@ -595,7 +595,7 @@ class EnergyCalculator {
                         for (let j = 1; j < cells.length && j <= 9; j++) {
                             const coeff = parseFloat(cells[j]);
                             if (!isNaN(coeff)) {
-                                currentRoute.coefficients.es6[j + 5] = coeff; // j+5 because axle loads start from 6
+                                currentRoute.coefficients['2es6'][j + 5] = coeff; // j+5 because axle loads start from 6
                             }
                         }
                     }
@@ -610,7 +610,7 @@ class EnergyCalculator {
         
         return routes.filter(route => 
             route.distance > 0 && 
-            (Object.keys(route.coefficients.vl10u).length > 0 || Object.keys(route.coefficients.es6).length > 0)
+            (Object.keys(route.coefficients.vl10u).length > 0 || Object.keys(route.coefficients['2es6']).length > 0)
         );
     }
 
@@ -696,7 +696,7 @@ class EnergyCalculator {
         
         Object.values(this.customRoutes).forEach(route => {
             // Check if route has custom coefficients
-            if (route.coefficients && (Object.keys(route.coefficients.vl10u || {}).length > 0 || Object.keys(route.coefficients.es6 || {}).length > 0)) {
+            if (route.coefficients && (Object.keys(route.coefficients.vl10u || {}).length > 0 || Object.keys(route.coefficients['2es6'] || {}).length > 0)) {
                 // Full format with coefficients
                 routeLines.push(`# ${route.name}`);
                 routeLines.push(`## ${route.distance} км`);
@@ -712,10 +712,10 @@ class EnergyCalculator {
                     routeLines.push(vl10uRow.join(' | '));
                 }
                 
-                if (route.coefficients.es6 && Object.keys(route.coefficients.es6).length > 0) {
+                if (route.coefficients['2es6'] && Object.keys(route.coefficients['2es6']).length > 0) {
                     const es6Row = ['| 2ЭС6'];
                     for (let axle = 6; axle <= 14; axle++) {
-                        es6Row.push(route.coefficients.es6[axle] || '-');
+                        es6Row.push(route.coefficients['2es6'][axle] || '-');
                     }
                     es6Row.push('|');
                     routeLines.push(es6Row.join(' | '));
@@ -751,7 +751,7 @@ class EnergyCalculator {
             exportLines.push('');
             
             // If route has custom coefficients, export full table
-            if (route.coefficients && (Object.keys(route.coefficients.vl10u || {}).length > 0 || Object.keys(route.coefficients.es6 || {}).length > 0)) {
+            if (route.coefficients && (Object.keys(route.coefficients.vl10u || {}).length > 0 || Object.keys(route.coefficients['2es6'] || {}).length > 0)) {
                 exportLines.push('| нагрузка на ось | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 |');
                 
                 if (route.coefficients.vl10u && Object.keys(route.coefficients.vl10u).length > 0) {
@@ -763,10 +763,10 @@ class EnergyCalculator {
                     exportLines.push(vl10uRow.join(' | '));
                 }
                 
-                if (route.coefficients.es6 && Object.keys(route.coefficients.es6).length > 0) {
+                if (route.coefficients['2es6'] && Object.keys(route.coefficients['2es6']).length > 0) {
                     const es6Row = ['| 2ЭС6'];
-                    for (let axle = 6; axle <= 14; axle++) {
-                        es6Row.push(route.coefficients.es6[axle] || '-');
+                    for (let j = 1; j < cells.length && j <= 9; j++) {
+                        es6Row.push(route.coefficients['2es6'][j + 5] || '-');
                     }
                     es6Row.push('|');
                     exportLines.push(es6Row.join(' | '));
