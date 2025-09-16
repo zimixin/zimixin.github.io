@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Icon Generator</title>
+</head>
+<body>
+    <canvas id="canvas" width="512" height="512"></canvas>
+    <script>
+        // Generate PNG icons from SVG for PWA
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        
+        // Draw icon at different sizes
+        const sizes = [72, 96, 128, 144, 152, 192, 384, 512];
+        
+        function drawIcon(size) {
+            canvas.width = size;
+            canvas.height = size;
+            
+            // Clear canvas
+            ctx.clearRect(0, 0, size, size);
+            
+            // Background
+            ctx.fillStyle = '#007bff';
+            ctx.fillRect(0, 0, size, size);
+            
+            // Train simplified icon
+            const scale = size / 512;
+            
+            // Main body
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(64 * scale, 200 * scale, 320 * scale, 120 * scale);
+            
+            // Front
+            ctx.beginPath();
+            ctx.moveTo(384 * scale, 200 * scale);
+            ctx.lineTo(448 * scale, 240 * scale);
+            ctx.lineTo(448 * scale, 280 * scale);
+            ctx.lineTo(384 * scale, 320 * scale);
+            ctx.closePath();
+            ctx.fill();
+            
+            // Windows
+            ctx.fillStyle = '#007bff';
+            ctx.fillRect(104 * scale, 230 * scale, 60 * scale, 40 * scale);
+            ctx.fillRect(184 * scale, 230 * scale, 60 * scale, 40 * scale);
+            ctx.fillRect(264 * scale, 230 * scale, 60 * scale, 40 * scale);
+            
+            // Wheels
+            ctx.fillStyle = '#333333';
+            ctx.beginPath();
+            ctx.arc(120 * scale, 340 * scale, 20 * scale, 0, 2 * Math.PI);
+            ctx.arc(200 * scale, 340 * scale, 20 * scale, 0, 2 * Math.PI);
+            ctx.arc(280 * scale, 340 * scale, 20 * scale, 0, 2 * Math.PI);
+            ctx.arc(360 * scale, 340 * scale, 20 * scale, 0, 2 * Math.PI);
+            ctx.fill();
+            
+            // Lightning bolt
+            ctx.fillStyle = '#ffd43b';
+            ctx.beginPath();
+            ctx.moveTo(220 * scale, 120 * scale);
+            ctx.lineTo(260 * scale, 120 * scale);
+            ctx.lineTo(230 * scale, 160 * scale);
+            ctx.lineTo(250 * scale, 160 * scale);
+            ctx.lineTo(210 * scale, 200 * scale);
+            ctx.lineTo(240 * scale, 160 * scale);
+            ctx.lineTo(220 * scale, 160 * scale);
+            ctx.closePath();
+            ctx.fill();
+            
+            // Rail tracks
+            ctx.fillStyle = '#666666';
+            ctx.fillRect(0, 380 * scale, size, 8 * scale);
+            ctx.fillRect(0, 400 * scale, size, 8 * scale);
+            
+            return canvas.toDataURL('image/png');
+        }
+        
+        // Generate and download icons
+        sizes.forEach(size => {
+            const dataUrl = drawIcon(size);
+            const link = document.createElement('a');
+            link.download = `icon-${size}x${size}.png`;
+            link.href = dataUrl;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        });
+    </script>
+</body>
+</html>

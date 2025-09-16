@@ -314,3 +314,40 @@ body {
         padding: 1rem 1.5rem;
     }
 }
+
+/* PWA Styles */
+@media (display-mode: standalone) {
+    /* Styles when app is running as PWA */
+    .header {
+        padding-top: max(2rem, env(safe-area-inset-top));
+    }
+    
+    .container {
+        padding-left: env(safe-area-inset-left);
+        padding-right: env(safe-area-inset-right);
+        padding-bottom: env(safe-area-inset-bottom);
+    }
+}
+
+/* Install button styles */
+.install-button {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+    border-radius: 12px;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+    }
+    50% {
+        box-shadow: 0 4px 24px rgba(0,123,255,0.4);
+    }
+    100% {
+        box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+    }
+}

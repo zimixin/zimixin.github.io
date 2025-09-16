@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>PWA Icon Generator</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .icon-preview { margin: 10px; display: inline-block; text-align: center; }
+        .icon-preview img { border: 1px solid #ccc; margin-bottom: 5px; }
+        button { padding: 10px 20px; margin: 10px; font-size: 16px; }
+        #output { margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <h1>PWA Icon Generator for RZD Calculator</h1>
+    <p>This page generates PWA icons in different sizes from the base SVG.</p>
+    <p><strong>Instructions:</strong> Open this file in a browser, click "Generate All Icons", then "Download All Generated Icons"</p>
+    
+    <button onclick="generateIcons()">Generate All Icons</button>
+    <button onclick="downloadAll()">Download All Generated Icons</button>
+    
+    <div id="output"></div>
+    
+    <script>
+        const sizes = [72, 96, 128, 144, 152, 192, 384, 512];
+        const iconData = {};
+        
+        // SVG content for the icon
+        const svgContent = `<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+          <rect width="512" height="512" rx="80" fill="#007bff"/>
+          <rect x="80" y="180" width="352" height="180" rx="20" fill="#ffffff"/>
+          <rect x="90" y="190" width="332" height="160" rx="15" fill="#f8f9fa"/>
+          <rect x="120" y="220" width="60" height="60" rx="8" fill="#007bff"/>
+          <rect x="200" y="220" width="60" height="60" rx="8" fill="#007bff"/>
+          <rect x="280" y="220" width="60" height="60" rx="8" fill="#007bff"/>
+          <rect x="360" y="220" width="40" height="60" rx="8" fill="#007bff"/>
+          <path d="M80 180 L80 360 L50 340 L50 200 Z" fill="#cccccc"/>
+          <circle cx="140" cy="380" r="20" fill="#333333"/>
+          <circle cx="200" cy="380" r="20" fill="#333333"/>
+          <circle cx="260" cy="380" r="20" fill="#333333"/>
+          <circle cx="320" cy="380" r="20" fill="#333333"/>
+          <circle cx="380" cy="380" r="20" fill="#333333"/>
+          <circle cx="140" cy="380" r="8" fill="#666666"/>
+          <circle cx="200" cy="380" r="8" fill="#666666"/>
+          <circle cx="260" cy="380" r="8" fill="#666666"/>
+          <circle cx="320" cy="380" r="8" fill="#666666"/>
+          <circle cx="380" cy="380" r="8" fill="#666666"/>
+          <path d="M240 120 L280 120 L260 150 L290 150 L240 190 L250 160 L220 160 Z" fill="#ffd700" stroke="#ffcc00" stroke-width="2"/>
+          <text x="256" y="450" text-anchor="middle" fill="#007bff" font-family="Arial, sans-serif" font-size="32" font-weight="bold">РЖД</text>
+        </svg>`;
+        
+        function svgToPng(svgContent, size) {
+            return new Promise((resolve) => {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                const img = new Image();
+                
+                canvas.width = size;
+                canvas.height = size;
+                
+                img.onload = () => {
+                    ctx.drawImage(img, 0, 0, size, size);
+                    canvas.toBlob(resolve, 'image/png');
+                };
+                
+                const svgBlob = new Blob([svgContent], { type: 'image/svg+xml' });
+                img.src = URL.createObjectURL(svgBlob);
+            });
+        }
+        
+        async function generateIcons() {
+            const output = document.getElementById('output');
+            output.innerHTML = '<h2>Generated Icons:</h2>';
+            
+            for (const size of sizes) {
+                try {
+                    const blob = await svgToPng(svgContent, size);
+                    const url = URL.createObjectURL(blob);
+                    iconData[size] = blob;
+                    
+                    const preview = document.createElement('div');
+                    preview.className = 'icon-preview';
+                    preview.innerHTML = `<img src="${url}" width="${Math.min(size, 64)}" height="${Math.min(size, 64)}" alt="Icon ${size}x${size}"><br>${size}x${size}<br><a href="${url}" download="icon-${size}x${size}.png">Download</a>`;
+                    output.appendChild(preview);
+                } catch (error) {
+                    console.error(`Error generating ${size}x${size} icon:`, error);
+                }
+            }
+        }
+        
+        function downloadAll() {
+            for (const [size, blob] of Object.entries(iconData)) {
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `icon-${size}x${size}.png`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            }
+        }
+        
+        // Auto-generate icons when page loads
+        window.addEventListener('load', generateIcons);
+    </script>
+</body>
+</html>

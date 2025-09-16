@@ -1,0 +1,36 @@
+{
+  "name": "Калькулятор норм расхода электроэнергии РЖД",
+  "short_name": "РЖД Калькулятор",
+  "description": "Веб-калькулятор для расчета норм расхода электроэнергии в грузовом движении на тягу поездов",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "theme_color": "#007bff",
+  "background_color": "#ffffff",
+  "lang": "ru",
+  "scope": "/",
+  "categories": ["productivity", "utilities"],
+  "icons": [
+    {
+      "src": "icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "icons/icon.svg",
+      "sizes": "72x72 96x96 128x128 144x144 152x152 192x192 384x384 512x512",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Новый расчет",
+      "short_name": "Расчет",
+      "description": "Начать новый расчет энергопотребления",
+      "url": "/",
+      "icons": [{ "src": "icons/icon.svg", "sizes": "96x96", "type": "image/svg+xml" }]
+    }
+  ]
+}
