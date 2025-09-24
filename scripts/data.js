@@ -31,6 +31,7 @@ async function loadRoutesFromFiles() {
             'abdulino-kinel.md',
             'abdulino-oktyabrsk.md',
             'abdulino-syzran.md',
+            'syzran-abdulino.md',
             'kinel-abdulino.md',
             'moscow-spb.md'
         ];
