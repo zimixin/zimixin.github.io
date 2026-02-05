@@ -34,15 +34,28 @@ class ThemeManager {
     }
 
     toggleTheme() {
-        const newTheme = this.currentTheme === 'light' ? 'dark' : 'light';
+        let newTheme;
+        switch (this.currentTheme) {
+            case 'light':
+                newTheme = 'dark';
+                break;
+            case 'dark':
+                newTheme = 'amoled';
+                break;
+            case 'amoled':
+                newTheme = 'light';
+                break;
+            default:
+                newTheme = 'light';
+        }
         this.applyTheme(newTheme);
         this.storeTheme(newTheme);
     }
 
     applyTheme(theme) {
         // Remove existing theme classes
-        this.body.classList.remove('theme-light', 'theme-dark');
-        
+        this.body.classList.remove('theme-light', 'theme-dark', 'theme-amoled');
+
         // Apply new theme
         this.body.classList.add(`theme-${theme}`);
         
@@ -59,7 +72,13 @@ class ThemeManager {
     updateThemeIcon(theme) {
         if (this.themeIcon) {
             // The CSS handles the icon content based on theme class
-            this.themeIcon.textContent = theme === 'light' ? '🌙' : '☀️';
+            if (theme === 'light') {
+                this.themeIcon.textContent = '🌙';
+            } else if (theme === 'dark') {
+                this.themeIcon.textContent = '☀️';
+            } else if (theme === 'amoled') {
+                this.themeIcon.textContent = '⚫'; // Black circle for AMOLED theme
+            }
         }
     }
 
@@ -101,7 +120,7 @@ class ThemeManager {
 
     // Public method to set theme programmatically
     setTheme(theme) {
-        if (theme === 'light' || theme === 'dark') {
+        if (theme === 'light' || theme === 'dark' || theme === 'amoled') {
             this.applyTheme(theme);
             this.storeTheme(theme);
         }
@@ -144,6 +163,13 @@ document.addEventListener('themeChange', (event) => {
         document.head.appendChild(themeColorMeta);
     }
     
-    const themeColor = event.detail.theme === 'dark' ? '#1a1a1a' : '#ffffff';
-    themeColorMeta.content = themeColor;
+    let themeColor;
+        if (event.detail.theme === 'dark') {
+            themeColor = '#1a1a1a';
+        } else if (event.detail.theme === 'amoled') {
+            themeColor = '#000000'; // Pure black for AMOLED
+        } else {
+            themeColor = '#ffffff';
+        }
+        themeColorMeta.content = themeColor;
 });

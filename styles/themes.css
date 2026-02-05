@@ -85,6 +85,52 @@
     background: linear-gradient(135deg, #4dabf7 0%, #339af0 100%);
 }
 
+/* AMOLED Theme Variables */
+.theme-amoled {
+    --bg-primary: #000000;
+    --bg-secondary: #000000;
+    --card-bg: #000000;
+    --input-bg: #000000;
+    --result-bg: #000000;
+    --text-primary: #f8f9fa;
+    --text-secondary: #adb5bd;
+    --border-color: #343a40;
+    --accent-color: #4dabf7;
+    --accent-hover: #339af0;
+    --accent-light: rgba(77, 171, 247, 0.1);
+    --success-color: #51cf66;
+    --warning-color: #ffd43b;
+    --danger-color: #ff6b6b;
+    --shadow: rgba(0, 0, 0, 0.5);
+
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+}
+
+.theme-amoled .header {
+    background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-primary) 100%);
+}
+
+.theme-amoled .theme-toggle {
+    border-color: var(--border-color);
+    color: var(--text-primary);
+    background: var(--card-bg);
+}
+
+.theme-amoled .theme-toggle:hover {
+    background: var(--accent-light);
+    border-color: var(--accent-color);
+}
+
+/* Theme-specific locomotive cards */
+.theme-amoled .locomotive-vl10u.locomotive-card {
+    background: linear-gradient(135deg, #fd7e14 0%, #e55c00 100%);
+}
+
+.theme-amoled .locomotive-es6.locomotive-card {
+    background: linear-gradient(135deg, #4dabf7 0%, #339af0 100%);
+}
+
 /* Smooth transitions for theme switching */
 body,
 .calculator-card,

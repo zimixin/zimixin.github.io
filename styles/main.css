@@ -223,6 +223,14 @@ body {
     box-shadow: 0 4px 16px rgba(0, 123, 255, 0.3);
 }
 
+.btn-primary:active {
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    border: 2px solid var(--accent-color);
+    transform: translateY(1px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
 .btn-calculate {
     font-size: 1.2rem;
     padding: 1.25rem 2.5rem;
