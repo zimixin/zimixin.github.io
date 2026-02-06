@@ -111,19 +111,21 @@ function parseRouteFromMarkdown(content, filename) {
             // Parse coefficient table
             else if (line.startsWith('|')) {
                 const cells = line.split('|').map(cell => cell.trim()).filter(cell => cell);
-                
-                if (!headerParsed && cells[0].includes('нагрузка')) {
+
+                if (!headerParsed && cells[0].toLowerCase().includes('нагрузка')) {
                     headerParsed = true;
                     parsingTable = true;
                 } else if (parsingTable && cells.length > 1) {
                     const locomotiveType = cells[0].toUpperCase();
-                    
+
                     if (locomotiveType.includes('ВЛ10У')) {
                         // Parse ВЛ10У coefficients
                         for (let j = 1; j < cells.length; j++) {
                             const coeff = parseFloat(cells[j]);
                             if (!isNaN(coeff)) {
-                                const axleLoad = j + 5; // Start from 6 t/axle
+                                // Determine axle load from header row - assuming sequential from 6
+                                // The first data cell corresponds to axle load 6, second to 7, etc.
+                                const axleLoad = j + 5; // j starts from 1, so j+5 gives us 6, 7, 8...
                                 route.coefficients.vl10u[axleLoad] = coeff;
                             }
                         }
@@ -132,7 +134,9 @@ function parseRouteFromMarkdown(content, filename) {
                         for (let j = 1; j < cells.length; j++) {
                             const coeff = parseFloat(cells[j]);
                             if (!isNaN(coeff)) {
-                                const axleLoad = j + 5; // Start from 6 t/axle
+                                // Determine axle load from header row - assuming sequential from 6
+                                // The first data cell corresponds to axle load 6, second to 7, etc.
+                                const axleLoad = j + 5; // j starts from 1, so j+5 gives us 6, 7, 8...
                                 route.coefficients['2es6'][axleLoad] = coeff;
                             }
                         }
@@ -175,22 +179,22 @@ function getRouteData(routeCode) {
 }
 
 function getEnergyCoefficient(locomotiveType, axleLoad, routeData = null) {
-    // Check if route has custom coefficients
+    // Only use route-specific coefficients, no fallback to standard coefficients
     if (routeData && routeData.coefficients && routeData.coefficients[locomotiveType]) {
         const roundedAxleLoad = Math.round(axleLoad);
         const customCoefficients = routeData.coefficients[locomotiveType];
-        
+
         // Try exact match first
-        if (customCoefficients[roundedAxleLoad]) {
+        if (customCoefficients[roundedAxleLoad] !== undefined) {
             return customCoefficients[roundedAxleLoad];
         }
-        
+
         // Find closest match in custom coefficients
         const availableLoads = Object.keys(customCoefficients).map(Number).sort((a, b) => a - b);
         if (availableLoads.length > 0) {
             let closestLoad = availableLoads[0];
             let minDiff = Math.abs(roundedAxleLoad - closestLoad);
-            
+
             for (const load of availableLoads) {
                 const diff = Math.abs(roundedAxleLoad - load);
                 if (diff < minDiff) {
@@ -198,12 +202,12 @@ function getEnergyCoefficient(locomotiveType, axleLoad, routeData = null) {
                     closestLoad = load;
                 }
             }
-            
+
             return customCoefficients[closestLoad];
         }
     }
-    
-    // Fallback - no standard coefficients available
+
+    // No coefficients available from route file
     return null;
 }
 

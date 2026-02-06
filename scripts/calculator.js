@@ -20,13 +20,18 @@ class EnergyCalculator {
 
     initializeEventListeners() {
         if (this.form) {
-            this.form.addEventListener('submit', (e) => this.handleSubmit(e));
+            this.form.addEventListener('submit', (e) => {
+                e.preventDefault(); // Prevent form submission since we're doing real-time calculations
+            });
         }
 
         // Add real-time validation
         const inputs = this.form.querySelectorAll('input, select');
         inputs.forEach(input => {
-            input.addEventListener('input', () => this.validateField(input));
+            input.addEventListener('input', () => {
+                this.validateField(input);
+                this.performRealTimeCalculation(); // Recalculate on every input change
+            });
             input.addEventListener('blur', () => this.validateField(input));
         });
 
@@ -82,6 +87,12 @@ class EnergyCalculator {
         const addLocomotiveBtn = document.getElementById('addLocomotiveBtn');
         if (addLocomotiveBtn) {
             addLocomotiveBtn.addEventListener('click', () => this.addLocomotive());
+        }
+        
+        // Add cold locomotive button
+        const addColdLocomotiveBtn = document.getElementById('addColdLocomotiveBtn');
+        if (addColdLocomotiveBtn) {
+            addColdLocomotiveBtn.addEventListener('click', () => this.addColdLocomotive());
         }
     }
 
@@ -156,13 +167,81 @@ class EnergyCalculator {
         `;
         
         locomotiveContainer.appendChild(locomotiveCard);
+        
+        // Trigger recalculation after adding locomotive
+        this.performRealTimeCalculation();
+        this.highlightSelectedCoefficient();
+    }
+
+    addColdLocomotive() {
+        this.locomotiveCount++;
+        const locomotiveContainer = document.getElementById('locomotiveContainer');
+        
+        const locomotiveCard = document.createElement('div');
+        locomotiveCard.className = 'locomotive-card-wrapper';
+        locomotiveCard.id = `locomotiveCard${this.locomotiveCount}`;
+        
+        locomotiveCard.innerHTML = `
+            <div class="locomotive-card locomotive-cold" data-type="cold" data-length="32" onclick="toggleLocomotiveSelection(${this.locomotiveCount})">
+                <div class="locomotive-info">
+                    <h3>Х</h3>
+                    <p>Длина: 32м</p>
+                </div>
+            </div>
+            <div class="locomotive-type-selector" id="locomotiveSelector${this.locomotiveCount}" style="display:none;">
+                <div class="locomotive-option" onclick="selectLocomotiveType(${this.locomotiveCount}, 'vl10u', 'ВЛ10У', 32)">
+                    <div class="locomotive-card locomotive-vl10u">
+                        <div class="locomotive-info">
+                            <h3>ВЛ10У</h3>
+                            <p>Длина: 32м</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="locomotive-option" onclick="selectLocomotiveType(${this.locomotiveCount}, '2es6', '2ЭС6', 34)">
+                    <div class="locomotive-card locomotive-es6">
+                        <div class="locomotive-info">
+                            <h3>2ЭС6</h3>
+                            <p>Длина: 34м</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="locomotive-custom-option">
+                    <div class="input-group">
+                        <label>Произвольный тип:</label>
+                        <input type="text" id="customType${this.locomotiveCount}" placeholder="например, ТЭ3" value="Х">
+                    </div>
+                    <div class="input-group">
+                        <label>Длина (м):</label>
+                        <input type="number" id="customLength${this.locomotiveCount}" value="32" min="1" max="100">
+                    </div>
+                    <button class="btn btn-secondary" onclick="setCustomLocomotive(${this.locomotiveCount})">Установить</button>
+                </div>
+            </div>
+            <button class="remove-locomotive-btn" onclick="removeLocomotive(${this.locomotiveCount})">×</button>
+        `;
+        
+        locomotiveContainer.appendChild(locomotiveCard);
+        
+        // Trigger recalculation after adding locomotive
+        this.performRealTimeCalculation();
+        this.highlightSelectedCoefficient();
     }
 
     removeLocomotive(index) {
+        // Prevent removal of the first locomotive
+        if (index === 1) {
+            alert('Нельзя удалить первый локомотив. Поезд должен иметь хотя бы один локомотив.');
+            return;
+        }
+        
         const locomotiveCard = document.getElementById(`locomotiveCard${index}`);
         if (locomotiveCard) {
             locomotiveCard.remove();
             this.locomotiveCount--;
+            
+            // Trigger recalculation after removing locomotive
+            this.performRealTimeCalculation();
+            this.highlightSelectedCoefficient();
         }
     }
 
@@ -187,16 +266,34 @@ class EnergyCalculator {
     getFormData() {
         // Collect locomotive data
         const locomotives = [];
+        let activeLocomotiveCount = 0; // Count of active (non-cold) locomotives
+        let coldLocomotiveCount = 0; // Count of cold locomotives
+        
         for (let i = 1; i <= this.locomotiveCount; i++) {
-            const locomotiveType = document.querySelector(`#locomotiveCard${i} .locomotive-card`).getAttribute('data-type') || 'vl10u';
-            const locomotiveName = document.querySelector(`#locomotiveCard${i} .locomotive-card h3`).textContent;
-            const locomotiveLength = document.querySelector(`#locomotiveCard${i} .locomotive-card p`).textContent.replace('Длина: ', '').replace('м', '');
+            const locomotiveCard = document.querySelector(`#locomotiveCard${i} .locomotive-card`);
+            if (!locomotiveCard) continue;
             
-            locomotives.push({
+            const locomotiveType = locomotiveCard.getAttribute('data-type') || 'vl10u';
+            const locomotiveName = locomotiveCard.querySelector('h3').textContent;
+            // Use the data-length attribute if available, otherwise extract from text
+            const locomotiveLength = locomotiveCard.getAttribute('data-length') ? 
+                parseFloat(locomotiveCard.getAttribute('data-length')) : 
+                parseFloat(locomotiveCard.querySelector('p').textContent.replace('Длина: ', '').replace('м', ''));
+            
+            const locomotive = {
                 type: locomotiveType,
                 name: locomotiveName,
-                length: parseFloat(locomotiveLength)
-            });
+                length: locomotiveLength
+            };
+            
+            locomotives.push(locomotive);
+            
+            // Count active vs cold locomotives
+            if (locomotiveType === 'cold') {
+                coldLocomotiveCount++;
+            } else {
+                activeLocomotiveCount++;
+            }
         }
         
         // Get train parameters
@@ -210,7 +307,8 @@ class EnergyCalculator {
         
         return {
             locomotives: locomotives,
-            locomotiveCount: locomotives.length,
+            locomotiveCount: activeLocomotiveCount, // Only count active locomotives for traction
+            coldLocomotiveCount: coldLocomotiveCount,
             trainWeight: parseFloat(trainWeightInput?.value) || 0,
             axleCount: parseInt(trainAxlesInput?.value) || 0,
             actualWagons: parseInt(actualWagonsInput?.value) || 0,
@@ -222,15 +320,16 @@ class EnergyCalculator {
 
     calculateEnergyConsumption(data) {
         try {
-            // Use the first locomotive for calculation (simplified approach)
-            if (!data.locomotives || data.locomotives.length === 0) {
+            // Find the first active (non-cold) locomotive for calculation
+            const activeLocomotives = data.locomotives.filter(loc => loc.type !== 'cold');
+            if (!activeLocomotives || activeLocomotives.length === 0) {
                 return {
                     success: false,
-                    error: 'Нет данных локомотива'
+                    error: 'Нет активных локомотивов для тяги'
                 };
             }
             
-            const locomotiveData = data.locomotives[0]; // Using first locomotive for calculation
+            const locomotiveData = activeLocomotives[0]; // Using first active locomotive for calculation
             
             // Get route data (standard routes only)
             let routeData = getRouteData(data.route) || ROUTE_DATA[data.route];
@@ -267,9 +366,28 @@ class EnergyCalculator {
             const energyConsumption = (data.trainWeight * coefficient * routeData.distance) / 10000 / 100;
 
             // Calculate train length using conditional wagons from train parameters
+            // Include all locomotives (active and cold) in the length calculation
             let trainLength = null;
             if (data.conditionalWagons > 0) {
-                trainLength = (locomotiveData.length * data.locomotiveCount) + (data.conditionalWagons * WAGON_LENGTH);
+                // Calculate total length for all active locomotives
+                let activeLocomotiveLength = 0;
+                for (const loc of data.locomotives) {
+                    if (loc.type !== 'cold') {
+                        activeLocomotiveLength += loc.length;
+                    }
+                }
+                
+                // Calculate cold locomotive length based on individual lengths
+                let coldLocomotiveLength = 0;
+                for (const loc of data.locomotives) {
+                    if (loc.type === 'cold') {
+                        coldLocomotiveLength += loc.length;
+                    }
+                }
+                
+                const conditionalWagonLength = data.conditionalWagons * WAGON_LENGTH;
+                
+                trainLength = activeLocomotiveLength + coldLocomotiveLength + conditionalWagonLength;
             }
 
             return {
@@ -612,17 +730,6 @@ class EnergyCalculator {
     populateCoefficientsTable(coefficients, tableBody) {
         tableBody.innerHTML = '';
 
-        // Get all available axle loads
-        const allAxleLoads = new Set();
-        if (coefficients.vl10u) {
-            Object.keys(coefficients.vl10u).forEach(load => allAxleLoads.add(parseInt(load)));
-        }
-        if (coefficients['2es6']) {
-            Object.keys(coefficients['2es6']).forEach(load => allAxleLoads.add(parseInt(load)));
-        }
-
-        const sortedAxleLoads = Array.from(allAxleLoads).sort((a, b) => a - b);
-
         // Create rows for each locomotive type
         if (coefficients.vl10u && Object.keys(coefficients.vl10u).length > 0) {
             const vl10uRow = document.createElement('tr');
@@ -632,8 +739,8 @@ class EnergyCalculator {
             for (let axle = 6; axle <= 23; axle++) {
                 const cell = document.createElement('td');
                 const value = coefficients.vl10u[axle];
-                cell.textContent = value ? value.toString() : '-';
-                if (!value) {
+                cell.textContent = value !== undefined ? value.toString() : '-';
+                if (value === undefined) {
                     cell.style.opacity = '0.3';
                 }
                 vl10uRow.appendChild(cell);
@@ -650,8 +757,8 @@ class EnergyCalculator {
             for (let axle = 6; axle <= 23; axle++) {
                 const cell = document.createElement('td');
                 const value = coefficients['2es6'][axle];
-                cell.textContent = value ? value.toString() : '-';
-                if (!value) {
+                cell.textContent = value !== undefined ? value.toString() : '-';
+                if (value === undefined) {
                     cell.style.opacity = '0.3';
                 }
                 es6Row.appendChild(cell);
@@ -782,11 +889,47 @@ function selectLocomotiveType(index, type, name, length) {
             selector.style.display = 'none';
         }
         
-        // Update coefficient highlighting after locomotive type change
+        // Update coefficient highlighting and recalculate after locomotive type change
         if (window.calculator) {
             setTimeout(() => {
                 window.calculator.highlightSelectedCoefficient();
+                window.calculator.performRealTimeCalculation();
             }, 10);
+        }
+    }
+}
+
+function setCustomLocomotive(index) {
+    const customTypeInput = document.getElementById(`customType${index}`);
+    const customLengthInput = document.getElementById(`customLength${index}`);
+    
+    if (customTypeInput && customLengthInput) {
+        const customType = customTypeInput.value || 'Х';
+        const customLength = parseFloat(customLengthInput.value) || 32;
+        
+        const locomotiveCard = document.querySelector(`#locomotiveCard${index} .locomotive-card`);
+        if (locomotiveCard) {
+            locomotiveCard.setAttribute('data-type', 'cold');
+            locomotiveCard.setAttribute('data-length', customLength);
+            locomotiveCard.querySelector('h3').textContent = customType;
+            locomotiveCard.querySelector('p').textContent = `Длина: ${customLength}м`;
+            
+            // Update class based on locomotive type
+            locomotiveCard.className = 'locomotive-card locomotive-cold';
+            
+            // Hide the selector after selection
+            const selector = document.getElementById(`locomotiveSelector${index}`);
+            if (selector) {
+                selector.style.display = 'none';
+            }
+            
+            // Update coefficient highlighting and recalculate after locomotive type change
+            if (window.calculator) {
+                setTimeout(() => {
+                    window.calculator.highlightSelectedCoefficient();
+                    window.calculator.performRealTimeCalculation();
+                }, 10);
+            }
         }
     }
 }
@@ -794,6 +937,13 @@ function selectLocomotiveType(index, type, name, length) {
 function removeLocomotive(index) {
     if (window.calculator) {
         window.calculator.removeLocomotive(index);
+        // Trigger recalculation after removing locomotive
+        setTimeout(() => {
+            if (window.calculator) {
+                window.calculator.performRealTimeCalculation();
+                window.calculator.highlightSelectedCoefficient();
+            }
+        }, 10);
     }
 }
 
