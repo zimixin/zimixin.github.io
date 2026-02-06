@@ -82,14 +82,14 @@ body {
 
 /* Form Sections */
 .form-section {
-    margin-bottom: 1.5rem;
+    margin-bottom: 1rem; /* Reduced margin */
 }
 
 .section-title {
-    font-size: 1.3rem;
+    font-size: 1.1rem; /* Smaller font size */
     font-weight: 600;
-    margin-bottom: 0.75rem;
-    padding-bottom: 0.25rem;
+    margin-bottom: 0.5rem; /* Reduced margin */
+    padding-bottom: 0.15rem; /* Reduced padding */
     border-bottom: 2px solid var(--accent-color);
 }
 
@@ -98,16 +98,39 @@ body {
     background: var(--card-bg);
     border: 1px solid var(--border-color);
     border-radius: 8px;
-    padding: 1rem;
+    padding: 0.75rem;
     margin-bottom: 1rem;
 }
 
 .train-params-card .input-group {
-    margin-bottom: 1rem;
+    margin-bottom: 0.5rem;
 }
 
 .train-params-card .input-group:last-child {
     margin-bottom: 0;
+}
+
+/* Coefficients table */
+.coefficients-table {
+    font-size: 0.8rem; /* Smaller font size */
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.coefficients-table th,
+.coefficients-table td {
+    padding: 0.2rem; /* Reduced padding */
+    text-align: center;
+    border: 1px solid var(--border-color);
+}
+
+/* Highlighted coefficient in the table */
+.highlighted-coefficient {
+    background-color: var(--accent-color) !important;
+    color: white !important;
+    font-weight: bold;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
 }
 
 /* Wagon Cards */
@@ -174,7 +197,7 @@ body {
 
 .locomotive-card {
     display: block;
-    padding: 1rem;
+    padding: 0.75rem; /* Reduced padding */
     border: 2px solid var(--border-color);
     border-radius: 10px;
     cursor: pointer;
@@ -199,14 +222,14 @@ body {
 }
 
 .locomotive-info h3 {
-    font-size: 1.1rem;
+    font-size: 1rem; /* Smaller font size */
     font-weight: 700;
-    margin-bottom: 0.25rem;
+    margin-bottom: 0.1rem; /* Reduced margin */
 }
 
 .locomotive-info p {
     opacity: 0.9;
-    font-size: 0.9rem;
+    font-size: 0.8rem; /* Smaller font size */
 }
 
 .locomotive-type-selector {
@@ -248,23 +271,24 @@ body {
 
 /* Input Groups */
 .input-group {
-    margin-bottom: 1rem;
+    margin-bottom: 0.5rem; /* Reduced margin */
 }
 
 .input-group label {
     display: block;
     font-weight: 600;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.25rem; /* Reduced margin */
     color: var(--text-primary);
+    font-size: 0.9rem; /* Smaller font size */
 }
 
 .input-group input,
 .input-group select {
     width: 100%;
-    padding: 0.5rem;
+    padding: 0.3rem; /* Reduced padding */
     border: 2px solid var(--border-color);
     border-radius: 6px;
-    font-size: 0.9rem;
+    font-size: 0.85rem; /* Smaller font size */
     transition: border-color 0.3s ease;
     background: var(--input-bg);
     color: var(--text-primary);

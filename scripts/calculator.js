@@ -94,6 +94,7 @@ class EnergyCalculator {
                 clearTimeout(this.calculationTimeout);
                 this.calculationTimeout = setTimeout(() => {
                     this.performRealTimeCalculation();
+                    this.highlightSelectedCoefficient(); // Also highlight the selected coefficient
                 }, 300);
             });
         });
@@ -595,6 +596,10 @@ class EnergyCalculator {
             coefficientsSection.style.display = 'block';
             noCoefficients.style.display = 'none';
             this.populateCoefficientsTable(routeData.coefficients, coefficientsTableBody);
+            // Highlight the selected coefficient after populating the table
+            setTimeout(() => {
+                this.highlightSelectedCoefficient();
+            }, 10);
         } else {
             coefficientsSection.style.display = 'none';
             noCoefficients.style.display = 'block';
@@ -653,6 +658,62 @@ class EnergyCalculator {
             }
 
             tableBody.appendChild(es6Row);
+        }
+        
+        // Highlight the selected coefficient if we have form data
+        this.highlightSelectedCoefficient();
+    }
+    
+    highlightSelectedCoefficient() {
+        // First, clear ALL existing highlights in the coefficient table
+        const table = document.getElementById('coefficientsTable');
+        if (table) {
+            const allCells = table.querySelectorAll('tbody td');
+            allCells.forEach(cell => {
+                cell.classList.remove('highlighted-coefficient');
+            });
+        }
+        
+        // Get current form data to determine which coefficient should be highlighted
+        const trainWeight = parseFloat(document.getElementById('trainWeight')?.value) || 0;
+        const trainAxles = parseInt(document.getElementById('trainAxles')?.value) || 0;
+        const routeSelect = document.getElementById('route');
+        const routeValue = routeSelect ? routeSelect.value : '';
+        
+        if (trainWeight > 0 && trainAxles > 0 && routeValue) {
+            const axleLoad = trainWeight / trainAxles;
+            const roundedAxleLoad = Math.round(axleLoad);
+            
+            // Get selected locomotive type from the first locomotive card
+            const locomotiveCard = document.querySelector('#locomotiveCard1 .locomotive-card');
+            let selectedLocomotiveType = null;
+            
+            if (locomotiveCard) {
+                selectedLocomotiveType = locomotiveCard.getAttribute('data-type') || 'vl10u';
+            }
+            
+            if (selectedLocomotiveType && roundedAxleLoad >= 6 && roundedAxleLoad <= 23) {
+                // Find the table cell corresponding to the selected locomotive and axle load
+                if (table) {
+                    const rows = table.querySelectorAll('tbody tr');
+                    
+                    for (const row of rows) {
+                        const locomotiveCell = row.cells[0];
+                        if (locomotiveCell && 
+                            ((selectedLocomotiveType === 'vl10u' && locomotiveCell.textContent.includes('ВЛ10У')) ||
+                             (selectedLocomotiveType === '2es6' && locomotiveCell.textContent.includes('2ЭС6')))) {
+                            
+                            // Highlight the cell for the rounded axle load
+                            // Axle load 6 corresponds to column index 1 (first data column after locomotive name)
+                            const columnIndex = roundedAxleLoad - 6 + 1;
+                            if (row.cells[columnIndex]) {
+                                row.cells[columnIndex].classList.add('highlighted-coefficient');
+                            }
+                            break;
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -719,6 +780,13 @@ function selectLocomotiveType(index, type, name, length) {
         const selector = document.getElementById(`locomotiveSelector${index}`);
         if (selector) {
             selector.style.display = 'none';
+        }
+        
+        // Update coefficient highlighting after locomotive type change
+        if (window.calculator) {
+            setTimeout(() => {
+                window.calculator.highlightSelectedCoefficient();
+            }, 10);
         }
     }
 }

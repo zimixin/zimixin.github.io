@@ -47,6 +47,69 @@
         <!-- Main Calculator -->
         <main class="main">
             <div class="calculator-card">
+                <!-- Route Selection -->
+                <div class="form-section">
+                    <h2 class="section-title">Маршрут</h2>
+                    <div class="input-group">
+                        <label for="route">Выберите маршрут</label>
+                        <select id="route" name="route" required>
+                            <option value="">-- Выберите маршрут --</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Custom Route Input -->
+                    
+                    <!-- Route Information Display -->
+                    <div class="route-info-display" id="routeInfoDisplay" style="display: none;">
+                        <div class="route-info-card">
+                            <h3 id="selectedRouteName">Информация о маршруте</h3>
+                            <p class="route-distance">Расстояние: <strong id="selectedRouteDistance">0 км</strong></p>
+                            
+                            <div class="coefficients-section" id="coefficientsSection" style="display: none;">
+                                <h4>Коэффициенты энергопотребления</h4>
+                                <div class="coefficients-table-container">
+                                    <table class="coefficients-table" id="coefficientsTable">
+                                        <thead>
+                                            <tr>
+                                                <th>Локомотив</th>
+                                                <th>6</th>
+                                                <th>7</th>
+                                                <th>8</th>
+                                                <th>9</th>
+                                                <th>10</th>
+                                                <th>11</th>
+                                                <th>12</th>
+                                                <th>13</th>
+                                                <th>14</th>
+                                                <th>15</th>
+                                                <th>16</th>
+                                                <th>17</th>
+                                                <th>18</th>
+                                                <th>19</th>
+                                                <th>20</th>
+                                                <th>21</th>
+                                                <th>22</th>
+                                                <th>23</th>
+                                            </tr>
+                                            <tr class="table-subheader">
+                                                <th>Нагрузка на ось (т/ось)</th>
+                                                <th colspan="18">Коэффициенты</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="coefficientsTableBody">
+                                            <!-- Coefficients will be populated here -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            
+                            <div class="no-coefficients" id="noCoefficients" style="display: none;">
+                                <p><em>Для этого маршрута используются стандартные коэффициенты локомотивов</em></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Results Section -->
                 <div class="results-section" id="resultsSection" style="display: none;">
                     <h2 class="section-title">Результаты расчета</h2>
@@ -139,69 +202,6 @@
                             <div class="input-group">
                                 <label for="conditionalWagons">Условные вагоны</label>
                                 <input type="number" id="conditionalWagons" name="conditionalWagons" min="0" max="1000" step="1">
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Route Selection -->
-                    <div class="form-section">
-                        <h2 class="section-title">Маршрут</h2>
-                        <div class="input-group">
-                            <label for="route">Выберите маршрут</label>
-                            <select id="route" name="route" required>
-                                <option value="">-- Выберите маршрут --</option>
-                            </select>
-                        </div>
-                        
-                        <!-- Custom Route Input -->
-                        
-                        <!-- Route Information Display -->
-                        <div class="route-info-display" id="routeInfoDisplay" style="display: none;">
-                            <div class="route-info-card">
-                                <h3 id="selectedRouteName">Информация о маршруте</h3>
-                                <p class="route-distance">Расстояние: <strong id="selectedRouteDistance">0 км</strong></p>
-                                
-                                <div class="coefficients-section" id="coefficientsSection" style="display: none;">
-                                    <h4>Коэффициенты энергопотребления</h4>
-                                    <div class="coefficients-table-container">
-                                        <table class="coefficients-table" id="coefficientsTable">
-                                            <thead>
-                                                <tr>
-                                                    <th>Локомотив</th>
-                                                    <th>6</th>
-                                                    <th>7</th>
-                                                    <th>8</th>
-                                                    <th>9</th>
-                                                    <th>10</th>
-                                                    <th>11</th>
-                                                    <th>12</th>
-                                                    <th>13</th>
-                                                    <th>14</th>
-                                                    <th>15</th>
-                                                    <th>16</th>
-                                                    <th>17</th>
-                                                    <th>18</th>
-                                                    <th>19</th>
-                                                    <th>20</th>
-                                                    <th>21</th>
-                                                    <th>22</th>
-                                                    <th>23</th>
-                                                </tr>
-                                                <tr class="table-subheader">
-                                                    <th>Нагрузка на ось (т/ось)</th>
-                                                    <th colspan="18">Коэффициенты</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody id="coefficientsTableBody">
-                                                <!-- Coefficients will be populated here -->
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                                
-                                <div class="no-coefficients" id="noCoefficients" style="display: none;">
-                                    <p><em>Для этого маршрута используются стандартные коэффициенты локомотивов</em></p>
-                                </div>
                             </div>
                         </div>
                     </div>
