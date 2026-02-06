@@ -8,10 +8,8 @@ class EnergyCalculator {
         this.historySection = document.getElementById('historySection');
         this.infoModal = document.getElementById('infoModal');
         this.currentResult = null;
-        this.customRoutes = {};
         this.initializeEventListeners();
         this.loadHistory();
-        this.loadCustomRoutes();
         this.initializeRoutes();
     }
 
@@ -70,30 +68,8 @@ class EnergyCalculator {
         const routeSelect = document.getElementById('route');
         if (routeSelect) {
             routeSelect.addEventListener('change', () => {
-                this.handleRouteChange();
                 this.displayRouteInformation();
             });
-        }
-
-        // Custom routes management
-        const loadCustomRoutesBtn = document.getElementById('loadCustomRoutesBtn');
-        if (loadCustomRoutesBtn) {
-            loadCustomRoutesBtn.addEventListener('click', () => this.parseAndLoadCustomRoutes());
-        }
-
-        const saveCustomRoutesBtn = document.getElementById('saveCustomRoutesBtn');
-        if (saveCustomRoutesBtn) {
-            saveCustomRoutesBtn.addEventListener('click', () => this.saveCustomRoutesToStorage());
-        }
-
-        const exportCustomRoutesBtn = document.getElementById('exportCustomRoutesBtn');
-        if (exportCustomRoutesBtn) {
-            exportCustomRoutesBtn.addEventListener('click', () => this.exportCustomRoutes());
-        }
-
-        const shareCustomRoutesBtn = document.getElementById('shareCustomRoutesBtn');
-        if (shareCustomRoutesBtn) {
-            shareCustomRoutesBtn.addEventListener('click', () => this.shareCustomRoutes());
         }
     }
 
@@ -122,8 +98,6 @@ class EnergyCalculator {
             trainWeight: parseFloat(formData.get('trainWeight')),
             axleCount: parseInt(formData.get('axleCount')),
             route: formData.get('route'),
-            customRouteName: formData.get('customRouteName'),
-            customRouteDistance: formData.get('customRouteDistance') ? parseInt(formData.get('customRouteDistance')) : null,
             wagonCount: formData.get('wagonCount') ? parseInt(formData.get('wagonCount')) : null
         };
     }
@@ -139,25 +113,8 @@ class EnergyCalculator {
                 };
             }
 
-            // Get route data (standard or custom)
-            let routeData;
-            if (data.route === 'custom') {
-                if (!data.customRouteName || !data.customRouteDistance) {
-                    return {
-                        success: false,
-                        error: 'Укажите название и расстояние пользовательского маршрута'
-                    };
-                }
-                routeData = {
-                    name: data.customRouteName,
-                    distance: data.customRouteDistance,
-                    description: 'Пользовательский маршрут'
-                };
-            } else if (this.customRoutes[data.route]) {
-                routeData = this.customRoutes[data.route];
-            } else {
-                routeData = getRouteData(data.route) || ROUTE_DATA[data.route];
-            }
+            // Get route data (standard routes only)
+            let routeData = getRouteData(data.route) || ROUTE_DATA[data.route];
 
             if (!routeData) {
                 return {
@@ -472,365 +429,7 @@ class EnergyCalculator {
     }
 
     // Custom Routes Management
-    handleRouteChange() {
-        const routeSelect = document.getElementById('route');
-        const customRouteGroup = document.getElementById('customRouteGroup');
-        const customRouteDistanceGroup = document.getElementById('customRouteDistanceGroup');
-        const routeInfoDisplay = document.getElementById('routeInfoDisplay');
 
-        if (routeSelect.value === 'custom') {
-            customRouteGroup.style.display = 'block';
-            customRouteDistanceGroup.style.display = 'block';
-            customRouteGroup.classList.add('show');
-            customRouteDistanceGroup.classList.add('show');
-            routeInfoDisplay.style.display = 'none';
-        } else {
-            customRouteGroup.style.display = 'none';
-            customRouteDistanceGroup.style.display = 'none';
-            customRouteGroup.classList.remove('show');
-            customRouteDistanceGroup.classList.remove('show');
-        }
-    }
-
-    parseAndLoadCustomRoutes() {
-        const customRoutesText = document.getElementById('customRoutesText').value.trim();
-        
-        if (!customRoutesText) {
-            alert('Введите маршруты в текстовое поле');
-            return;
-        }
-
-        try {
-            const routes = this.parseMarkdownRoutes(customRoutesText);
-            
-            if (routes.length === 0) {
-                alert('Не удалось распознать маршруты. Проверьте формат.');
-                return;
-            }
-
-            // Add routes to custom routes storage
-            routes.forEach(route => {
-                const routeId = 'custom_' + route.name.toLowerCase().replace(/[^a-zа-я0-9]/gi, '_');
-                this.customRoutes[routeId] = route;
-            });
-
-            this.updateRouteSelect();
-            alert(`Загружено ${routes.length} маршрутов`);
-        } catch (error) {
-            console.error('Error parsing custom routes:', error);
-            alert('Ошибка при обработке маршрутов: ' + error.message);
-        }
-    }
-
-    parseMarkdownRoutes(text) {
-        const routes = [];
-        
-        // Check for full markdown format first
-        const fullFormatRoutes = this.parseFullMarkdownFormat(text);
-        if (fullFormatRoutes.length > 0) {
-            routes.push(...fullFormatRoutes);
-        }
-        
-        // Then check for simple format
-        const simpleFormatRoutes = this.parseSimpleFormat(text);
-        routes.push(...simpleFormatRoutes);
-        
-        return routes;
-    }
-
-    parseFullMarkdownFormat(text) {
-        const routes = [];
-        const lines = text.split('\n');
-        let currentRoute = null;
-        let parsingTable = false;
-        let headerParsed = false;
-        
-        for (let i = 0; i < lines.length; i++) {
-            const line = lines[i].trim();
-            
-            // Parse route name (# Title)
-            if (line.startsWith('#') && !line.startsWith('##')) {
-                if (currentRoute) {
-                    routes.push(currentRoute);
-                }
-                currentRoute = {
-                    name: line.substring(1).trim(),
-                    distance: 0,
-                    description: 'Пользовательский маршрут с коэффициентами',
-                    coefficients: {
-                        vl10u: {},
-                        '2es6': {}
-                    }
-                };
-                parsingTable = false;
-                headerParsed = false;
-            }
-            
-            // Parse distance (## Distance)
-            else if (line.startsWith('##') && currentRoute) {
-                const distanceMatch = line.match(/##\s*(\d+)\s*км/);
-                if (distanceMatch) {
-                    currentRoute.distance = parseInt(distanceMatch[1]);
-                }
-            }
-            
-            // Parse table
-            else if (line.startsWith('|') && currentRoute) {
-                const cells = line.split('|').map(cell => cell.trim()).filter(cell => cell);
-                
-                if (!headerParsed) {
-                    // This should be the header row with axle loads
-                    if (cells[0].includes('нагрузка')) {
-                        headerParsed = true;
-                        parsingTable = true;
-                    }
-                } else if (parsingTable && cells.length > 1) {
-                    const locomotiveType = cells[0].toUpperCase();
-                    
-                    if (locomotiveType.includes('ВЛ10У') || locomotiveType.includes('VL10U')) {
-                        // Parse ВЛ10У coefficients
-                        for (let j = 1; j < cells.length && j <= 9; j++) {
-                            const coeff = parseFloat(cells[j]);
-                            if (!isNaN(coeff)) {
-                                currentRoute.coefficients.vl10u[j + 5] = coeff; // j+5 because axle loads start from 6
-                            }
-                        }
-                    } else if (locomotiveType.includes('2ЭС6') || locomotiveType.includes('ES6')) {
-                        // Parse 2ЭС6 coefficients
-                        for (let j = 1; j < cells.length && j <= 9; j++) {
-                            const coeff = parseFloat(cells[j]);
-                            if (!isNaN(coeff)) {
-                                currentRoute.coefficients['2es6'][j + 5] = coeff; // j+5 because axle loads start from 6
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        
-        // Add the last route if it exists
-        if (currentRoute && currentRoute.distance > 0) {
-            routes.push(currentRoute);
-        }
-        
-        return routes.filter(route => 
-            route.distance > 0 && 
-            (Object.keys(route.coefficients.vl10u).length > 0 || Object.keys(route.coefficients['2es6']).length > 0)
-        );
-    }
-
-    parseSimpleFormat(text) {
-        const routes = [];
-        const lines = text.split('\n').filter(line => line.trim());
-        
-        lines.forEach((line, index) => {
-            const trimmedLine = line.trim();
-            if (!trimmedLine || trimmedLine.startsWith('#') || trimmedLine.startsWith('|')) {
-                return; // Skip markdown headers and table lines
-            }
-
-            const parts = trimmedLine.split('|').map(part => part.trim());
-            if (parts.length === 2) {
-                const name = parts[0];
-                const distance = parseInt(parts[1]);
-
-                if (!isNaN(distance) && distance > 0) {
-                    routes.push({
-                        name: name,
-                        distance: distance,
-                        description: 'Пользовательский маршрут'
-                    });
-                }
-            }
-        });
-        
-        return routes;
-    }
-
-    updateRouteSelect() {
-        const routeSelect = document.getElementById('route');
-        const currentValue = routeSelect.value;
-
-        // Remove custom routes
-        const customOptions = routeSelect.querySelectorAll('option[data-custom="true"]');
-        customOptions.forEach(option => option.remove());
-
-        // Add custom routes
-        Object.keys(this.customRoutes).forEach(routeId => {
-            const route = this.customRoutes[routeId];
-            const option = document.createElement('option');
-            option.value = routeId;
-            option.textContent = `${route.name} (${route.distance} км)`;
-            option.setAttribute('data-custom', 'true');
-            routeSelect.appendChild(option);
-        });
-
-        // Restore selection if still valid
-        if (currentValue && [...routeSelect.options].some(opt => opt.value === currentValue)) {
-            routeSelect.value = currentValue;
-            // Trigger route information display if a route is selected
-            if (currentValue && currentValue !== 'custom') {
-                this.displayRouteInformation();
-            }
-        }
-    }
-
-    saveCustomRoutesToStorage() {
-        try {
-            localStorage.setItem('rzdCustomRoutes', JSON.stringify(this.customRoutes));
-            alert('Маршруты сохранены');
-        } catch (e) {
-            alert('Ошибка сохранения');
-        }
-    }
-
-    loadCustomRoutes() {
-        try {
-            const stored = localStorage.getItem('rzdCustomRoutes');
-            if (stored) {
-                this.customRoutes = JSON.parse(stored);
-                this.updateRouteSelect();
-                this.displayCustomRoutesInTextArea();
-            }
-        } catch (e) {
-            console.warn('Could not load custom routes from localStorage');
-        }
-    }
-
-    displayCustomRoutesInTextArea() {
-        const customRoutesText = document.getElementById('customRoutesText');
-        if (!customRoutesText) return;
-
-        const routeLines = [];
-        
-        Object.values(this.customRoutes).forEach(route => {
-            // Check if route has custom coefficients
-            if (route.coefficients && (Object.keys(route.coefficients.vl10u || {}).length > 0 || Object.keys(route.coefficients['2es6'] || {}).length > 0)) {
-                // Full format with coefficients
-                routeLines.push(`# ${route.name}`);
-                routeLines.push(`## ${route.distance} км`);
-                routeLines.push('');
-                routeLines.push('| нагрузка на ось | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 |');
-                
-                if (route.coefficients.vl10u && Object.keys(route.coefficients.vl10u).length > 0) {
-                    const vl10uRow = ['| ВЛ10У'];
-                    for (let axle = 6; axle <= 14; axle++) {
-                        vl10uRow.push(route.coefficients.vl10u[axle] || '-');
-                    }
-                    vl10uRow.push('|');
-                    routeLines.push(vl10uRow.join(' | '));
-                }
-                
-                if (route.coefficients['2es6'] && Object.keys(route.coefficients['2es6']).length > 0) {
-                    const es6Row = ['| 2ЭС6'];
-                    for (let axle = 6; axle <= 14; axle++) {
-                        es6Row.push(route.coefficients['2es6'][axle] || '-');
-                    }
-                    es6Row.push('|');
-                    routeLines.push(es6Row.join(' | '));
-                }
-                
-                routeLines.push('');
-            } else {
-                // Simple format
-                routeLines.push(`${route.name} | ${route.distance}`);
-            }
-        });
-        
-        if (routeLines.length > 0) {
-            customRoutesText.value = routeLines.join('\n');
-        }
-    }
-
-    exportCustomRoutes() {
-        if (Object.keys(this.customRoutes).length === 0) {
-            alert('Нет пользовательских маршрутов для экспорта');
-            return;
-        }
-
-        const exportLines = [
-            '# Пользовательские маршруты для калькулятора РЖД',
-            `Экспортировано: ${new Date().toLocaleString('ru-RU')}`,
-            ''
-        ];
-
-        Object.values(this.customRoutes).forEach(route => {
-            exportLines.push(`# ${route.name}`);
-            exportLines.push(`## ${route.distance} км`);
-            exportLines.push('');
-            
-            // If route has custom coefficients, export full table
-            if (route.coefficients && (Object.keys(route.coefficients.vl10u || {}).length > 0 || Object.keys(route.coefficients['2es6'] || {}).length > 0)) {
-                exportLines.push('| нагрузка на ось | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 |');
-                
-                if (route.coefficients.vl10u && Object.keys(route.coefficients.vl10u).length > 0) {
-                    const vl10uRow = ['| ВЛ10У'];
-                    for (let axle = 6; axle <= 14; axle++) {
-                        vl10uRow.push(route.coefficients.vl10u[axle] || '-');
-                    }
-                    vl10uRow.push('|');
-                    exportLines.push(vl10uRow.join(' | '));
-                }
-                
-                if (route.coefficients['2es6'] && Object.keys(route.coefficients['2es6']).length > 0) {
-                    const es6Row = ['| 2ЭС6'];
-                    for (let j = 1; j < cells.length && j <= 9; j++) {
-                        es6Row.push(route.coefficients['2es6'][j + 5] || '-');
-                    }
-                    es6Row.push('|');
-                    exportLines.push(es6Row.join(' | '));
-                }
-            }
-            
-            exportLines.push('');
-        });
-
-        const exportData = exportLines.join('\n');
-        const blob = new Blob([exportData], { type: 'text/plain;charset=utf-8' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `маршруты_РЖД_${new Date().toISOString().split('T')[0]}.md`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-    }
-
-    shareCustomRoutes() {
-        if (Object.keys(this.customRoutes).length === 0) {
-            alert('Нет пользовательских маршрутов для отправки');
-            return;
-        }
-
-        const routeLines = Object.values(this.customRoutes).map(route => 
-            `${route.name} | ${route.distance}`
-        ).join('\n');
-
-        const emailSubject = 'Предложение новых маршрутов для калькулятора РЖД';
-        const emailBody = `Привет!
-
-Предлагаю добавить следующие маршруты в калькулятор:
-
-${routeLines}
-
-С уважением,
-Пользователь калькулятора РЖД`;
-        
-        const mailtoLink = `mailto:?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`;
-        
-        // Also copy to clipboard
-        if (navigator.clipboard) {
-            navigator.clipboard.writeText(routeLines).then(() => {
-                alert('Маршруты скопированы в буфер обмена. Открываем почтового клиента...');
-                window.open(mailtoLink);
-            }).catch(() => {
-                window.open(mailtoLink);
-            });
-        } else {
-            window.open(mailtoLink);
-        }
-    }
 
     // Route Information Display
     displayRouteInformation() {
@@ -841,34 +440,29 @@ ${routeLines}
         const coefficientsSection = document.getElementById('coefficientsSection');
         const noCoefficients = document.getElementById('noCoefficients');
         const coefficientsTableBody = document.getElementById('coefficientsTableBody');
-        
-        if (!routeSelect.value || routeSelect.value === 'custom') {
+
+        if (!routeSelect.value) {
             routeInfoDisplay.style.display = 'none';
             return;
         }
-        
+
         // Get route data
-        let routeData;
-        if (this.customRoutes[routeSelect.value]) {
-            routeData = this.customRoutes[routeSelect.value];
-        } else {
-            routeData = getRouteData(routeSelect.value) || ROUTE_DATA[routeSelect.value];
-        }
-        
+        let routeData = getRouteData(routeSelect.value) || ROUTE_DATA[routeSelect.value];
+
         if (!routeData) {
             routeInfoDisplay.style.display = 'none';
             return;
         }
-        
+
         // Display route information
         selectedRouteName.textContent = routeData.name;
         selectedRouteDistance.textContent = `${routeData.distance} км`;
-        
+
         // Check if route has custom coefficients
-        const hasCoefficients = routeData.coefficients && 
-            (Object.keys(routeData.coefficients.vl10u || {}).length > 0 || 
+        const hasCoefficients = routeData.coefficients &&
+            (Object.keys(routeData.coefficients.vl10u || {}).length > 0 ||
              Object.keys(routeData.coefficients['2es6'] || {}).length > 0);
-        
+
         if (hasCoefficients) {
             coefficientsSection.style.display = 'block';
             noCoefficients.style.display = 'none';
@@ -877,7 +471,7 @@ ${routeLines}
             coefficientsSection.style.display = 'none';
             noCoefficients.style.display = 'block';
         }
-        
+
         routeInfoDisplay.style.display = 'block';
         routeInfoDisplay.classList.add('fade-in');
     }
@@ -946,8 +540,8 @@ ${routeLines}
         const routeSelect = document.getElementById('route');
         if (!routeSelect) return;
 
-        // Remove old standard routes except custom option
-        const optionsToRemove = routeSelect.querySelectorAll('option:not([value=""]):not([value="custom"]):not([data-custom="true"])');
+        // Remove old standard routes
+        const optionsToRemove = routeSelect.querySelectorAll('option:not([value=""])');
         optionsToRemove.forEach(option => option.remove());
 
         // Add routes from ROUTE_DATA (loaded from files)
@@ -956,14 +550,11 @@ ${routeLines}
             const option = document.createElement('option');
             option.value = routeId;
             option.textContent = `${route.name} (${route.distance} км)`;
-            
-            // Insert before custom option
-            const customOption = routeSelect.querySelector('option[value="custom"]');
-            routeSelect.insertBefore(option, customOption);
+            routeSelect.appendChild(option);
         });
-        
+
         // If a route is currently selected, update its information display
-        if (routeSelect.value && routeSelect.value !== 'custom' && routeSelect.value !== '') {
+        if (routeSelect.value && routeSelect.value !== '') {
             this.displayRouteInformation();
         }
     }
