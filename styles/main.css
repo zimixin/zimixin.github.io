@@ -126,7 +126,10 @@ body {
 
 .locomotive-option input[type="radio"]:checked + .locomotive-card {
     border-color: var(--accent-color);
-    background: var(--accent-light);
+    box-shadow: 0 0 0 3px var(--accent-light);
+    transform: scale(1.05);
+    z-index: 1;
+    position: relative;
 }
 
 .locomotive-vl10u.locomotive-card {

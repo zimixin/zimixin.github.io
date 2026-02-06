@@ -85,6 +85,14 @@
     background: linear-gradient(135deg, #4dabf7 0%, #339af0 100%);
 }
 
+/* Highlight selected locomotive in dark theme */
+.theme-dark .locomotive-option input[type="radio"]:checked + .locomotive-card {
+    box-shadow: 0 0 0 3px var(--accent-light);
+    transform: scale(1.05);
+    z-index: 1;
+    position: relative;
+}
+
 /* AMOLED Theme Variables */
 .theme-amoled {
     --bg-primary: #000000;
@@ -129,6 +137,14 @@
 
 .theme-amoled .locomotive-es6.locomotive-card {
     background: linear-gradient(135deg, #4dabf7 0%, #339af0 100%);
+}
+
+/* Highlight selected locomotive in amoled theme */
+.theme-amoled .locomotive-option input[type="radio"]:checked + .locomotive-card {
+    box-shadow: 0 0 0 3px var(--accent-light);
+    transform: scale(1.05);
+    z-index: 1;
+    position: relative;
 }
 
 /* Smooth transitions for theme switching */
