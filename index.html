@@ -47,48 +47,98 @@
         <!-- Main Calculator -->
         <main class="main">
             <div class="calculator-card">
+                <!-- Results Section -->
+                <div class="results-section" id="resultsSection" style="display: none;">
+                    <h2 class="section-title">Результаты расчета</h2>
+                    <div class="results-grid">
+                        <div class="result-card">
+                            <h3>Норма расхода за поездку</h3>
+                            <div class="result-value" id="consumptionResult">0 кВт⋅ч</div>
+                        </div>
+                        <div class="result-card">
+                            <h3>Нагрузка на ось</h3>
+                            <div class="result-value" id="axleLoadResult">0 т/ось</div>
+                        </div>
+                        <div class="result-card" id="trainLengthCard" style="display: none;">
+                            <h3>Длина состава</h3>
+                            <div class="result-value" id="trainLengthResult">0 м</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Export and Actions -->
+                    <div class="result-actions">
+                        <button type="button" class="btn btn-secondary" id="exportBtn">
+                            <span class="btn-icon">📊</span>
+                            Экспорт результата
+                        </button>
+                        <button type="button" class="btn btn-secondary" id="saveToHistoryBtn">
+                            <span class="btn-icon">💾</span>
+                            Сохранить в историю
+                        </button>
+                        <button type="button" class="btn btn-secondary" id="showInfoBtn">
+                            <span class="btn-icon">ℹ️</span>
+                            Справка
+                        </button>
+                    </div>
+                </div>
+
                 <form class="calculator-form" id="calculatorForm">
                     <!-- Locomotive Selection -->
                     <div class="form-section">
-                        <h2 class="section-title">Выбор локомотива</h2>
-                        <div class="locomotive-grid">
-                            <div class="locomotive-option">
-                                <input type="radio" id="vl10u" name="locomotive" value="vl10u" checked>
-                                <label for="vl10u" class="locomotive-card locomotive-vl10u">
+                        <h2 class="section-title">Выбор локомотивов</h2>
+                        <div class="locomotive-controls">
+                            <button type="button" class="btn btn-secondary" id="addLocomotiveBtn">+Л</button>
+                        </div>
+                        <div class="locomotive-container" id="locomotiveContainer">
+                            <div class="locomotive-card-wrapper" id="locomotiveCard1">
+                                <div class="locomotive-card locomotive-vl10u" onclick="toggleLocomotiveSelection(1)">
                                     <div class="locomotive-info">
                                         <h3>ВЛ10У</h3>
                                         <p>Длина: 32м</p>
                                     </div>
-                                </label>
-                            </div>
-                            <div class="locomotive-option">
-                                <input type="radio" id="2es6" name="locomotive" value="2es6">
-                                <label for="2es6" class="locomotive-card locomotive-es6">
-                                    <div class="locomotive-info">
-                                        <h3>2ЭС6</h3>
-                                        <p>Длина: 34м</p>
+                                </div>
+                                <div class="locomotive-type-selector" id="locomotiveSelector1" style="display:none;">
+                                    <div class="locomotive-option" onclick="selectLocomotiveType(1, 'vl10u', 'ВЛ10У', 32)">
+                                        <div class="locomotive-card locomotive-vl10u">
+                                            <div class="locomotive-info">
+                                                <h3>ВЛ10У</h3>
+                                                <p>Длина: 32м</p>
+                                            </div>
+                                        </div>
                                     </div>
-                                </label>
+                                    <div class="locomotive-option" onclick="selectLocomotiveType(1, '2es6', '2ЭС6', 34)">
+                                        <div class="locomotive-card locomotive-es6">
+                                            <div class="locomotive-info">
+                                                <h3>2ЭС6</h3>
+                                                <p>Длина: 34м</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button class="remove-locomotive-btn" onclick="removeLocomotive(1)">×</button>
                             </div>
-                        </div>
-                        
-                        <div class="input-group">
-                            <label for="locomotiveCount">Количество локомотивов</label>
-                            <input type="number" id="locomotiveCount" name="locomotiveCount" min="1" max="3" value="1" required>
                         </div>
                     </div>
 
                     <!-- Train Parameters -->
                     <div class="form-section">
                         <h2 class="section-title">Параметры поезда</h2>
-                        <div class="input-grid">
+                        <div class="train-params-card">
                             <div class="input-group">
-                                <label for="trainWeight">Вес поезда (тонн)</label>
+                                <label for="trainWeight">Вес (тонн)</label>
                                 <input type="number" id="trainWeight" name="trainWeight" min="100" max="10000" step="1" required>
                             </div>
                             <div class="input-group">
-                                <label for="axleCount">Количество осей</label>
-                                <input type="number" id="axleCount" name="axleCount" min="10" max="500" step="1" required>
+                                <label for="trainAxles">Оси</label>
+                                <input type="number" id="trainAxles" name="trainAxles" min="10" max="500" step="1" required>
+                            </div>
+                            <div class="input-group">
+                                <label for="actualWagons">Фактические вагоны</label>
+                                <input type="number" id="actualWagons" name="actualWagons" min="0" max="1000" step="1">
+                            </div>
+                            <div class="input-group">
+                                <label for="conditionalWagons">Условные вагоны</label>
+                                <input type="number" id="conditionalWagons" name="conditionalWagons" min="0" max="1000" step="1">
                             </div>
                         </div>
                     </div>
@@ -156,17 +206,6 @@
                         </div>
                     </div>
 
-
-                    <!-- Optional: Train Length Calculation -->
-                    <div class="form-section">
-                        <h2 class="section-title">Дополнительно</h2>
-                        <div class="input-group">
-                            <label for="wagonCount">Количество вагонов (для расчета длины состава)</label>
-                            <input type="number" id="wagonCount" name="wagonCount" min="0" max="1000" step="1" placeholder="Необязательно">
-                            <small class="input-hint">Длина вагона: 14м</small>
-                        </div>
-                    </div>
-
                     <!-- Calculate Button -->
                     <div class="form-actions">
                         <button type="submit" class="btn btn-primary btn-calculate">
@@ -175,41 +214,6 @@
                         </button>
                     </div>
                 </form>
-
-                <!-- Results Section -->
-                <div class="results-section" id="resultsSection" style="display: none;">
-                    <h2 class="section-title">Результаты расчета</h2>
-                    <div class="results-grid">
-                        <div class="result-card">
-                            <h3>Норма расхода за поездку</h3>
-                            <div class="result-value" id="consumptionResult">0 кВт⋅ч</div>
-                        </div>
-                        <div class="result-card">
-                            <h3>Нагрузка на ось</h3>
-                            <div class="result-value" id="axleLoadResult">0 т/ось</div>
-                        </div>
-                        <div class="result-card" id="trainLengthCard" style="display: none;">
-                            <h3>Длина состава</h3>
-                            <div class="result-value" id="trainLengthResult">0 м</div>
-                        </div>
-                    </div>
-                    
-                    <!-- Export and Actions -->
-                    <div class="result-actions">
-                        <button type="button" class="btn btn-secondary" id="exportBtn">
-                            <span class="btn-icon">📊</span>
-                            Экспорт результата
-                        </button>
-                        <button type="button" class="btn btn-secondary" id="saveToHistoryBtn">
-                            <span class="btn-icon">💾</span>
-                            Сохранить в историю
-                        </button>
-                        <button type="button" class="btn btn-secondary" id="showInfoBtn">
-                            <span class="btn-icon">ℹ️</span>
-                            Справка
-                        </button>
-                    </div>
-                </div>
 
                 <!-- History Section -->
                 <div class="history-section" id="historySection" style="display: none;">
