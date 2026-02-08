@@ -25,7 +25,14 @@ const DATA_CACHE_URLS = [
   '/data/abdulino-oktyabrsk.md',
   '/data/abdulino-syzran.md',
   '/data/kinel-abdulino.md',
-  '/data/moscow-spb.md'
+  '/data/abdulino-dema.md',
+  '/data/abdulino-oktyabrsk-south.md',
+  '/data/abdulino-syzran-south.md',
+  '/data/oktyabrsk-abdulino-south.md',
+  '/data/oktyabrsk-abdulino.md',
+  '/data/syzran-abdulino-south.md',
+  '/data/syzran-abdulino.md',
+  '/data/index.json'
 ];
 
 // All URLs to cache

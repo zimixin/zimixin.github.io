@@ -16,6 +16,11 @@ class EnergyCalculator {
         this.loadHistory();
         this.initializeRoutes();
         this.setupRealTimeCalculation();
+        
+        // Listen for route loading completion
+        document.addEventListener('routesLoaded', () => {
+            this.updateRouteSelectWithFileRoutes();
+        });
     }
 
     initializeEventListeners() {
@@ -332,7 +337,7 @@ class EnergyCalculator {
             const locomotiveData = activeLocomotives[0]; // Using first active locomotive for calculation
             
             // Get route data (standard routes only)
-            let routeData = getRouteData(data.route) || ROUTE_DATA[data.route];
+            let routeData = getRouteData(data.route) || (window.ROUTE_DATA && window.ROUTE_DATA[data.route]);
 
             if (!routeData) {
                 return {
@@ -694,7 +699,7 @@ class EnergyCalculator {
         }
 
         // Get route data
-        let routeData = getRouteData(routeSelect.value) || ROUTE_DATA[routeSelect.value];
+        let routeData = getRouteData(routeSelect.value) || (window.ROUTE_DATA && window.ROUTE_DATA[routeSelect.value]);
 
         if (!routeData) {
             routeInfoDisplay.style.display = 'none';
@@ -826,10 +831,7 @@ class EnergyCalculator {
 
     // Initialize routes from file system
     async initializeRoutes() {
-        // Wait a bit for routes to load from files
-        setTimeout(() => {
-            this.updateRouteSelectWithFileRoutes();
-        }, 100); // Minimal wait time
+        // Routes will be loaded and UI updated via 'routesLoaded' event
     }
 
     updateRouteSelectWithFileRoutes() {
@@ -840,9 +842,9 @@ class EnergyCalculator {
         const optionsToRemove = routeSelect.querySelectorAll('option:not([value=""])');
         optionsToRemove.forEach(option => option.remove());
 
-        // Add routes from ROUTE_DATA (loaded from files)
-        Object.keys(ROUTE_DATA).forEach(routeId => {
-            const route = ROUTE_DATA[routeId];
+        // Add routes from window.ROUTE_DATA (loaded from files)
+        Object.keys(window.ROUTE_DATA || {}).forEach(routeId => {
+            const route = (window.ROUTE_DATA || {})[routeId];
             const option = document.createElement('option');
             option.value = routeId;
             option.textContent = `${route.name} (${route.distance} км)`;
