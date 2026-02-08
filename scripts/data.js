@@ -11,6 +11,14 @@ const LOCOMOTIVE_DATA = {
         name: 'ВЛ10У',
         length: 32 // meters
     },
+    vl10k: {
+        name: 'ВЛ10К',
+        length: 30 // meters
+    },
+    vl10uk: {
+        name: 'ВЛ10УК',
+        length: 32 // meters
+    },
     '2es6': {
         name: '2ЭС6',
         length: 34 // meters
@@ -21,57 +29,43 @@ const LOCOMOTIVE_DATA = {
 
 const WAGON_LENGTH = 14; // meters per wagon
 
-// Function to discover and load all .md files from data directory
+// Function to load all routes from a single JSON file
 async function loadRoutesFromFiles() {
     try {
-        console.log('Starting route loading...');
-        
-        // Simple list of known route files - no dynamic discovery needed
-        const routeFiles = [
-            'abdulino-kinel.md',
-            'abdulino-oktyabrsk.md',
-            'abdulino-syzran.md',
-            'syzran-abdulino.md',
-            'kinel-abdulino.md',
-            'moscow-spb.md'
-        ];
-        
-        console.log(`Attempting to load ${routeFiles.length} route files...`);
-        
-        // Load each .md file
-        for (const filename of routeFiles) {
-            try {
-                console.log(`Loading route file: ${filename}`);
-                const response = await fetch(`data/${filename}`);
-                if (response.ok) {
-                    const content = await response.text();
-                    const route = parseRouteFromMarkdown(content, filename);
-                    if (route) {
-                        const routeId = generateRouteId(route.name);
-                        ROUTE_DATA[routeId] = route;
-                        console.log(`✓ Loaded route: ${route.name} (${route.distance} км)`);
-                    } else {
-                        console.warn(`✗ Failed to parse route from ${filename}`);
-                    }
-                } else {
-                    console.warn(`✗ Could not load route file: ${filename} (HTTP ${response.status})`);
-                }
-            } catch (error) {
-                console.error(`✗ Error loading route file ${filename}:`, error);
+        console.log('Starting route loading from JSON file...');
+
+        // Load routes from the combined JSON file
+        const response = await fetch('data/routes.json');
+        if (response.ok) {
+            const routesData = await response.json();
+            
+            // Process each route in the JSON file
+            for (const [routeId, route] of Object.entries(routesData)) {
+                ROUTE_DATA[routeId] = route;
+                console.log(`✓ Loaded route: ${route.name} (${route.distance} км)`);
             }
+        } else {
+            console.error(`✗ Could not load routes JSON file (HTTP ${response.status})`);
+            return;
         }
-        
+
         const routeCount = Object.keys(ROUTE_DATA).length;
         console.log(`Route loading completed. Total routes loaded: ${routeCount}`);
         console.log('Available routes:', Object.keys(ROUTE_DATA).map(id => ROUTE_DATA[id].name));
+
+        // Dispatch a custom event to notify that routes have been loaded
+        const event = new CustomEvent('routesLoaded', { detail: { routeCount: Object.keys(ROUTE_DATA).length } });
+        document.dispatchEvent(event);
         
-        // Trigger UI update if calculator is ready
+        // If calculator is already initialized, update routes immediately
         if (typeof window !== 'undefined' && window.calculator && window.calculator.updateRouteSelectWithFileRoutes) {
             window.calculator.updateRouteSelectWithFileRoutes();
         }
-        
+
     } catch (error) {
         console.error('Error loading route files:', error);
+    }
+}
     }
 }
 
@@ -118,7 +112,7 @@ function parseRouteFromMarkdown(content, filename) {
                 } else if (parsingTable && cells.length > 1) {
                     const locomotiveType = cells[0].toUpperCase();
 
-                    if (locomotiveType.includes('ВЛ10У')) {
+                    if (locomotiveType.toUpperCase().includes('ВЛ10У') && !locomotiveType.toUpperCase().includes('ВЛ10УК')) {
                         // Parse ВЛ10У coefficients
                         for (let j = 1; j < cells.length; j++) {
                             const coeff = parseFloat(cells[j]);
@@ -129,7 +123,29 @@ function parseRouteFromMarkdown(content, filename) {
                                 route.coefficients.vl10u[axleLoad] = coeff;
                             }
                         }
-                    } else if (locomotiveType.includes('2ЭС6')) {
+                    } else if (locomotiveType.toUpperCase().includes('ВЛ10К') && !locomotiveType.toUpperCase().includes('ВЛ10УК')) {
+                        // Parse ВЛ10К coefficients
+                        for (let j = 1; j < cells.length; j++) {
+                            const coeff = parseFloat(cells[j]);
+                            if (!isNaN(coeff)) {
+                                // Determine axle load from header row - assuming sequential from 6
+                                // The first data cell corresponds to axle load 6, second to 7, etc.
+                                const axleLoad = j + 5; // j starts from 1, so j+5 gives us 6, 7, 8...
+                                route.coefficients.vl10k[axleLoad] = coeff;
+                            }
+                        }
+                    } else if (locomotiveType.toUpperCase().includes('ВЛ10УК')) {
+                        // Parse ВЛ10УК coefficients
+                        for (let j = 1; j < cells.length; j++) {
+                            const coeff = parseFloat(cells[j]);
+                            if (!isNaN(coeff)) {
+                                // Determine axle load from header row - assuming sequential from 6
+                                // The first data cell corresponds to axle load 6, second to 7, etc.
+                                const axleLoad = j + 5; // j starts from 1, so j+5 gives us 6, 7, 8...
+                                route.coefficients.vl10uk[axleLoad] = coeff;
+                            }
+                        }
+                    } else if (locomotiveType.toUpperCase().includes('2ЭС6')) {
                         // Parse 2ЭС6 coefficients
                         for (let j = 1; j < cells.length; j++) {
                             const coeff = parseFloat(cells[j]);
@@ -209,6 +225,11 @@ function getEnergyCoefficient(locomotiveType, axleLoad, routeData = null) {
 
     // No coefficients available from route file
     return null;
+}
+
+// Make ROUTE_DATA available globally
+if (typeof window !== 'undefined') {
+    window.ROUTE_DATA = ROUTE_DATA;
 }
 
 // Export for use in other scripts (if needed)

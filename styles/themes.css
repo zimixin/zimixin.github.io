@@ -85,6 +85,14 @@
     background: linear-gradient(135deg, #fd7e14 0%, #e55c00 100%);
 }
 
+.theme-dark .locomotive-vl10k.locomotive-card {
+    background: linear-gradient(135deg, #e55c00 0%, #c2410c 100%);
+}
+
+.theme-dark .locomotive-vl10uk.locomotive-card {
+    background: linear-gradient(135deg, #fd7e14 0%, #e55c00 100%);
+}
+
 .theme-dark .locomotive-es6.locomotive-card {
     background: linear-gradient(135deg, #4dabf7 0%, #339af0 100%);
 }
@@ -138,6 +146,14 @@
 
 /* Theme-specific locomotive cards */
 .theme-amoled .locomotive-vl10u.locomotive-card {
+    background: linear-gradient(135deg, #fd7e14 0%, #e55c00 100%);
+}
+
+.theme-amoled .locomotive-vl10k.locomotive-card {
+    background: linear-gradient(135deg, #e55c00 0%, #c2410c 100%);
+}
+
+.theme-amoled .locomotive-vl10uk.locomotive-card {
     background: linear-gradient(135deg, #fd7e14 0%, #e55c00 100%);
 }
 

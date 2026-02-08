@@ -216,6 +216,16 @@ body {
     color: white;
 }
 
+.locomotive-vl10k.locomotive-card {
+    background: linear-gradient(135deg, #ff6b3d 0%, #d35400 100%);
+    color: white;
+}
+
+.locomotive-vl10uk.locomotive-card {
+    background: linear-gradient(135deg, #ff9a56 0%, #ff6b3d 100%);
+    color: white;
+}
+
 .locomotive-es6.locomotive-card {
     background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
     color: white;

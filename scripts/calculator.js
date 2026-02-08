@@ -16,6 +16,11 @@ class EnergyCalculator {
         this.loadHistory();
         this.initializeRoutes();
         this.setupRealTimeCalculation();
+        
+        // Listen for route loading completion
+        document.addEventListener('routesLoaded', () => {
+            this.updateRouteSelectWithFileRoutes();
+        });
     }
 
     initializeEventListeners() {
@@ -162,6 +167,22 @@ class EnergyCalculator {
                         </div>
                     </div>
                 </div>
+                <div class="locomotive-option" onclick="selectLocomotiveType(${this.locomotiveCount}, 'vl10k', 'ВЛ10К', 30)">
+                    <div class="locomotive-card locomotive-vl10k">
+                        <div class="locomotive-info">
+                            <h3>ВЛ10К</h3>
+                            <p>Длина: 30м</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="locomotive-option" onclick="selectLocomotiveType(${this.locomotiveCount}, 'vl10uk', 'ВЛ10УК', 32)">
+                    <div class="locomotive-card locomotive-vl10uk">
+                        <div class="locomotive-info">
+                            <h3>ВЛ10УК</h3>
+                            <p>Длина: 32м</p>
+                        </div>
+                    </div>
+                </div>
             </div>
             <button class="remove-locomotive-btn" onclick="removeLocomotive(${this.locomotiveCount})">×</button>
         `;
@@ -202,6 +223,22 @@ class EnergyCalculator {
                         <div class="locomotive-info">
                             <h3>2ЭС6</h3>
                             <p>Длина: 34м</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="locomotive-option" onclick="selectLocomotiveType(${this.locomotiveCount}, 'vl10k', 'ВЛ10К', 30)">
+                    <div class="locomotive-card locomotive-vl10k">
+                        <div class="locomotive-info">
+                            <h3>ВЛ10К</h3>
+                            <p>Длина: 30м</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="locomotive-option" onclick="selectLocomotiveType(${this.locomotiveCount}, 'vl10uk', 'ВЛ10УК', 32)">
+                    <div class="locomotive-card locomotive-vl10uk">
+                        <div class="locomotive-info">
+                            <h3>ВЛ10УК</h3>
+                            <p>Длина: 32м</p>
                         </div>
                     </div>
                 </div>
@@ -708,6 +745,8 @@ class EnergyCalculator {
         // Check if route has custom coefficients
         const hasCoefficients = routeData.coefficients &&
             (Object.keys(routeData.coefficients.vl10u || {}).length > 0 ||
+             Object.keys(routeData.coefficients.vl10k || {}).length > 0 ||
+             Object.keys(routeData.coefficients.vl10uk || {}).length > 0 ||
              Object.keys(routeData.coefficients['2es6'] || {}).length > 0);
 
         if (hasCoefficients) {
@@ -747,6 +786,42 @@ class EnergyCalculator {
             }
 
             tableBody.appendChild(vl10uRow);
+        }
+
+        if (coefficients.vl10k && Object.keys(coefficients.vl10k).length > 0) {
+            const vl10kRow = document.createElement('tr');
+            vl10kRow.innerHTML = '<td>ВЛ10К</td>';
+
+            // Add coefficients for axle loads 6-23
+            for (let axle = 6; axle <= 23; axle++) {
+                const cell = document.createElement('td');
+                const value = coefficients.vl10k[axle];
+                cell.textContent = value !== undefined ? value.toString() : '-';
+                if (value === undefined) {
+                    cell.style.opacity = '0.3';
+                }
+                vl10kRow.appendChild(cell);
+            }
+
+            tableBody.appendChild(vl10kRow);
+        }
+
+        if (coefficients.vl10uk && Object.keys(coefficients.vl10uk).length > 0) {
+            const vl10ukRow = document.createElement('tr');
+            vl10ukRow.innerHTML = '<td>ВЛ10УК</td>';
+
+            // Add coefficients for axle loads 6-23
+            for (let axle = 6; axle <= 23; axle++) {
+                const cell = document.createElement('td');
+                const value = coefficients.vl10uk[axle];
+                cell.textContent = value !== undefined ? value.toString() : '-';
+                if (value === undefined) {
+                    cell.style.opacity = '0.3';
+                }
+                vl10ukRow.appendChild(cell);
+            }
+
+            tableBody.appendChild(vl10ukRow);
         }
 
         if (coefficients['2es6'] && Object.keys(coefficients['2es6']).length > 0) {
@@ -806,8 +881,10 @@ class EnergyCalculator {
                     
                     for (const row of rows) {
                         const locomotiveCell = row.cells[0];
-                        if (locomotiveCell && 
+                        if (locomotiveCell &&
                             ((selectedLocomotiveType === 'vl10u' && locomotiveCell.textContent.includes('ВЛ10У')) ||
+                             (selectedLocomotiveType === 'vl10k' && locomotiveCell.textContent.includes('ВЛ10К')) ||
+                             (selectedLocomotiveType === 'vl10uk' && locomotiveCell.textContent.includes('ВЛ10УК')) ||
                              (selectedLocomotiveType === '2es6' && locomotiveCell.textContent.includes('2ЭС6')))) {
                             
                             // Highlight the cell for the rounded axle load
@@ -826,10 +903,10 @@ class EnergyCalculator {
 
     // Initialize routes from file system
     async initializeRoutes() {
-        // Wait a bit for routes to load from files
-        setTimeout(() => {
+        // If routes are already loaded, update UI immediately
+        if (Object.keys(window.ROUTE_DATA || {}).length > 0) {
             this.updateRouteSelectWithFileRoutes();
-        }, 100); // Minimal wait time
+        }
     }
 
     updateRouteSelectWithFileRoutes() {
@@ -874,21 +951,25 @@ function selectLocomotiveType(index, type, name, length) {
         locomotiveCard.setAttribute('data-type', type);
         locomotiveCard.querySelector('h3').textContent = name;
         locomotiveCard.querySelector('p').textContent = `Длина: ${length}м`;
-        
+
         // Update class based on locomotive type
         locomotiveCard.className = 'locomotive-card';
         if (type === 'vl10u') {
             locomotiveCard.classList.add('locomotive-vl10u');
+        } else if (type === 'vl10k') {
+            locomotiveCard.classList.add('locomotive-vl10k');
+        } else if (type === 'vl10uk') {
+            locomotiveCard.classList.add('locomotive-vl10uk');
         } else if (type === '2es6') {
             locomotiveCard.classList.add('locomotive-es6');
         }
-        
+
         // Hide the selector after selection
         const selector = document.getElementById(`locomotiveSelector${index}`);
         if (selector) {
             selector.style.display = 'none';
         }
-        
+
         // Update coefficient highlighting and recalculate after locomotive type change
         if (window.calculator) {
             setTimeout(() => {

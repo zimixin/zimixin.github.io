@@ -21,11 +21,7 @@ const STATIC_CACHE_URLS = [
 
 // Data files to cache
 const DATA_CACHE_URLS = [
-  '/data/abdulino-kinel.md',
-  '/data/abdulino-oktyabrsk.md',
-  '/data/abdulino-syzran.md',
-  '/data/kinel-abdulino.md',
-  '/data/moscow-spb.md'
+  '/data/routes.json'
 ];
 
 // All URLs to cache
