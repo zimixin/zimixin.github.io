@@ -249,7 +249,7 @@ class EnergyCalculator {
                     </div>
                     <div class="input-group">
                         <label>Длина (м):</label>
-                        <input type="number" id="customLength${this.locomotiveCount}" value="32" min="1" max="100">
+                        <input type="number" class="compact-input" id="customLength${this.locomotiveCount}" value="32" min="1" max="100">
                     </div>
                     <button class="btn btn-secondary" onclick="setCustomLocomotive(${this.locomotiveCount})">Установить</button>
                 </div>

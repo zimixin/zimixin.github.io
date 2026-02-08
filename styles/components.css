@@ -298,6 +298,14 @@
     display: block;
 }
 
+/* Compact input styles for numeric values */
+.compact-input {
+    max-width: 120px;
+    padding: 0.2rem 0.3rem;
+    font-size: 0.8rem;
+    text-align: center;
+}
+
 /* Animations */
 @keyframes fadeIn {
     from {

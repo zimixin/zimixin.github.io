@@ -334,6 +334,12 @@ body {
     color: var(--text-primary);
 }
 
+/* Specific styles for numeric inputs */
+.input-group input[type="number"] {
+    max-width: 150px; /* Limit width for numeric inputs */
+    text-align: center; /* Center-align numbers */
+}
+
 .input-group input:focus,
 .input-group select:focus {
     outline: none;
