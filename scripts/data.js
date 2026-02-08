@@ -32,21 +32,35 @@ const WAGON_LENGTH = 14; // meters per wagon
 // Function to load all routes from a single JSON file
 async function loadRoutesFromFiles() {
     try {
-        console.log('Starting route loading from JSON file...');
+        console.log('Starting route loading...');
 
-        // Load routes from the combined JSON file
-        const response = await fetch('data/routes.json');
-        if (response.ok) {
-            const routesData = await response.json();
-            
-            // Process each route in the JSON file
-            for (const [routeId, route] of Object.entries(routesData)) {
-                ROUTE_DATA[routeId] = route;
-                console.log(`✓ Loaded route: ${route.name} (${route.distance} км)`);
+        // Load route list from index.json
+        const response = await fetch('data/index.json');
+        const routeFiles = await response.json();
+
+        console.log(`Attempting to load ${routeFiles.length} route files...`);
+
+        // Load each .md file
+        for (const filename of routeFiles) {
+            try {
+                console.log(`Loading route file: ${filename}`);
+                const response = await fetch(`data/${filename}`);
+                if (response.ok) {
+                    const content = await response.text();
+                    const route = parseRouteFromMarkdown(content, filename);
+                    if (route) {
+                        const routeId = generateRouteId(route.name);
+                        ROUTE_DATA[routeId] = route;
+                        console.log(`✓ Loaded route: ${route.name} (${route.distance} км)`);
+                    } else {
+                        console.warn(`✗ Failed to parse route from ${filename}`);
+                    }
+                } else {
+                    console.warn(`✗ Could not load route file: ${filename} (HTTP ${response.status})`);
+                }
+            } catch (error) {
+                console.error(`✗ Error loading route file ${filename}:`, error);
             }
-        } else {
-            console.error(`✗ Could not load routes JSON file (HTTP ${response.status})`);
-            return;
         }
 
         const routeCount = Object.keys(ROUTE_DATA).length;
@@ -56,7 +70,7 @@ async function loadRoutesFromFiles() {
         // Dispatch a custom event to notify that routes have been loaded
         const event = new CustomEvent('routesLoaded', { detail: { routeCount: Object.keys(ROUTE_DATA).length } });
         document.dispatchEvent(event);
-        
+
         // If calculator is already initialized, update routes immediately
         if (typeof window !== 'undefined' && window.calculator && window.calculator.updateRouteSelectWithFileRoutes) {
             window.calculator.updateRouteSelectWithFileRoutes();
@@ -64,8 +78,6 @@ async function loadRoutesFromFiles() {
 
     } catch (error) {
         console.error('Error loading route files:', error);
-    }
-}
     }
 }
 
@@ -191,7 +203,7 @@ function getLocomotiveData(locomotiveType) {
 }
 
 function getRouteData(routeCode) {
-    return ROUTE_DATA[routeCode] || null;
+    return (window.ROUTE_DATA && window.ROUTE_DATA[routeCode]) || ROUTE_DATA[routeCode] || null;
 }
 
 function getEnergyCoefficient(locomotiveType, axleLoad, routeData = null) {

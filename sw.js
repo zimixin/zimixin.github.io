@@ -21,7 +21,18 @@ const STATIC_CACHE_URLS = [
 
 // Data files to cache
 const DATA_CACHE_URLS = [
-  '/data/routes.json'
+  '/data/abdulino-kinel.md',
+  '/data/abdulino-oktyabrsk.md',
+  '/data/abdulino-syzran.md',
+  '/data/kinel-abdulino.md',
+  '/data/abdulino-dema.md',
+  '/data/abdulino-oktyabrsk-south.md',
+  '/data/abdulino-syzran-south.md',
+  '/data/oktyabrsk-abdulino-south.md',
+  '/data/oktyabrsk-abdulino.md',
+  '/data/syzran-abdulino-south.md',
+  '/data/syzran-abdulino.md',
+  '/data/index.json'
 ];
 
 // All URLs to cache
