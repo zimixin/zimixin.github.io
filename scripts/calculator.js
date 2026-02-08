@@ -908,24 +908,40 @@ class EnergyCalculator {
 
     updateRouteSelectWithFileRoutes() {
         const routeSelect = document.getElementById('route');
-        if (!routeSelect) return;
+        if (!routeSelect) {
+            console.log('Route select element not found');
+            return;
+        }
+        
+        console.log('Updating route select dropdown with loaded routes...');
+        console.log('Current ROUTE_DATA:', window.ROUTE_DATA);
 
         // Remove old standard routes
         const optionsToRemove = routeSelect.querySelectorAll('option:not([value=""])');
+        console.log(`Removing ${optionsToRemove.length} existing route options`);
         optionsToRemove.forEach(option => option.remove());
 
         // Add routes from window.ROUTE_DATA (loaded from files)
-        Object.keys(window.ROUTE_DATA || {}).forEach(routeId => {
+        const routeIds = Object.keys(window.ROUTE_DATA || {});
+        console.log(`Adding ${routeIds.length} routes to dropdown:`, routeIds);
+        
+        routeIds.forEach(routeId => {
             const route = (window.ROUTE_DATA || {})[routeId];
+            console.log(`Adding route to dropdown: ${routeId} -> ${route.name} (${route.distance} км)`);
             const option = document.createElement('option');
             option.value = routeId;
             option.textContent = `${route.name} (${route.distance} км)`;
             routeSelect.appendChild(option);
         });
 
+        console.log(`Total options in route select after update: ${routeSelect.options.length - 1}`); // -1 to exclude the default option
+
         // If a route is currently selected, update its information display
         if (routeSelect.value && routeSelect.value !== '') {
+            console.log('Current route is selected, updating information display');
             this.displayRouteInformation();
+        } else {
+            console.log('No route currently selected');
         }
     }
 }

@@ -29,29 +29,67 @@ const LOCOMOTIVE_DATA = {
 
 const WAGON_LENGTH = 14; // meters per wagon
 
-// Function to load all routes from a single JSON file
+// Function to discover and load all .md files from data directory
 async function loadRoutesFromFiles() {
     try {
         console.log('Starting route loading...');
 
-        // Load route list from index.json
-        const response = await fetch('data/index.json');
-        const routeFiles = await response.json();
+        // Define the list of known route files by scanning the data directory
+        // Since we can't dynamically scan the server directory with JavaScript,
+        // we'll define the list of all possible route files
+        const routeFiles = [
+            'abdulino-dema.md',
+            'abdulino-kinel.md',
+            'abdulino-oktyabrsk-south.md',
+            'abdulino-oktyabrsk.md',
+            'abdulino-syzran-south.md',
+            'abdulino-syzran.md',
+            'kinel-abdulino.md',
+            'oktyabrsk-abdulino-south.md',
+            'oktyabrsk-abdulino.md',
+            'syzran-abdulino-south.md',
+            'syzran-abdulino.md'
+        ];
 
-        console.log(`Attempting to load ${routeFiles.length} route files...`);
+        console.log(`Total route files defined: ${routeFiles.length}`);
 
-        // Load each .md file
+        // Filter out files that don't exist
+        const existingFiles = [];
         for (const filename of routeFiles) {
+            try {
+                console.log(`Checking existence of file: data/${filename}`);
+                const response = await fetch(`data/${filename}`);
+                console.log(`Response for ${filename}: ${response.status} ${response.statusText}`);
+                
+                if (response.ok) {
+                    existingFiles.push(filename);
+                    console.log(`✓ File exists: data/${filename}`);
+                } else {
+                    console.log(`✗ File does not exist, skipping: data/${filename}`);
+                }
+            } catch (error) {
+                console.log(`✗ Error checking file existence, skipping: data/${filename}`, error);
+            }
+        }
+
+        console.log(`Found ${existingFiles.length} existing route files:`, existingFiles);
+
+        // Load each .md file that exists
+        for (const filename of existingFiles) {
             try {
                 console.log(`Loading route file: ${filename}`);
                 const response = await fetch(`data/${filename}`);
+                console.log(`Fetched ${filename}: ${response.status} ${response.statusText}`);
+                
                 if (response.ok) {
                     const content = await response.text();
+                    console.log(`Successfully retrieved content from ${filename}, length: ${content.length}`);
+                    
                     const route = parseRouteFromMarkdown(content, filename);
                     if (route) {
                         const routeId = generateRouteId(route.name);
                         ROUTE_DATA[routeId] = route;
-                        console.log(`✓ Loaded route: ${route.name} (${route.distance} км)`);
+                        console.log(`✓ Successfully parsed and loaded route: ${route.name} (${route.distance} км)`);
                     } else {
                         console.warn(`✗ Failed to parse route from ${filename}`);
                     }
@@ -69,11 +107,15 @@ async function loadRoutesFromFiles() {
 
         // Dispatch a custom event to notify that routes have been loaded
         const event = new CustomEvent('routesLoaded', { detail: { routeCount: Object.keys(ROUTE_DATA).length } });
+        console.log(`Dispatching routesLoaded event with route count: ${routeCount}`);
         document.dispatchEvent(event);
 
         // If calculator is already initialized, update routes immediately
         if (typeof window !== 'undefined' && window.calculator && window.calculator.updateRouteSelectWithFileRoutes) {
+            console.log('Calling calculator.updateRouteSelectWithFileRoutes()');
             window.calculator.updateRouteSelectWithFileRoutes();
+        } else {
+            console.log('Calculator not initialized yet, waiting for routesLoaded event');
         }
 
     } catch (error) {
@@ -84,14 +126,19 @@ async function loadRoutesFromFiles() {
 // Parse route data from markdown content
 function parseRouteFromMarkdown(content, filename) {
     try {
+        console.log(`Parsing route from file: ${filename}`);
         const lines = content.split('\n');
+        console.log(`File contains ${lines.length} lines`);
+        
         let route = {
             name: '',
             distance: 0,
             description: `Маршрут из файла ${filename}`,
             coefficients: {
                 vl10u: {},
-                '2es6': {}
+                '2es6': {},
+                vl10k: {},
+                vl10uk: {}
             }
         };
         
@@ -104,6 +151,7 @@ function parseRouteFromMarkdown(content, filename) {
             // Parse route name (# Title)
             if (line.startsWith('#') && !line.startsWith('##')) {
                 route.name = line.substring(1).trim();
+                console.log(`Found route name: ${route.name}`);
             }
             
             // Parse distance (## Distance)
@@ -111,6 +159,7 @@ function parseRouteFromMarkdown(content, filename) {
                 const distanceMatch = line.match(/##\s*(\d+)\s*км/);
                 if (distanceMatch) {
                     route.distance = parseInt(distanceMatch[1]);
+                    console.log(`Found distance: ${route.distance} km`);
                 }
             }
             
@@ -121,10 +170,12 @@ function parseRouteFromMarkdown(content, filename) {
                 if (!headerParsed && cells[0].toLowerCase().includes('нагрузка')) {
                     headerParsed = true;
                     parsingTable = true;
+                    console.log('Found coefficient table header, starting to parse coefficients');
                 } else if (parsingTable && cells.length > 1) {
                     const locomotiveType = cells[0].toUpperCase();
 
                     if (locomotiveType.toUpperCase().includes('ВЛ10У') && !locomotiveType.toUpperCase().includes('ВЛ10УК')) {
+                        console.log(`Parsing ВЛ10У coefficients from line: ${line}`);
                         // Parse ВЛ10У coefficients
                         for (let j = 1; j < cells.length; j++) {
                             const coeff = parseFloat(cells[j]);
@@ -133,9 +184,11 @@ function parseRouteFromMarkdown(content, filename) {
                                 // The first data cell corresponds to axle load 6, second to 7, etc.
                                 const axleLoad = j + 5; // j starts from 1, so j+5 gives us 6, 7, 8...
                                 route.coefficients.vl10u[axleLoad] = coeff;
+                                console.log(`Set ВЛ10У coefficient for ${axleLoad} tons/axle: ${coeff}`);
                             }
                         }
                     } else if (locomotiveType.toUpperCase().includes('ВЛ10К') && !locomotiveType.toUpperCase().includes('ВЛ10УК')) {
+                        console.log(`Parsing ВЛ10К coefficients from line: ${line}`);
                         // Parse ВЛ10К coefficients
                         for (let j = 1; j < cells.length; j++) {
                             const coeff = parseFloat(cells[j]);
@@ -144,9 +197,11 @@ function parseRouteFromMarkdown(content, filename) {
                                 // The first data cell corresponds to axle load 6, second to 7, etc.
                                 const axleLoad = j + 5; // j starts from 1, so j+5 gives us 6, 7, 8...
                                 route.coefficients.vl10k[axleLoad] = coeff;
+                                console.log(`Set ВЛ10К coefficient for ${axleLoad} tons/axle: ${coeff}`);
                             }
                         }
                     } else if (locomotiveType.toUpperCase().includes('ВЛ10УК')) {
+                        console.log(`Parsing ВЛ10УК coefficients from line: ${line}`);
                         // Parse ВЛ10УК coefficients
                         for (let j = 1; j < cells.length; j++) {
                             const coeff = parseFloat(cells[j]);
@@ -155,9 +210,11 @@ function parseRouteFromMarkdown(content, filename) {
                                 // The first data cell corresponds to axle load 6, second to 7, etc.
                                 const axleLoad = j + 5; // j starts from 1, so j+5 gives us 6, 7, 8...
                                 route.coefficients.vl10uk[axleLoad] = coeff;
+                                console.log(`Set ВЛ10УК coefficient for ${axleLoad} tons/axle: ${coeff}`);
                             }
                         }
                     } else if (locomotiveType.toUpperCase().includes('2ЭС6')) {
+                        console.log(`Parsing 2ЭС6 coefficients from line: ${line}`);
                         // Parse 2ЭС6 coefficients
                         for (let j = 1; j < cells.length; j++) {
                             const coeff = parseFloat(cells[j]);
@@ -166,6 +223,7 @@ function parseRouteFromMarkdown(content, filename) {
                                 // The first data cell corresponds to axle load 6, second to 7, etc.
                                 const axleLoad = j + 5; // j starts from 1, so j+5 gives us 6, 7, 8...
                                 route.coefficients['2es6'][axleLoad] = coeff;
+                                console.log(`Set 2ЭС6 coefficient for ${axleLoad} tons/axle: ${coeff}`);
                             }
                         }
                     }
@@ -173,10 +231,15 @@ function parseRouteFromMarkdown(content, filename) {
             }
         }
         
+        console.log(`Completed parsing for ${filename}. Name: "${route.name}", Distance: ${route.distance} km`);
+        console.log(`Coefficients found - ВЛ10У: ${Object.keys(route.coefficients.vl10u).length}, 2ЭС6: ${Object.keys(route.coefficients['2es6']).length}, ВЛ10К: ${Object.keys(route.coefficients.vl10k).length}, ВЛ10УК: ${Object.keys(route.coefficients.vl10uk).length}`);
+        
         if (route.name && route.distance > 0) {
+            console.log(`Route successfully parsed: ${route.name} (${route.distance} km)`);
             return route;
         }
         
+        console.log(`Failed to parse route from ${filename}: missing name or distance`);
         return null;
     } catch (error) {
         console.error('Error parsing route markdown:', error);
