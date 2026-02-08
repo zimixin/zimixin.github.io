@@ -25,19 +25,13 @@ const WAGON_LENGTH = 14; // meters per wagon
 async function loadRoutesFromFiles() {
     try {
         console.log('Starting route loading...');
-        
-        // Simple list of known route files - no dynamic discovery needed
-        const routeFiles = [
-            'abdulino-kinel.md',
-            'abdulino-oktyabrsk.md',
-            'abdulino-syzran.md',
-            'syzran-abdulino.md',
-            'kinel-abdulino.md',
-            'moscow-spb.md'
-        ];
+
+        // Load route list from index.json
+        const response = await fetch('data/index.json');
+        const routeFiles = await response.json();
         
         console.log(`Attempting to load ${routeFiles.length} route files...`);
-        
+
         // Load each .md file
         for (const filename of routeFiles) {
             try {
@@ -60,16 +54,20 @@ async function loadRoutesFromFiles() {
                 console.error(`✗ Error loading route file ${filename}:`, error);
             }
         }
-        
+
         const routeCount = Object.keys(ROUTE_DATA).length;
         console.log(`Route loading completed. Total routes loaded: ${routeCount}`);
         console.log('Available routes:', Object.keys(ROUTE_DATA).map(id => ROUTE_DATA[id].name));
+
+        // Dispatch a custom event to notify that routes have been loaded
+        const event = new CustomEvent('routesLoaded', { detail: { routeCount: Object.keys(ROUTE_DATA).length } });
+        document.dispatchEvent(event);
         
-        // Trigger UI update if calculator is ready
+        // If calculator is already initialized, update routes immediately
         if (typeof window !== 'undefined' && window.calculator && window.calculator.updateRouteSelectWithFileRoutes) {
             window.calculator.updateRouteSelectWithFileRoutes();
         }
-        
+
     } catch (error) {
         console.error('Error loading route files:', error);
     }
@@ -175,7 +173,7 @@ function getLocomotiveData(locomotiveType) {
 }
 
 function getRouteData(routeCode) {
-    return ROUTE_DATA[routeCode] || null;
+    return (window.ROUTE_DATA && window.ROUTE_DATA[routeCode]) || ROUTE_DATA[routeCode] || null;
 }
 
 function getEnergyCoefficient(locomotiveType, axleLoad, routeData = null) {
@@ -209,6 +207,11 @@ function getEnergyCoefficient(locomotiveType, axleLoad, routeData = null) {
 
     // No coefficients available from route file
     return null;
+}
+
+// Make ROUTE_DATA available globally
+if (typeof window !== 'undefined') {
+    window.ROUTE_DATA = ROUTE_DATA;
 }
 
 // Export for use in other scripts (if needed)
