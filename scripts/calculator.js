@@ -99,6 +99,12 @@ class EnergyCalculator {
         if (addColdLocomotiveBtn) {
             addColdLocomotiveBtn.addEventListener('click', () => this.addColdLocomotive());
         }
+
+        // Show coefficients table button
+        const showCoefficientsBtn = document.getElementById('showCoefficientsBtn');
+        if (showCoefficientsBtn) {
+            showCoefficientsBtn.addEventListener('click', () => this.toggleCoefficientsTable());
+        }
     }
 
     setupRealTimeCalculation() {
@@ -724,6 +730,7 @@ class EnergyCalculator {
         const coefficientsSection = document.getElementById('coefficientsSection');
         const noCoefficients = document.getElementById('noCoefficients');
         const coefficientsTableBody = document.getElementById('coefficientsTableBody');
+        const showCoefficientsBtn = document.getElementById('showCoefficientsBtn');
 
         if (!routeSelect.value) {
             routeInfoDisplay.style.display = 'none';
@@ -750,20 +757,47 @@ class EnergyCalculator {
              Object.keys(routeData.coefficients['2es6'] || {}).length > 0);
 
         if (hasCoefficients) {
-            coefficientsSection.style.display = 'block';
+            // Initially hide the coefficients table
+            coefficientsSection.style.display = 'none';
             noCoefficients.style.display = 'none';
             this.populateCoefficientsTable(routeData.coefficients, coefficientsTableBody);
-            // Highlight the selected coefficient after populating the table
-            setTimeout(() => {
-                this.highlightSelectedCoefficient();
-            }, 10);
         } else {
             coefficientsSection.style.display = 'none';
             noCoefficients.style.display = 'block';
         }
 
+        // Show/hide the button based on whether coefficients exist
+        if (showCoefficientsBtn) {
+            showCoefficientsBtn.style.display = hasCoefficients ? 'inline-block' : 'none';
+            // Reset button text to "Открыть таблицу коэффициентов" when route changes
+            if (hasCoefficients) {
+                showCoefficientsBtn.innerHTML = '<span class="btn-icon">📋</span> Открыть таблицу коэффициентов';
+                // Hide coefficients table initially
+                coefficientsSection.style.display = 'none';
+            }
+        }
+
         routeInfoDisplay.style.display = 'block';
         routeInfoDisplay.classList.add('fade-in');
+    }
+
+    toggleCoefficientsTable() {
+        const coefficientsSection = document.getElementById('coefficientsSection');
+        const showCoefficientsBtn = document.getElementById('showCoefficientsBtn');
+        
+        if (coefficientsSection) {
+            if (coefficientsSection.style.display === 'none' || coefficientsSection.style.display === '') {
+                coefficientsSection.style.display = 'block';
+                if (showCoefficientsBtn) {
+                    showCoefficientsBtn.innerHTML = '<span class="btn-icon">📋</span> Скрыть таблицу коэффициентов';
+                }
+            } else {
+                coefficientsSection.style.display = 'none';
+                if (showCoefficientsBtn) {
+                    showCoefficientsBtn.innerHTML = '<span class="btn-icon">📋</span> Открыть таблицу коэффициентов';
+                }
+            }
+        }
     }
 
     populateCoefficientsTable(coefficients, tableBody) {

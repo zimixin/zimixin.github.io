@@ -64,7 +64,12 @@
                         <div class="route-info-card">
                             <h3 id="selectedRouteName">Информация о маршруте</h3>
                             <p class="route-distance">Расстояние: <strong id="selectedRouteDistance">0 км</strong></p>
-                            
+
+                            <button type="button" class="btn btn-secondary" id="showCoefficientsBtn">
+                                <span class="btn-icon">📋</span>
+                                Открыть таблицу коэффициентов
+                            </button>
+
                             <div class="coefficients-section" id="coefficientsSection" style="display: none;">
                                 <h4>Коэффициенты энергопотребления</h4>
                                 <div class="coefficients-table-container">
@@ -102,7 +107,7 @@
                                     </table>
                                 </div>
                             </div>
-                            
+
                             <div class="no-coefficients" id="noCoefficients" style="display: none;">
                                 <p><em>Для этого маршрута используются стандартные коэффициенты локомотивов</em></p>
                             </div>

@@ -97,9 +97,70 @@
     background: linear-gradient(135deg, #4dabf7 0%, #339af0 100%);
 }
 
+/* Compact locomotive card styling in light theme */
+.theme-light .locomotive-card {
+    padding: 0.4rem; /* Reduced padding */
+    min-width: 90px; /* Reduced width */
+}
+
+.theme-light .locomotive-info h3 {
+    font-size: 0.85rem; /* Smaller font */
+    margin-bottom: 0.05rem; /* Reduced margin */
+}
+
+.theme-light .locomotive-info p {
+    font-size: 0.7rem; /* Smaller font */
+}
+
+/* Compact locomotive card styling */
+.locomotive-card {
+    padding: 0.4rem; /* Reduced padding */
+    min-width: 90px; /* Reduced width */
+}
+
+.locomotive-info h3 {
+    font-size: 0.85rem; /* Smaller font */
+    margin-bottom: 0.05rem; /* Reduced margin */
+}
+
+.locomotive-info p {
+    font-size: 0.7rem; /* Smaller font */
+}
+
+/* Compact locomotive card styling in all themes */
+.locomotive-card {
+    padding: 0.4rem; /* Reduced padding */
+    min-width: 90px; /* Reduced width */
+}
+
+.locomotive-info h3 {
+    font-size: 0.85rem; /* Smaller font */
+    margin-bottom: 0.05rem; /* Reduced margin */
+}
+
+.locomotive-info p {
+    font-size: 0.7rem; /* Smaller font */
+}
+
 /* Highlight selected locomotive in dark theme */
 .theme-dark .locomotive-option input[type="radio"]:checked + .locomotive-card {
-    box-shadow: 0 0 0 3px var(--accent-light);
+    box-shadow: 0 0 0 2px var(--accent-light); /* Reduced border */
+    transform: scale(1.05);
+    z-index: 1;
+    position: relative;
+}
+
+/* Highlight selected locomotive in light theme */
+.theme-light .locomotive-option input[type="radio"]:checked + .locomotive-card {
+    box-shadow: 0 0 0 2px var(--accent-light); /* Reduced border */
+    transform: scale(1.05);
+    z-index: 1;
+    position: relative;
+}
+
+/* Highlight selected locomotive in all themes */
+.locomotive-option input[type="radio"]:checked + .locomotive-card {
+    box-shadow: 0 0 0 2px var(--accent-light); /* Reduced border */
     transform: scale(1.05);
     z-index: 1;
     position: relative;
@@ -161,9 +222,24 @@
     background: linear-gradient(135deg, #4dabf7 0%, #339af0 100%);
 }
 
+/* Compact locomotive card styling in AMOLED theme */
+.theme-amoled .locomotive-card {
+    padding: 0.4rem; /* Reduced padding */
+    min-width: 90px; /* Reduced width */
+}
+
+.theme-amoled .locomotive-info h3 {
+    font-size: 0.85rem; /* Smaller font */
+    margin-bottom: 0.05rem; /* Reduced margin */
+}
+
+.theme-amoled .locomotive-info p {
+    font-size: 0.7rem; /* Smaller font */
+}
+
 /* Highlight selected locomotive in amoled theme */
 .theme-amoled .locomotive-option input[type="radio"]:checked + .locomotive-card {
-    box-shadow: 0 0 0 3px var(--accent-light);
+    box-shadow: 0 0 0 2px var(--accent-light); /* Reduced border */
     transform: scale(1.05);
     z-index: 1;
     position: relative;
@@ -177,5 +253,5 @@ body,
 input,
 select,
 .theme-toggle {
-    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+    transition: background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease;
 }
