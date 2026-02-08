@@ -81,6 +81,10 @@
 }
 
 /* Theme-specific locomotive cards */
+.theme-dark .locomotive-vl10.locomotive-card {
+    background: linear-gradient(135deg, #e55c00 0%, #c2410c 100%);
+}
+
 .theme-dark .locomotive-vl10u.locomotive-card {
     background: linear-gradient(135deg, #fd7e14 0%, #e55c00 100%);
 }
@@ -110,6 +114,12 @@
 
 .theme-light .locomotive-info p {
     font-size: 0.7rem; /* Smaller font */
+}
+
+/* Theme-specific locomotive cards in light theme */
+.theme-light .locomotive-vl10.locomotive-card {
+    background: linear-gradient(135deg, #ff6b3d 0%, #d35400 100%);
+    color: white;
 }
 
 /* Compact locomotive card styling */
@@ -206,6 +216,10 @@
 }
 
 /* Theme-specific locomotive cards */
+.theme-amoled .locomotive-vl10.locomotive-card {
+    background: linear-gradient(135deg, #e55c00 0%, #c2410c 100%);
+}
+
 .theme-amoled .locomotive-vl10u.locomotive-card {
     background: linear-gradient(135deg, #fd7e14 0%, #e55c00 100%);
 }

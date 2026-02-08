@@ -419,7 +419,16 @@
 
 .route-distance {
     font-size: 1.1rem;
-    margin-bottom: 1rem; /* Reduced margin */
+    margin-bottom: 0.5rem; /* Reduced margin */
+    padding: 0.75rem;
+    background: var(--accent-light);
+    border-radius: 8px;
+    border-left: 4px solid var(--accent-color);
+}
+
+.route-travel-time {
+    font-size: 1rem; /* Smaller font */
+    margin-bottom: 1rem; /* Margin after travel time */
     padding: 0.75rem;
     background: var(--accent-light);
     border-radius: 8px;

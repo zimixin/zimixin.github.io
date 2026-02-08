@@ -157,6 +157,14 @@ class EnergyCalculator {
                 </div>
             </div>
             <div class="locomotive-type-selector" id="locomotiveSelector${this.locomotiveCount}" style="display:none;">
+                <div class="locomotive-option" onclick="selectLocomotiveType(${this.locomotiveCount}, 'vl10', 'ВЛ10', 32)">
+                    <div class="locomotive-card locomotive-vl10">
+                        <div class="locomotive-info">
+                            <h3>ВЛ10</h3>
+                            <p>Длина: 32м</p>
+                        </div>
+                    </div>
+                </div>
                 <div class="locomotive-option" onclick="selectLocomotiveType(${this.locomotiveCount}, 'vl10u', 'ВЛ10У', 32)">
                     <div class="locomotive-card locomotive-vl10u">
                         <div class="locomotive-info">
@@ -216,6 +224,14 @@ class EnergyCalculator {
                 </div>
             </div>
             <div class="locomotive-type-selector" id="locomotiveSelector${this.locomotiveCount}" style="display:none;">
+                <div class="locomotive-option" onclick="selectLocomotiveType(${this.locomotiveCount}, 'vl10', 'ВЛ10', 32)">
+                    <div class="locomotive-card locomotive-vl10">
+                        <div class="locomotive-info">
+                            <h3>ВЛ10</h3>
+                            <p>Длина: 32м</p>
+                        </div>
+                    </div>
+                </div>
                 <div class="locomotive-option" onclick="selectLocomotiveType(${this.locomotiveCount}, 'vl10u', 'ВЛ10У', 32)">
                     <div class="locomotive-card locomotive-vl10u">
                         <div class="locomotive-info">
@@ -727,6 +743,7 @@ class EnergyCalculator {
         const routeInfoDisplay = document.getElementById('routeInfoDisplay');
         const selectedRouteName = document.getElementById('selectedRouteName');
         const selectedRouteDistance = document.getElementById('selectedRouteDistance');
+        const selectedRouteTravelTime = document.getElementById('selectedRouteTravelTime'); // Новый элемент для времени
         const coefficientsSection = document.getElementById('coefficientsSection');
         const noCoefficients = document.getElementById('noCoefficients');
         const coefficientsTableBody = document.getElementById('coefficientsTableBody');
@@ -748,10 +765,28 @@ class EnergyCalculator {
         // Display route information
         selectedRouteName.textContent = routeData.name;
         selectedRouteDistance.textContent = `${routeData.distance} км`;
+        
+        // Display travel time if available
+        console.log(`Processing route: ${routeData.name}, travelTime: ${routeData.travelTime}`);
+        if (selectedRouteTravelTime) {
+            console.log(`selectedRouteTravelTime element found`);
+            if (routeData.travelTime && routeData.travelTime > 0) {
+                selectedRouteTravelTime.textContent = `${routeData.travelTime} ч`;
+                // Make sure the parent element (the p tag) is displayed
+                selectedRouteTravelTime.parentElement.style.display = 'block';
+                console.log(`Travel time displayed: ${routeData.travelTime} for route ${routeData.name}`);
+            } else {
+                selectedRouteTravelTime.parentElement.style.display = 'none'; // Hide if no travel time
+                console.log(`No travel time for route ${routeData.name}, hiding element`);
+            }
+        } else {
+            console.log('selectedRouteTravelTime element not found');
+        }
 
         // Check if route has custom coefficients
         const hasCoefficients = routeData.coefficients &&
-            (Object.keys(routeData.coefficients.vl10u || {}).length > 0 ||
+            (Object.keys(routeData.coefficients.vl10 || {}).length > 0 ||
+             Object.keys(routeData.coefficients.vl10u || {}).length > 0 ||
              Object.keys(routeData.coefficients.vl10k || {}).length > 0 ||
              Object.keys(routeData.coefficients.vl10uk || {}).length > 0 ||
              Object.keys(routeData.coefficients['2es6'] || {}).length > 0);
@@ -804,6 +839,24 @@ class EnergyCalculator {
         tableBody.innerHTML = '';
 
         // Create rows for each locomotive type
+        if (coefficients.vl10 && Object.keys(coefficients.vl10).length > 0) {
+            const vl10Row = document.createElement('tr');
+            vl10Row.innerHTML = '<td>ВЛ10</td>';
+
+            // Add coefficients for axle loads 6-23
+            for (let axle = 6; axle <= 23; axle++) {
+                const cell = document.createElement('td');
+                const value = coefficients.vl10[axle];
+                cell.textContent = value !== undefined ? value.toString() : '-';
+                if (value === undefined) {
+                    cell.style.opacity = '0.3';
+                }
+                vl10Row.appendChild(cell);
+            }
+
+            tableBody.appendChild(vl10Row);
+        }
+
         if (coefficients.vl10u && Object.keys(coefficients.vl10u).length > 0) {
             const vl10uRow = document.createElement('tr');
             vl10uRow.innerHTML = '<td>ВЛ10У</td>';
@@ -875,7 +928,7 @@ class EnergyCalculator {
 
             tableBody.appendChild(es6Row);
         }
-        
+
         // Highlight the selected coefficient if we have form data
         this.highlightSelectedCoefficient();
     }
@@ -1001,7 +1054,9 @@ function selectLocomotiveType(index, type, name, length) {
 
         // Update class based on locomotive type
         locomotiveCard.className = 'locomotive-card';
-        if (type === 'vl10u') {
+        if (type === 'vl10') {
+            locomotiveCard.classList.add('locomotive-vl10');
+        } else if (type === 'vl10u') {
             locomotiveCard.classList.add('locomotive-vl10u');
         } else if (type === 'vl10k') {
             locomotiveCard.classList.add('locomotive-vl10k');

@@ -211,6 +211,11 @@ body {
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
+.locomotive-vl10.locomotive-card {
+    background: linear-gradient(135deg, #ff6b3d 0%, #d35400 100%);
+    color: white;
+}
+
 .locomotive-vl10u.locomotive-card {
     background: linear-gradient(135deg, #ff9a56 0%, #ff6b3d 100%);
     color: white;

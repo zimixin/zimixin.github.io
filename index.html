@@ -64,6 +64,7 @@
                         <div class="route-info-card">
                             <h3 id="selectedRouteName">Информация о маршруте</h3>
                             <p class="route-distance">Расстояние: <strong id="selectedRouteDistance">0 км</strong></p>
+                            <p class="route-travel-time" style="display: none;">Время в пути: <strong id="selectedRouteTravelTime">0 ч</strong></p>
 
                             <button type="button" class="btn btn-secondary" id="showCoefficientsBtn">
                                 <span class="btn-icon">📋</span>
@@ -167,6 +168,14 @@
                                     </div>
                                 </div>
                                 <div class="locomotive-type-selector" id="locomotiveSelector1" style="display:none;">
+                                    <div class="locomotive-option" onclick="selectLocomotiveType(1, 'vl10', 'ВЛ10', 32)">
+                                        <div class="locomotive-card locomotive-vl10">
+                                            <div class="locomotive-info">
+                                                <h3>ВЛ10</h3>
+                                                <p>Длина: 32м</p>
+                                            </div>
+                                        </div>
+                                    </div>
                                     <div class="locomotive-option" onclick="selectLocomotiveType(1, 'vl10u', 'ВЛ10У', 32)">
                                         <div class="locomotive-card locomotive-vl10u">
                                             <div class="locomotive-info">

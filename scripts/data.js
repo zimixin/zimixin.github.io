@@ -7,6 +7,10 @@ let ROUTE_DATA = {};
 // No default routes - all routes are loaded from /data folder
 
 const LOCOMOTIVE_DATA = {
+    vl10: {
+        name: 'ВЛ10',
+        length: 32 // meters
+    },
     vl10u: {
         name: 'ВЛ10У',
         length: 32 // meters
@@ -133,6 +137,7 @@ function parseRouteFromMarkdown(content, filename) {
         let route = {
             name: '',
             distance: 0,
+            travelTime: 0, // Время в пути
             description: `Маршрут из файла ${filename}`,
             coefficients: {
                 vl10u: {},
@@ -154,7 +159,24 @@ function parseRouteFromMarkdown(content, filename) {
                 console.log(`Found route name: ${route.name}`);
             }
             
-            // Parse distance (## Distance)
+            // Parse distance and travel time (using bullet points)
+            else if (line.startsWith('-')) {
+                // Looking for distance pattern: "- XXX км"
+                const distanceMatch = line.match(/\-\s*(\d+)\s*км/);
+                if (distanceMatch) {
+                    route.distance = parseInt(distanceMatch[1]);
+                    console.log(`Found distance: ${route.distance} km`);
+                }
+                
+                // Looking for travel time pattern: "- XX,XX часа" or "- XX,XX часов"
+                const timeMatch = line.match(/\-\s*(\d+[,.]\d+)\s*час[ао]/);
+                if (timeMatch) {
+                    route.travelTime = parseFloat(timeMatch[1].replace(',', '.'));
+                    console.log(`Found travel time: ${route.travelTime} hours`);
+                }
+            }
+            
+            // Alternative: Parse distance (## Distance)
             else if (line.startsWith('##')) {
                 const distanceMatch = line.match(/##\s*(\d+)\s*км/);
                 if (distanceMatch) {
@@ -231,11 +253,11 @@ function parseRouteFromMarkdown(content, filename) {
             }
         }
         
-        console.log(`Completed parsing for ${filename}. Name: "${route.name}", Distance: ${route.distance} km`);
+        console.log(`Completed parsing for ${filename}. Name: "${route.name}", Distance: ${route.distance} km, Travel Time: ${route.travelTime} hours`);
         console.log(`Coefficients found - ВЛ10У: ${Object.keys(route.coefficients.vl10u).length}, 2ЭС6: ${Object.keys(route.coefficients['2es6']).length}, ВЛ10К: ${Object.keys(route.coefficients.vl10k).length}, ВЛ10УК: ${Object.keys(route.coefficients.vl10uk).length}`);
         
         if (route.name && route.distance > 0) {
-            console.log(`Route successfully parsed: ${route.name} (${route.distance} km)`);
+            console.log(`Route successfully parsed: ${route.name} (${route.distance} km, ${route.travelTime} hours)`);
             return route;
         }
         
@@ -271,30 +293,48 @@ function getRouteData(routeCode) {
 
 function getEnergyCoefficient(locomotiveType, axleLoad, routeData = null) {
     // Only use route-specific coefficients, no fallback to standard coefficients
-    if (routeData && routeData.coefficients && routeData.coefficients[locomotiveType]) {
-        const roundedAxleLoad = Math.round(axleLoad);
-        const customCoefficients = routeData.coefficients[locomotiveType];
-
-        // Try exact match first
-        if (customCoefficients[roundedAxleLoad] !== undefined) {
-            return customCoefficients[roundedAxleLoad];
+    if (routeData && routeData.coefficients) {
+        // Map locomotive types to their corresponding coefficient arrays
+        let coefficientArray = null;
+        
+        // Check for exact locomotive type match
+        if (routeData.coefficients[locomotiveType]) {
+            coefficientArray = routeData.coefficients[locomotiveType];
         }
+        // Special handling for ВЛ10 (which might be represented differently)
+        else if (locomotiveType === 'vl10' && routeData.coefficients['vl10']) {
+            coefficientArray = routeData.coefficients['vl10'];
+        }
+        // Fallback to other similar types if needed
+        else if (locomotiveType === 'vl10u' && routeData.coefficients['vl10']) {
+            coefficientArray = routeData.coefficients['vl10'];
+        }
+        
+        if (coefficientArray) {
+            const roundedAxleLoad = Math.round(axleLoad);
+            const customCoefficients = coefficientArray;
 
-        // Find closest match in custom coefficients
-        const availableLoads = Object.keys(customCoefficients).map(Number).sort((a, b) => a - b);
-        if (availableLoads.length > 0) {
-            let closestLoad = availableLoads[0];
-            let minDiff = Math.abs(roundedAxleLoad - closestLoad);
-
-            for (const load of availableLoads) {
-                const diff = Math.abs(roundedAxleLoad - load);
-                if (diff < minDiff) {
-                    minDiff = diff;
-                    closestLoad = load;
-                }
+            // Try exact match first
+            if (customCoefficients[roundedAxleLoad] !== undefined) {
+                return customCoefficients[roundedAxleLoad];
             }
 
-            return customCoefficients[closestLoad];
+            // Find closest match in custom coefficients
+            const availableLoads = Object.keys(customCoefficients).map(Number).sort((a, b) => a - b);
+            if (availableLoads.length > 0) {
+                let closestLoad = availableLoads[0];
+                let minDiff = Math.abs(roundedAxleLoad - closestLoad);
+
+                for (const load of availableLoads) {
+                    const diff = Math.abs(roundedAxleLoad - load);
+                    if (diff < minDiff) {
+                        minDiff = diff;
+                        closestLoad = load;
+                    }
+                }
+
+                return customCoefficients[closestLoad];
+            }
         }
     }
 
