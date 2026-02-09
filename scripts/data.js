@@ -61,18 +61,18 @@ async function loadRoutesFromFiles() {
         const existingFiles = [];
         for (const filename of routeFiles) {
             try {
-                console.log(`Checking existence of file: data/${filename}`);
-                const response = await fetch(`data/${filename}`);
+                console.log(`Checking existence of file: ./data/${filename}`);
+                const response = await fetch(`./data/${filename}`);
                 console.log(`Response for ${filename}: ${response.status} ${response.statusText}`);
-                
+
                 if (response.ok) {
                     existingFiles.push(filename);
-                    console.log(`✓ File exists: data/${filename}`);
+                    console.log(`✓ File exists: ./data/${filename}`);
                 } else {
-                    console.log(`✗ File does not exist, skipping: data/${filename}`);
+                    console.log(`✗ File does not exist, skipping: ./data/${filename}`);
                 }
             } catch (error) {
-                console.log(`✗ Error checking file existence, skipping: data/${filename}`, error);
+                console.log(`✗ Error checking file existence, skipping: ./data/${filename}`, error);
             }
         }
 
@@ -82,13 +82,13 @@ async function loadRoutesFromFiles() {
         for (const filename of existingFiles) {
             try {
                 console.log(`Loading route file: ${filename}`);
-                const response = await fetch(`data/${filename}`);
+                const response = await fetch(`./data/${filename}`);
                 console.log(`Fetched ${filename}: ${response.status} ${response.statusText}`);
-                
+
                 if (response.ok) {
                     const content = await response.text();
                     console.log(`Successfully retrieved content from ${filename}, length: ${content.length}`);
-                    
+
                     const route = parseRouteFromMarkdown(content, filename);
                     if (route) {
                         const routeId = generateRouteId(route.name);

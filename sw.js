@@ -2,36 +2,36 @@
 // Handles caching and offline functionality
 
 const CACHE_NAME = 'rzd-calculator-v1.0.0';
-const OFFLINE_URL = '/offline.html';
+const OFFLINE_URL = './offline.html';
 
 // Files to cache for offline functionality
 const STATIC_CACHE_URLS = [
-  '/',
-  '/index.html',
-  '/styles/main.css',
-  '/styles/themes.css', 
-  '/styles/components.css',
-  '/scripts/calculator.js',
-  '/scripts/data.js',
-  '/scripts/themes.js',
-  '/offline.html',
-  '/icons/icon.svg',
-  '/manifest.json'
+  './',
+  './index.html',
+  './styles/main.css',
+  './styles/themes.css',
+  './styles/components.css',
+  './scripts/calculator.js',
+  './scripts/data.js',
+  './scripts/themes.js',
+  './offline.html',
+  './icons/icon.svg',
+  './manifest.json'
 ];
 
 // Data files to cache
 const DATA_CACHE_URLS = [
-  '/data/abdulino-kinel.md',
-  '/data/abdulino-oktyabrsk.md',
-  '/data/abdulino-syzran.md',
-  '/data/kinel-abdulino.md',
-  '/data/abdulino-dema.md',
-  '/data/abdulino-oktyabrsk-south.md',
-  '/data/abdulino-syzran-south.md',
-  '/data/oktyabrsk-abdulino-south.md',
-  '/data/oktyabrsk-abdulino.md',
-  '/data/syzran-abdulino-south.md',
-  '/data/syzran-abdulino.md'
+  './data/abdulino-kinel.md',
+  './data/abdulino-oktyabrsk.md',
+  './data/abdulino-syzran.md',
+  './data/kinel-abdulino.md',
+  './data/abdulino-dema.md',
+  './data/abdulino-oktyabrsk-south.md',
+  './data/abdulino-syzran-south.md',
+  './data/oktyabrsk-abdulino-south.md',
+  './data/oktyabrsk-abdulino.md',
+  './data/syzran-abdulino-south.md',
+  './data/syzran-abdulino.md'
 ];
 
 // All URLs to cache
