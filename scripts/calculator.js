@@ -420,6 +420,16 @@ class EnergyCalculator {
                 };
             }
 
+            // Debug output
+            console.log(`Debug: Calculating energy consumption`);
+            console.log(`Train weight: ${data.trainWeight}`);
+            console.log(`Axle load: ${axleLoad}`);
+            console.log(`Locomotive type: ${locomotiveData.type}`);
+            console.log(`Route: ${routeData.name}`);
+            console.log(`Distance: ${routeData.distance}`);
+            console.log(`Coefficient: ${coefficient}`);
+            console.log(`Locomotive count: ${data.locomotiveCount}`);
+
             // Check if train weight exceeds max allowed weight for the route
             if (routeData.maxWeight && routeData.maxWeight > 0 && data.trainWeight > routeData.maxWeight) {
                 return {
@@ -431,8 +441,8 @@ class EnergyCalculator {
             // Check if train weight exceeds max allowed weight for single or multiple locomotive operation
             if (data.locomotiveCount === 1) {
                 // Check 'one' max weight for each locomotive type
-                if (routeData.coefficients && routeData.coefficients[locomotiveData.type]) {
-                    const maxWeightOne = routeData.coefficients[locomotiveData.type]['one'];
+                if (routeData.maxWeights && routeData.maxWeights[locomotiveData.type]) {
+                    const maxWeightOne = routeData.maxWeights[locomotiveData.type]['one'];
                     if (maxWeightOne && maxWeightOne > 0 && data.trainWeight > maxWeightOne) {
                         return {
                             success: false,
@@ -442,8 +452,8 @@ class EnergyCalculator {
                 }
             } else if (data.locomotiveCount > 1) {
                 // Check 'smet' max weight for each locomotive type
-                if (routeData.coefficients && routeData.coefficients[locomotiveData.type]) {
-                    const maxWeightSmet = routeData.coefficients[locomotiveData.type]['smet'];
+                if (routeData.maxWeights && routeData.maxWeights[locomotiveData.type]) {
+                    const maxWeightSmet = routeData.maxWeights[locomotiveData.type]['smet'];
                     if (maxWeightSmet && maxWeightSmet > 0 && data.trainWeight > maxWeightSmet) {
                         return {
                             success: false,
@@ -456,6 +466,7 @@ class EnergyCalculator {
             // Calculate energy consumption using the formula:
             // (Weight * Coefficient * Distance) / 10000 / 100
             const energyConsumption = (data.trainWeight * coefficient * routeData.distance) / 10000 / 100;
+            console.log(`Calculated energy consumption: ${energyConsumption} кВт⋅ч`);
 
             // Calculate train length using conditional wagons from train parameters
             // Include all locomotives (active and cold) in the length calculation
@@ -491,7 +502,15 @@ class EnergyCalculator {
                     coefficient: coefficient,
                     locomotive: locomotiveData,
                     route: routeData,
-                    formData: data
+                    formData: data,
+                    // Additional data for detailed calculation display
+                    calculationDetails: {
+                        weight: data.trainWeight,
+                        coefficient: coefficient,
+                        distance: routeData.distance,
+                        axleLoad: axleLoad,
+                        locomotiveCount: data.locomotiveCount
+                    }
                 }
             };
 
@@ -527,6 +546,46 @@ class EnergyCalculator {
             trainLengthCard.style.display = 'block';
         } else {
             trainLengthCard.style.display = 'none';
+        }
+
+        // Show detailed calculation breakdown
+        const calculationDetails = document.getElementById('calculationDetails');
+        if (calculationDetails) {
+            calculationDetails.innerHTML = `
+                <div class="calculation-breakdown">
+                    <h4>Расчет по формуле</h4>
+                    <div class="formula-breakdown">
+                        <div class="breakdown-row">
+                            <span class="breakdown-label">Вес поезда:</span>
+                            <span class="breakdown-value">${data.formData.trainWeight} т</span>
+                        </div>
+                        <div class="breakdown-row">
+                            <span class="breakdown-label">Коэффициент:</span>
+                            <span class="breakdown-value">${data.coefficient}</span>
+                        </div>
+                        <div class="breakdown-row">
+                            <span class="breakdown-label">Расстояние:</span>
+                            <span class="breakdown-value">${data.route.distance} км</span>
+                        </div>
+                        <div class="breakdown-row">
+                            <span class="breakdown-label">Нагрузка на ось:</span>
+                            <span class="breakdown-value">${data.axleLoad.toFixed(2)} т/ось</span>
+                        </div>
+                        <div class="breakdown-row">
+                            <span class="breakdown-label">Количество локомотивов:</span>
+                            <span class="breakdown-value">${data.formData.locomotiveCount}</span>
+                        </div>
+                        <div class="breakdown-row formula-row">
+                            <span class="breakdown-label">Формула:</span>
+                            <span class="breakdown-value">(Вес × Коэффициент × Расстояние) ÷ 10000 ÷ 100</span>
+                        </div>
+                        <div class="breakdown-row calculation-row">
+                            <span class="breakdown-label">Расчет:</span>
+                            <span class="breakdown-value">(${data.formData.trainWeight} × ${data.coefficient} × ${data.route.distance}) ÷ 10000 ÷ 100 = ${data.energyConsumption.toFixed(2)}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
         }
 
         // Scroll to results
@@ -846,19 +905,19 @@ class EnergyCalculator {
             // Check if we have specific max weights for 'one' or 'smet' operations
             let maxWeightText = '';
             let hasSpecificWeights = false;
-            
-            // Check if route has coefficient data with specific weights
-            if (routeData.coefficients) {
+
+            // Check if route has maxWeights data with specific weights
+            if (routeData.maxWeights) {
                 // Loop through all locomotive types to collect all available weights
-                for (const locType in routeData.coefficients) {
-                    const locData = routeData.coefficients[locType];
-                    if (locData['one'] !== undefined || locData['smet'] !== undefined) {
-                        if (locData['one'] !== undefined) {
+                for (const locType in routeData.maxWeights) {
+                    const locData = routeData.maxWeights[locType];
+                    if (locData['one'] !== null || locData['smet'] !== null) {
+                        if (locData['one'] !== null) {
                             if (maxWeightText) maxWeightText += ', ';
                             maxWeightText += `Один: ${locData['one']} т`;
                             hasSpecificWeights = true;
                         }
-                        if (locData['smet'] !== undefined) {
+                        if (locData['smet'] !== null) {
                             if (maxWeightText) maxWeightText += ', ';
                             maxWeightText += `СМЕТ: ${locData['smet']} т`;
                             hasSpecificWeights = true;
@@ -866,7 +925,7 @@ class EnergyCalculator {
                     }
                 }
             }
-            
+
             if (hasSpecificWeights) {
                 selectedRouteMaxWeight.textContent = maxWeightText;
                 // Make sure the parent element (the p tag) is displayed
@@ -919,9 +978,9 @@ class EnergyCalculator {
         // Show/hide the button based on whether coefficients exist
         if (showCoefficientsBtn) {
             showCoefficientsBtn.style.display = hasCoefficients ? 'inline-block' : 'none';
-            // Reset button text to "Открыть таблицу коэффициентов" when route changes
+            // Reset button text to "Открыть таблицу коэффициентов и весов" when route changes
             if (hasCoefficients) {
-                showCoefficientsBtn.innerHTML = '<span class="btn-icon">📋</span> Открыть таблицу коэффициентов';
+                showCoefficientsBtn.innerHTML = '<span class="btn-icon">📋</span> Открыть таблицу коэффициентов и весов';
                 // Hide coefficients table initially
                 coefficientsSection.style.display = 'none';
             }
@@ -934,17 +993,17 @@ class EnergyCalculator {
     toggleCoefficientsTable() {
         const coefficientsSection = document.getElementById('coefficientsSection');
         const showCoefficientsBtn = document.getElementById('showCoefficientsBtn');
-        
+
         if (coefficientsSection) {
             if (coefficientsSection.style.display === 'none' || coefficientsSection.style.display === '') {
                 coefficientsSection.style.display = 'block';
                 if (showCoefficientsBtn) {
-                    showCoefficientsBtn.innerHTML = '<span class="btn-icon">📋</span> Скрыть таблицу коэффициентов';
+                    showCoefficientsBtn.innerHTML = '<span class="btn-icon">📋</span> Скрыть таблицу коэффициентов и весов';
                 }
             } else {
                 coefficientsSection.style.display = 'none';
                 if (showCoefficientsBtn) {
-                    showCoefficientsBtn.innerHTML = '<span class="btn-icon">📋</span> Открыть таблицу коэффициентов';
+                    showCoefficientsBtn.innerHTML = '<span class="btn-icon">📋</span> Открыть таблицу коэффициентов и весов';
                 }
             }
         }
@@ -973,15 +1032,16 @@ class EnergyCalculator {
         if (coefficients.vl10 && Object.keys(coefficients.vl10).length > 0) {
             const vl10Row = document.createElement('tr');
 
-            // Add cells for 'one' and 'smet' values (max weights)
+            // Add cells for 'one' and 'smet' values (max weights) - get from maxWeights
             const oneCell = document.createElement('td');
-            oneCell.textContent = coefficients.vl10['one'] !== undefined ? coefficients.vl10['one'].toString() : '-';
-            if (coefficients.vl10['one'] === undefined) oneCell.style.opacity = '0.3';
+            const maxWeightsForLoc = (routeData && routeData.maxWeights) ? routeData.maxWeights : {};
+            oneCell.textContent = (maxWeightsForLoc.vl10 && maxWeightsForLoc.vl10['one'] !== null) ? maxWeightsForLoc.vl10['one'].toString() : '-';
+            if (!(maxWeightsForLoc.vl10 && maxWeightsForLoc.vl10['one'] !== null)) oneCell.style.opacity = '0.3';
             vl10Row.appendChild(oneCell);
 
             const smetCell = document.createElement('td');
-            smetCell.textContent = coefficients.vl10['smet'] !== undefined ? coefficients.vl10['smet'].toString() : '-';
-            if (coefficients.vl10['smet'] === undefined) smetCell.style.opacity = '0.3';
+            smetCell.textContent = (maxWeightsForLoc.vl10 && maxWeightsForLoc.vl10['smet'] !== null) ? maxWeightsForLoc.vl10['smet'].toString() : '-';
+            if (!(maxWeightsForLoc.vl10 && maxWeightsForLoc.vl10['smet'] !== null)) smetCell.style.opacity = '0.3';
             vl10Row.appendChild(smetCell);
 
             // Add locomotive type cell
@@ -1006,15 +1066,16 @@ class EnergyCalculator {
         if (coefficients.vl10u && Object.keys(coefficients.vl10u).length > 0) {
             const vl10uRow = document.createElement('tr');
 
-            // Add cells for 'one' and 'smet' values (max weights)
+            // Add cells for 'one' and 'smet' values (max weights) - get from maxWeights
             const oneCell = document.createElement('td');
-            oneCell.textContent = coefficients.vl10u['one'] !== undefined ? coefficients.vl10u['one'].toString() : '-';
-            if (coefficients.vl10u['one'] === undefined) oneCell.style.opacity = '0.3';
+            const maxWeightsForLoc = (routeData && routeData.maxWeights) ? routeData.maxWeights : {};
+            oneCell.textContent = (maxWeightsForLoc.vl10u && maxWeightsForLoc.vl10u['one'] !== null) ? maxWeightsForLoc.vl10u['one'].toString() : '-';
+            if (!(maxWeightsForLoc.vl10u && maxWeightsForLoc.vl10u['one'] !== null)) oneCell.style.opacity = '0.3';
             vl10uRow.appendChild(oneCell);
 
             const smetCell = document.createElement('td');
-            smetCell.textContent = coefficients.vl10u['smet'] !== undefined ? coefficients.vl10u['smet'].toString() : '-';
-            if (coefficients.vl10u['smet'] === undefined) smetCell.style.opacity = '0.3';
+            smetCell.textContent = (maxWeightsForLoc.vl10u && maxWeightsForLoc.vl10u['smet'] !== null) ? maxWeightsForLoc.vl10u['smet'].toString() : '-';
+            if (!(maxWeightsForLoc.vl10u && maxWeightsForLoc.vl10u['smet'] !== null)) smetCell.style.opacity = '0.3';
             vl10uRow.appendChild(smetCell);
 
             // Add locomotive type cell
@@ -1039,15 +1100,16 @@ class EnergyCalculator {
         if (coefficients.vl10k && Object.keys(coefficients.vl10k).length > 0) {
             const vl10kRow = document.createElement('tr');
 
-            // Add cells for 'one' and 'smet' values (max weights)
+            // Add cells for 'one' and 'smet' values (max weights) - get from maxWeights
             const oneCell = document.createElement('td');
-            oneCell.textContent = coefficients.vl10k['one'] !== undefined ? coefficients.vl10k['one'].toString() : '-';
-            if (coefficients.vl10k['one'] === undefined) oneCell.style.opacity = '0.3';
+            const maxWeightsForLoc = (routeData && routeData.maxWeights) ? routeData.maxWeights : {};
+            oneCell.textContent = (maxWeightsForLoc.vl10k && maxWeightsForLoc.vl10k['one'] !== null) ? maxWeightsForLoc.vl10k['one'].toString() : '-';
+            if (!(maxWeightsForLoc.vl10k && maxWeightsForLoc.vl10k['one'] !== null)) oneCell.style.opacity = '0.3';
             vl10kRow.appendChild(oneCell);
 
             const smetCell = document.createElement('td');
-            smetCell.textContent = coefficients.vl10k['smet'] !== undefined ? coefficients.vl10k['smet'].toString() : '-';
-            if (coefficients.vl10k['smet'] === undefined) smetCell.style.opacity = '0.3';
+            smetCell.textContent = (maxWeightsForLoc.vl10k && maxWeightsForLoc.vl10k['smet'] !== null) ? maxWeightsForLoc.vl10k['smet'].toString() : '-';
+            if (!(maxWeightsForLoc.vl10k && maxWeightsForLoc.vl10k['smet'] !== null)) smetCell.style.opacity = '0.3';
             vl10kRow.appendChild(smetCell);
 
             // Add locomotive type cell
@@ -1072,15 +1134,16 @@ class EnergyCalculator {
         if (coefficients.vl10uk && Object.keys(coefficients.vl10uk).length > 0) {
             const vl10ukRow = document.createElement('tr');
 
-            // Add cells for 'one' and 'smet' values (max weights)
+            // Add cells for 'one' and 'smet' values (max weights) - get from maxWeights
             const oneCell = document.createElement('td');
-            oneCell.textContent = coefficients.vl10uk['one'] !== undefined ? coefficients.vl10uk['one'].toString() : '-';
-            if (coefficients.vl10uk['one'] === undefined) oneCell.style.opacity = '0.3';
+            const maxWeightsForLoc = (routeData && routeData.maxWeights) ? routeData.maxWeights : {};
+            oneCell.textContent = (maxWeightsForLoc.vl10uk && maxWeightsForLoc.vl10uk['one'] !== null) ? maxWeightsForLoc.vl10uk['one'].toString() : '-';
+            if (!(maxWeightsForLoc.vl10uk && maxWeightsForLoc.vl10uk['one'] !== null)) oneCell.style.opacity = '0.3';
             vl10ukRow.appendChild(oneCell);
 
             const smetCell = document.createElement('td');
-            smetCell.textContent = coefficients.vl10uk['smet'] !== undefined ? coefficients.vl10uk['smet'].toString() : '-';
-            if (coefficients.vl10uk['smet'] === undefined) smetCell.style.opacity = '0.3';
+            smetCell.textContent = (maxWeightsForLoc.vl10uk && maxWeightsForLoc.vl10uk['smet'] !== null) ? maxWeightsForLoc.vl10uk['smet'].toString() : '-';
+            if (!(maxWeightsForLoc.vl10uk && maxWeightsForLoc.vl10uk['smet'] !== null)) smetCell.style.opacity = '0.3';
             vl10ukRow.appendChild(smetCell);
 
             // Add locomotive type cell
@@ -1105,15 +1168,16 @@ class EnergyCalculator {
         if (coefficients['2es6'] && Object.keys(coefficients['2es6']).length > 0) {
             const es6Row = document.createElement('tr');
 
-            // Add cells for 'one' and 'smet' values (max weights)
+            // Add cells for 'one' and 'smet' values (max weights) - get from maxWeights
             const oneCell = document.createElement('td');
-            oneCell.textContent = coefficients['2es6']['one'] !== undefined ? coefficients['2es6']['one'].toString() : '-';
-            if (coefficients['2es6']['one'] === undefined) oneCell.style.opacity = '0.3';
+            const maxWeightsForLoc = (routeData && routeData.maxWeights) ? routeData.maxWeights : {};
+            oneCell.textContent = (maxWeightsForLoc['2es6'] && maxWeightsForLoc['2es6']['one'] !== null) ? maxWeightsForLoc['2es6']['one'].toString() : '-';
+            if (!(maxWeightsForLoc['2es6'] && maxWeightsForLoc['2es6']['one'] !== null)) oneCell.style.opacity = '0.3';
             es6Row.appendChild(oneCell);
 
             const smetCell = document.createElement('td');
-            smetCell.textContent = coefficients['2es6']['smet'] !== undefined ? coefficients['2es6']['smet'].toString() : '-';
-            if (coefficients['2es6']['smet'] === undefined) smetCell.style.opacity = '0.3';
+            smetCell.textContent = (maxWeightsForLoc['2es6'] && maxWeightsForLoc['2es6']['smet'] !== null) ? maxWeightsForLoc['2es6']['smet'].toString() : '-';
+            if (!(maxWeightsForLoc['2es6'] && maxWeightsForLoc['2es6']['smet'] !== null)) smetCell.style.opacity = '0.3';
             es6Row.appendChild(smetCell);
 
             // Add locomotive type cell
@@ -1252,17 +1316,17 @@ class EnergyCalculator {
             
             // Check if route has specific max weights for 'one' or 'smet' operations
             let hasSpecificWeights = false;
-            if (route.coefficients) {
-                for (const locType in route.coefficients) {
-                    const locData = route.coefficients[locType];
-                    if (locData['one'] !== undefined || locData['smet'] !== undefined) {
+            if (route.maxWeights) {
+                for (const locType in route.maxWeights) {
+                    const locData = route.maxWeights[locType];
+                    if (locData['one'] !== null || locData['smet'] !== null) {
                         optionText += ', ';
-                        if (locData['one'] !== undefined) {
+                        if (locData['one'] !== null) {
                             optionText += `Один: ${locData['one']}т`;
                             hasSpecificWeights = true;
                         }
-                        if (locData['smet'] !== undefined) {
-                            if (locData['one'] !== undefined) optionText += ', ';
+                        if (locData['smet'] !== null) {
+                            if (locData['one'] !== null) optionText += ', ';
                             optionText += `СМЕТ: ${locData['smet']}т`;
                             hasSpecificWeights = true;
                         }

@@ -9,6 +9,64 @@
     flex-wrap: wrap;
 }
 
+/* Detailed Calculation Breakdown */
+.detailed-calculation {
+    margin-top: 1.5rem;
+    padding: 1rem;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+}
+
+.calculation-breakdown h4 {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    color: var(--text-primary);
+    text-align: center;
+}
+
+.formula-breakdown {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.breakdown-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.25rem 0;
+    border-bottom: 1px solid var(--border-color-light);
+}
+
+.breakdown-row:last-child {
+    border-bottom: none;
+}
+
+.breakdown-label {
+    font-weight: 600;
+    color: var(--text-secondary);
+    min-width: 200px;
+}
+
+.breakdown-value {
+    color: var(--text-primary);
+    font-weight: 500;
+    text-align: right;
+}
+
+.formula-row {
+    margin-top: 0.5rem;
+    padding-top: 0.5rem;
+    border-top: 2px solid var(--accent-color);
+    font-style: italic;
+}
+
+.calculation-row {
+    font-family: 'Courier New', monospace;
+    font-weight: bold;
+    color: var(--accent-color);
+}
+
 .btn-secondary {
     background: var(--bg-secondary);
     color: var(--text-primary);

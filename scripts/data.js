@@ -139,7 +139,14 @@ function parseRouteFromMarkdown(content, filename) {
             distance: 0,
             travelTime: 0, // Время в пути
             description: `Маршрут из файла ${filename}`,
-            coefficients: {
+            maxWeights: { // Separate storage for max weights
+                vl10: { one: null, smet: null },
+                vl10u: { one: null, smet: null },
+                '2es6': { one: null, smet: null },
+                vl10k: { one: null, smet: null },
+                vl10uk: { one: null, smet: null }
+            },
+            coefficients: { // Only energy consumption coefficients
                 vl10: {},
                 vl10u: {},
                 '2es6': {},
@@ -222,13 +229,13 @@ function parseRouteFromMarkdown(content, filename) {
                             // First two columns are max weights for 'one' and 'smet'
                             const oneWeight = parseFloat(cells[0]);
                             const smetWeight = parseFloat(cells[1]);
-                            
+
                             if (!isNaN(oneWeight)) {
-                                route.coefficients.vl10['one'] = oneWeight;
+                                route.maxWeights.vl10.one = oneWeight;
                                 console.log(`Set ВЛ10 max weight for 'one': ${oneWeight}`);
                             }
                             if (!isNaN(smetWeight)) {
-                                route.coefficients.vl10['smet'] = smetWeight;
+                                route.maxWeights.vl10.smet = smetWeight;
                                 console.log(`Set ВЛ10 max weight for 'smet': ${smetWeight}`);
                             }
                             
@@ -252,13 +259,13 @@ function parseRouteFromMarkdown(content, filename) {
                             // First two columns are max weights for 'one' and 'smet'
                             const oneWeight = parseFloat(cells[0]);
                             const smetWeight = parseFloat(cells[1]);
-                            
+
                             if (!isNaN(oneWeight)) {
-                                route.coefficients.vl10u['one'] = oneWeight;
+                                route.maxWeights.vl10u.one = oneWeight;
                                 console.log(`Set ВЛ10У max weight for 'one': ${oneWeight}`);
                             }
                             if (!isNaN(smetWeight)) {
-                                route.coefficients.vl10u['smet'] = smetWeight;
+                                route.maxWeights.vl10u.smet = smetWeight;
                                 console.log(`Set ВЛ10У max weight for 'smet': ${smetWeight}`);
                             }
                             
@@ -282,13 +289,13 @@ function parseRouteFromMarkdown(content, filename) {
                             // First two columns are max weights for 'one' and 'smet'
                             const oneWeight = parseFloat(cells[0]);
                             const smetWeight = parseFloat(cells[1]);
-                            
+
                             if (!isNaN(oneWeight)) {
-                                route.coefficients.vl10k['one'] = oneWeight;
+                                route.maxWeights.vl10k.one = oneWeight;
                                 console.log(`Set ВЛ10К max weight for 'one': ${oneWeight}`);
                             }
                             if (!isNaN(smetWeight)) {
-                                route.coefficients.vl10k['smet'] = smetWeight;
+                                route.maxWeights.vl10k.smet = smetWeight;
                                 console.log(`Set ВЛ10К max weight for 'smet': ${smetWeight}`);
                             }
                             
@@ -312,13 +319,13 @@ function parseRouteFromMarkdown(content, filename) {
                             // First two columns are max weights for 'one' and 'smet'
                             const oneWeight = parseFloat(cells[0]);
                             const smetWeight = parseFloat(cells[1]);
-                            
+
                             if (!isNaN(oneWeight)) {
-                                route.coefficients.vl10uk['one'] = oneWeight;
+                                route.maxWeights.vl10uk.one = oneWeight;
                                 console.log(`Set ВЛ10УК max weight for 'one': ${oneWeight}`);
                             }
                             if (!isNaN(smetWeight)) {
-                                route.coefficients.vl10uk['smet'] = smetWeight;
+                                route.maxWeights.vl10uk.smet = smetWeight;
                                 console.log(`Set ВЛ10УК max weight for 'smet': ${smetWeight}`);
                             }
                             
@@ -342,13 +349,13 @@ function parseRouteFromMarkdown(content, filename) {
                             // First two columns are max weights for 'one' and 'smet'
                             const oneWeight = parseFloat(cells[0]);
                             const smetWeight = parseFloat(cells[1]);
-                            
+
                             if (!isNaN(oneWeight)) {
-                                route.coefficients['2es6']['one'] = oneWeight;
+                                route.maxWeights['2es6'].one = oneWeight;
                                 console.log(`Set 2ЭС6 max weight for 'one': ${oneWeight}`);
                             }
                             if (!isNaN(smetWeight)) {
-                                route.coefficients['2es6']['smet'] = smetWeight;
+                                route.maxWeights['2es6'].smet = smetWeight;
                                 console.log(`Set 2ЭС6 max weight for 'smet': ${smetWeight}`);
                             }
                             
@@ -412,6 +419,8 @@ function getRouteData(routeCode) {
 }
 
 function getEnergyCoefficient(locomotiveType, axleLoad, routeData = null, locomotiveCount = 1) {
+    console.log(`Debug: Getting energy coefficient for ${locomotiveType}, axle load: ${axleLoad}, locomotive count: ${locomotiveCount}`);
+    
     // Only use route-specific coefficients, no fallback to standard coefficients
     if (routeData && routeData.coefficients) {
         // Map locomotive types to their corresponding coefficient arrays
@@ -420,24 +429,36 @@ function getEnergyCoefficient(locomotiveType, axleLoad, routeData = null, locomo
         // Check for exact locomotive type match
         if (routeData.coefficients[locomotiveType]) {
             coefficientArray = routeData.coefficients[locomotiveType];
+            console.log(`Found coefficient array for ${locomotiveType}:`, coefficientArray);
         }
         // Special handling for ВЛ10 (which might be represented differently)
         else if (locomotiveType === 'vl10' && routeData.coefficients['vl10']) {
             coefficientArray = routeData.coefficients['vl10'];
+            console.log(`Found coefficient array for vl10:`, coefficientArray);
         }
         // Fallback to other similar types if needed
         else if (locomotiveType === 'vl10u' && routeData.coefficients['vl10']) {
             coefficientArray = routeData.coefficients['vl10'];
+            console.log(`Found coefficient array for vl10 (fallback):`, coefficientArray);
         }
 
         if (coefficientArray) {
             const roundedAxleLoad = Math.round(axleLoad);
             const customCoefficients = coefficientArray;
 
+            console.log(`Rounded axle load: ${roundedAxleLoad}`);
+            console.log(`Available coefficients:`, customCoefficients);
+
+            // NOTE: Special values 'one' and 'smet' are for max weight limits, not for energy consumption calculation
+            // They should not be returned as energy coefficients for consumption calculation
+            // Only use them for validation purposes (checked elsewhere)
+            // Skip returning these values for energy consumption calculation
+
             // Try exact match for regular axle loads
             if (customCoefficients[roundedAxleLoad] !== undefined) {
                 // Make sure it's a numeric key (not 'one' or 'smet')
                 if (!isNaN(roundedAxleLoad)) {
+                    console.log(`Returning exact match coefficient for load ${roundedAxleLoad}: ${customCoefficients[roundedAxleLoad]}`);
                     return customCoefficients[roundedAxleLoad];
                 }
             }
@@ -447,7 +468,9 @@ function getEnergyCoefficient(locomotiveType, axleLoad, routeData = null, locomo
                 .filter(key => !isNaN(key) && key !== 'one' && key !== 'smet') // Exclude special values
                 .map(Number)
                 .sort((a, b) => a - b);
-                
+
+            console.log(`Available loads for interpolation:`, availableLoads);
+
             if (availableLoads.length > 0) {
                 let closestLoad = availableLoads[0];
                 let minDiff = Math.abs(roundedAxleLoad - closestLoad);
@@ -460,12 +483,14 @@ function getEnergyCoefficient(locomotiveType, axleLoad, routeData = null, locomo
                     }
                 }
 
+                console.log(`Closest load to ${roundedAxleLoad} is ${closestLoad}, returning coefficient: ${customCoefficients[closestLoad]}`);
                 return customCoefficients[closestLoad];
             }
         }
     }
 
     // No coefficients available from route file
+    console.log('No coefficients found, returning null');
     return null;
 }
 
