@@ -417,22 +417,26 @@
     font-size: 1.2rem; /* Smaller font */
 }
 
-.route-distance {
-    font-size: 1.1rem;
+.route-distance,
+.route-max-weight,
+.route-travel-time {
+    font-size: 1rem;
     margin-bottom: 0.5rem; /* Reduced margin */
     padding: 0.75rem;
     background: var(--accent-light);
     border-radius: 8px;
     border-left: 4px solid var(--accent-color);
+    display: inline-block; /* Display side by side */
+    margin-right: 0.5rem; /* Space between elements */
 }
 
-.route-travel-time {
-    font-size: 1rem; /* Smaller font */
-    margin-bottom: 1rem; /* Margin after travel time */
-    padding: 0.75rem;
-    background: var(--accent-light);
-    border-radius: 8px;
-    border-left: 4px solid var(--accent-color);
+.route-info-card {
+    background: var(--card-bg);
+    border: 2px solid var(--accent-color);
+    border-radius: 12px;
+    padding: 1.2rem; /* Reduced padding */
+    box-shadow: 0 4px 16px var(--shadow);
+    overflow-x: auto; /* Allow horizontal scrolling if needed */
 }
 
 .route-info-card .btn-secondary {
@@ -456,6 +460,7 @@
     margin: 0.75rem 0; /* Reduced margin */
     border-radius: 8px;
     border: 1px solid var(--border-color);
+    max-width: 100%; /* Ensure container fits within its parent */
 }
 
 .coefficients-table {
@@ -463,6 +468,7 @@
     border-collapse: collapse;
     font-size: 0.75rem; /* More compact font */
     background: var(--bg-secondary);
+    min-width: 600px; /* Minimum width to accommodate all columns */
 }
 
 .coefficients-table th,
@@ -470,6 +476,7 @@
     padding: 0.3rem 0.2rem; /* Reduced padding */
     text-align: center;
     border: 1px solid var(--border-color);
+    white-space: nowrap; /* Prevent text wrapping in table cells */
 }
 
 .coefficients-table th {
@@ -496,6 +503,12 @@
 
 .coefficients-table tbody tr:hover {
     background: var(--input-bg);
+}
+
+.highlighted-coefficient {
+    background-color: var(--accent-color) !important;
+    color: white;
+    font-weight: bold;
 }
 
 .no-coefficients {

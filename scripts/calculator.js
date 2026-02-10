@@ -127,11 +127,11 @@ class EnergyCalculator {
         const routeSelect = document.getElementById('route');
         const trainWeight = document.getElementById('trainWeight');
         const trainAxles = document.getElementById('trainAxles');
-        
-        if (routeSelect && routeSelect.value && 
-            trainWeight && trainWeight.value && 
+
+        if (routeSelect && routeSelect.value &&
+            trainWeight && trainWeight.value &&
             trainAxles && trainAxles.value) {
-            
+
             const formData = this.getFormData();
             const result = this.calculateEnergyConsumption(formData);
 
@@ -144,11 +144,11 @@ class EnergyCalculator {
     addLocomotive() {
         this.locomotiveCount++;
         const locomotiveContainer = document.getElementById('locomotiveContainer');
-        
+
         const locomotiveCard = document.createElement('div');
         locomotiveCard.className = 'locomotive-card-wrapper';
         locomotiveCard.id = `locomotiveCard${this.locomotiveCount}`;
-        
+
         locomotiveCard.innerHTML = `
             <div class="locomotive-card locomotive-vl10u" onclick="toggleLocomotiveSelection(${this.locomotiveCount})">
                 <div class="locomotive-info">
@@ -200,9 +200,9 @@ class EnergyCalculator {
             </div>
             <button class="remove-locomotive-btn" onclick="removeLocomotive(${this.locomotiveCount})">×</button>
         `;
-        
+
         locomotiveContainer.appendChild(locomotiveCard);
-        
+
         // Trigger recalculation after adding locomotive
         this.performRealTimeCalculation();
         this.highlightSelectedCoefficient();
@@ -327,26 +327,26 @@ class EnergyCalculator {
         const locomotives = [];
         let activeLocomotiveCount = 0; // Count of active (non-cold) locomotives
         let coldLocomotiveCount = 0; // Count of cold locomotives
-        
+
         for (let i = 1; i <= this.locomotiveCount; i++) {
             const locomotiveCard = document.querySelector(`#locomotiveCard${i} .locomotive-card`);
             if (!locomotiveCard) continue;
-            
+
             const locomotiveType = locomotiveCard.getAttribute('data-type') || 'vl10u';
             const locomotiveName = locomotiveCard.querySelector('h3').textContent;
             // Use the data-length attribute if available, otherwise extract from text
-            const locomotiveLength = locomotiveCard.getAttribute('data-length') ? 
-                parseFloat(locomotiveCard.getAttribute('data-length')) : 
+            const locomotiveLength = locomotiveCard.getAttribute('data-length') ?
+                parseFloat(locomotiveCard.getAttribute('data-length')) :
                 parseFloat(locomotiveCard.querySelector('p').textContent.replace('Длина: ', '').replace('м', ''));
-            
+
             const locomotive = {
                 type: locomotiveType,
                 name: locomotiveName,
                 length: locomotiveLength
             };
-            
+
             locomotives.push(locomotive);
-            
+
             // Count active vs cold locomotives
             if (locomotiveType === 'cold') {
                 coldLocomotiveCount++;
@@ -354,16 +354,16 @@ class EnergyCalculator {
                 activeLocomotiveCount++;
             }
         }
-        
+
         // Get train parameters
         const trainWeightInput = document.getElementById('trainWeight');
         const trainAxlesInput = document.getElementById('trainAxles');
         const actualWagonsInput = document.getElementById('actualWagons');
         const conditionalWagonsInput = document.getElementById('conditionalWagons');
-        
+
         const routeSelect = document.getElementById('route');
         const wagonCountInput = document.getElementById('wagonCount');
-        
+
         return {
             locomotives: locomotives,
             locomotiveCount: activeLocomotiveCount, // Only count active locomotives for traction
@@ -387,9 +387,9 @@ class EnergyCalculator {
                     error: 'Нет активных локомотивов для тяги'
                 };
             }
-            
+
             const locomotiveData = activeLocomotives[0]; // Using first active locomotive for calculation
-            
+
             // Get route data (standard routes only)
             let routeData = getRouteData(data.route) || (window.ROUTE_DATA && window.ROUTE_DATA[data.route]);
 
@@ -407,17 +407,50 @@ class EnergyCalculator {
                     error: 'Количество осей не может быть 0'
                 };
             }
-            
+
             const axleLoad = data.trainWeight / data.axleCount;
 
-            // Get energy coefficient based on axle load
-            const coefficient = getEnergyCoefficient(locomotiveData.type, axleLoad, routeData);
+            // Get energy coefficient based on axle load and locomotive count
+            const coefficient = getEnergyCoefficient(locomotiveData.type, axleLoad, routeData, data.locomotiveCount);
 
             if (!coefficient) {
                 return {
                     success: false,
                     error: 'Не удалось найти коэффициент для данной нагрузки на ось'
                 };
+            }
+
+            // Check if train weight exceeds max allowed weight for the route
+            if (routeData.maxWeight && routeData.maxWeight > 0 && data.trainWeight > routeData.maxWeight) {
+                return {
+                    success: false,
+                    error: `Вес поезда (${data.trainWeight} т) превышает допустимый вес для маршрута (${routeData.maxWeight} т)`
+                };
+            }
+
+            // Check if train weight exceeds max allowed weight for single or multiple locomotive operation
+            if (data.locomotiveCount === 1) {
+                // Check 'one' max weight for each locomotive type
+                if (routeData.coefficients && routeData.coefficients[locomotiveData.type]) {
+                    const maxWeightOne = routeData.coefficients[locomotiveData.type]['one'];
+                    if (maxWeightOne && maxWeightOne > 0 && data.trainWeight > maxWeightOne) {
+                        return {
+                            success: false,
+                            error: `Вес поезда (${data.trainWeight} т) превышает допустимый вес для одиночного локомотива (${maxWeightOne} т)`
+                        };
+                    }
+                }
+            } else if (data.locomotiveCount > 1) {
+                // Check 'smet' max weight for each locomotive type
+                if (routeData.coefficients && routeData.coefficients[locomotiveData.type]) {
+                    const maxWeightSmet = routeData.coefficients[locomotiveData.type]['smet'];
+                    if (maxWeightSmet && maxWeightSmet > 0 && data.trainWeight > maxWeightSmet) {
+                        return {
+                            success: false,
+                            error: `Вес поезда (${data.trainWeight} т) превышает допустимый вес для режима СМЕТ (${maxWeightSmet} т)`
+                        };
+                    }
+                }
             }
 
             // Calculate energy consumption using the formula:
@@ -435,7 +468,7 @@ class EnergyCalculator {
                         activeLocomotiveLength += loc.length;
                     }
                 }
-                
+
                 // Calculate cold locomotive length based on individual lengths
                 let coldLocomotiveLength = 0;
                 for (const loc of data.locomotives) {
@@ -443,9 +476,9 @@ class EnergyCalculator {
                         coldLocomotiveLength += loc.length;
                     }
                 }
-                
+
                 const conditionalWagonLength = data.conditionalWagons * WAGON_LENGTH;
-                
+
                 trainLength = activeLocomotiveLength + coldLocomotiveLength + conditionalWagonLength;
             }
 
@@ -563,9 +596,9 @@ class EnergyCalculator {
                 if (axleLoad > 25) {
                     isValid = false;
                     errorMessage = 'Нагрузка на ось превышает допустимые значения (>25 т/ось)';
-                } else if (axleLoad < 5) {
+                } else if (axleLoad < 1) { // Changed minimum from 5 to 1 to allow for special cases like "Один"
                     isValid = false;
-                    errorMessage = 'Нагрузка на ось слишком мала (<5 т/ось)';
+                    errorMessage = 'Нагрузка на ось должна быть не менее 1 т/ось';
                 }
             }
         }
@@ -611,6 +644,27 @@ class EnergyCalculator {
             `- Фактические вагоны: ${data.formData.actualWagons}`,
             `- Условные вагоны: ${data.formData.conditionalWagons}`,
             `- Маршрут: ${data.route.name} (${data.route.distance} км)`,
+            data.route.maxWeight ? `- Допустимый вес: ${data.route.maxWeight} т` : '',
+            // Add specific max weights for 'one' and 'smet' if available
+            (() => {
+                if (data.route.coefficients) {
+                    for (const locType in data.route.coefficients) {
+                        const locData = data.route.coefficients[locType];
+                        if (locData['one'] !== undefined || locData['smet'] !== undefined) {
+                            let weightsStr = '- Максимальные веса: ';
+                            if (locData['one'] !== undefined) {
+                                weightsStr += `Один: ${locData['one']}т`;
+                            }
+                            if (locData['smet'] !== undefined) {
+                                if (locData['one'] !== undefined) weightsStr += ', ';
+                                weightsStr += `СМЕТ: ${locData['smet']}т`;
+                            }
+                            return weightsStr;
+                        }
+                    }
+                }
+                return ''; // Return empty string if no specific weights
+            })(),
             '',
             'Результаты:',
             `- Нагрузка на ось: ${data.axleLoad.toFixed(2)} т/ось`,
@@ -708,6 +762,26 @@ class EnergyCalculator {
                     Факт. вагоны: ${item.formData.actualWagons}, Усл. вагоны: ${item.formData.conditionalWagons},
                     Нагрузка: ${item.axleLoad.toFixed(2)}т/ось
                     ${item.trainLength ? `, Длина: ${item.trainLength}м` : ''}
+                    ${item.route.maxWeight ? `, Доп. вес: ${item.route.maxWeight}т` : ''}
+                    \${(() => {
+                        if (item.route.coefficients) {
+                            for (const locType in item.route.coefficients) {
+                                const locData = item.route.coefficients[locType];
+                                if (locData['one'] !== undefined || locData['smet'] !== undefined) {
+                                    let weightsStr = ', Макс.веса: ';
+                                    if (locData['one'] !== undefined) {
+                                        weightsStr += \`Один: \${locData['one']}т\`;
+                                    }
+                                    if (locData['smet'] !== undefined) {
+                                        if (locData['one'] !== undefined) weightsStr += ', ';
+                                        weightsStr += \`СМЕТ: \${locData['smet']}т\`;
+                                    }
+                                    return weightsStr;
+                                }
+                            }
+                        }
+                        return '';
+                    })()}
                 </div>
                 <div class="history-result">
                     Норма: ${item.energyConsumption.toFixed(2)} кВт⋅ч
@@ -743,6 +817,7 @@ class EnergyCalculator {
         const routeInfoDisplay = document.getElementById('routeInfoDisplay');
         const selectedRouteName = document.getElementById('selectedRouteName');
         const selectedRouteDistance = document.getElementById('selectedRouteDistance');
+        const selectedRouteMaxWeight = document.getElementById('selectedRouteMaxWeight');
         const selectedRouteTravelTime = document.getElementById('selectedRouteTravelTime'); // Новый элемент для времени
         const coefficientsSection = document.getElementById('coefficientsSection');
         const noCoefficients = document.getElementById('noCoefficients');
@@ -765,7 +840,46 @@ class EnergyCalculator {
         // Display route information
         selectedRouteName.textContent = routeData.name;
         selectedRouteDistance.textContent = `${routeData.distance} км`;
-        
+
+        // Display max weight if available
+        if (selectedRouteMaxWeight) {
+            // Check if we have specific max weights for 'one' or 'smet' operations
+            let maxWeightText = '';
+            let hasSpecificWeights = false;
+            
+            // Check if route has coefficient data with specific weights
+            if (routeData.coefficients) {
+                // Loop through all locomotive types to collect all available weights
+                for (const locType in routeData.coefficients) {
+                    const locData = routeData.coefficients[locType];
+                    if (locData['one'] !== undefined || locData['smet'] !== undefined) {
+                        if (locData['one'] !== undefined) {
+                            if (maxWeightText) maxWeightText += ', ';
+                            maxWeightText += `Один: ${locData['one']} т`;
+                            hasSpecificWeights = true;
+                        }
+                        if (locData['smet'] !== undefined) {
+                            if (maxWeightText) maxWeightText += ', ';
+                            maxWeightText += `СМЕТ: ${locData['smet']} т`;
+                            hasSpecificWeights = true;
+                        }
+                    }
+                }
+            }
+            
+            if (hasSpecificWeights) {
+                selectedRouteMaxWeight.textContent = maxWeightText;
+                // Make sure the parent element (the p tag) is displayed
+                selectedRouteMaxWeight.parentElement.style.display = 'block';
+            } else if (routeData.maxWeight && routeData.maxWeight > 0) {
+                selectedRouteMaxWeight.textContent = `${routeData.maxWeight} т`;
+                // Make sure the parent element (the p tag) is displayed
+                selectedRouteMaxWeight.parentElement.style.display = 'block';
+            } else {
+                selectedRouteMaxWeight.parentElement.style.display = 'none'; // Hide if no max weight
+            }
+        }
+
         // Display travel time if available
         console.log(`Processing route: ${routeData.name}, travelTime: ${routeData.travelTime}`);
         if (selectedRouteTravelTime) {
@@ -783,13 +897,14 @@ class EnergyCalculator {
             console.log('selectedRouteTravelTime element not found');
         }
 
-        // Check if route has custom coefficients
-        const hasCoefficients = routeData.coefficients &&
-            (Object.keys(routeData.coefficients.vl10 || {}).length > 0 ||
-             Object.keys(routeData.coefficients.vl10u || {}).length > 0 ||
-             Object.keys(routeData.coefficients.vl10k || {}).length > 0 ||
-             Object.keys(routeData.coefficients.vl10uk || {}).length > 0 ||
-             Object.keys(routeData.coefficients['2es6'] || {}).length > 0);
+        // Check if route has custom coefficients (any specific values, including 'one' and 'smet')
+        const hasCoefficients = routeData.coefficients && (
+            Object.keys(routeData.coefficients.vl10 || {}).length > 0 ||
+            Object.keys(routeData.coefficients.vl10u || {}).length > 0 ||
+            Object.keys(routeData.coefficients.vl10k || {}).length > 0 ||
+            Object.keys(routeData.coefficients.vl10uk || {}).length > 0 ||
+            Object.keys(routeData.coefficients['2es6'] || {}).length > 0
+        );
 
         if (hasCoefficients) {
             // Initially hide the coefficients table
@@ -838,10 +953,41 @@ class EnergyCalculator {
     populateCoefficientsTable(coefficients, tableBody) {
         tableBody.innerHTML = '';
 
+        // Get header row to dynamically adjust columns
+        const headerRow = document.getElementById('coefficientsHeaderRow');
+        if (headerRow) {
+            // Clear existing dynamic headers except the first few (Один, СМЕТ, Локомотив)
+            while (headerRow.children.length > 3) {
+                headerRow.removeChild(headerRow.lastChild);
+            }
+
+            // Add standard axle load headers (6-23)
+            for (let axle = 6; axle <= 23; axle++) {
+                const th = document.createElement('th');
+                th.textContent = axle.toString();
+                headerRow.appendChild(th);
+            }
+        }
+
         // Create rows for each locomotive type
         if (coefficients.vl10 && Object.keys(coefficients.vl10).length > 0) {
             const vl10Row = document.createElement('tr');
-            vl10Row.innerHTML = '<td>ВЛ10</td>';
+
+            // Add cells for 'one' and 'smet' values (max weights)
+            const oneCell = document.createElement('td');
+            oneCell.textContent = coefficients.vl10['one'] !== undefined ? coefficients.vl10['one'].toString() : '-';
+            if (coefficients.vl10['one'] === undefined) oneCell.style.opacity = '0.3';
+            vl10Row.appendChild(oneCell);
+
+            const smetCell = document.createElement('td');
+            smetCell.textContent = coefficients.vl10['smet'] !== undefined ? coefficients.vl10['smet'].toString() : '-';
+            if (coefficients.vl10['smet'] === undefined) smetCell.style.opacity = '0.3';
+            vl10Row.appendChild(smetCell);
+
+            // Add locomotive type cell
+            const typeCell = document.createElement('td');
+            typeCell.textContent = 'ВЛ10';
+            vl10Row.appendChild(typeCell);
 
             // Add coefficients for axle loads 6-23
             for (let axle = 6; axle <= 23; axle++) {
@@ -859,7 +1005,22 @@ class EnergyCalculator {
 
         if (coefficients.vl10u && Object.keys(coefficients.vl10u).length > 0) {
             const vl10uRow = document.createElement('tr');
-            vl10uRow.innerHTML = '<td>ВЛ10У</td>';
+
+            // Add cells for 'one' and 'smet' values (max weights)
+            const oneCell = document.createElement('td');
+            oneCell.textContent = coefficients.vl10u['one'] !== undefined ? coefficients.vl10u['one'].toString() : '-';
+            if (coefficients.vl10u['one'] === undefined) oneCell.style.opacity = '0.3';
+            vl10uRow.appendChild(oneCell);
+
+            const smetCell = document.createElement('td');
+            smetCell.textContent = coefficients.vl10u['smet'] !== undefined ? coefficients.vl10u['smet'].toString() : '-';
+            if (coefficients.vl10u['smet'] === undefined) smetCell.style.opacity = '0.3';
+            vl10uRow.appendChild(smetCell);
+
+            // Add locomotive type cell
+            const typeCell = document.createElement('td');
+            typeCell.textContent = 'ВЛ10У';
+            vl10uRow.appendChild(typeCell);
 
             // Add coefficients for axle loads 6-23
             for (let axle = 6; axle <= 23; axle++) {
@@ -877,7 +1038,22 @@ class EnergyCalculator {
 
         if (coefficients.vl10k && Object.keys(coefficients.vl10k).length > 0) {
             const vl10kRow = document.createElement('tr');
-            vl10kRow.innerHTML = '<td>ВЛ10К</td>';
+
+            // Add cells for 'one' and 'smet' values (max weights)
+            const oneCell = document.createElement('td');
+            oneCell.textContent = coefficients.vl10k['one'] !== undefined ? coefficients.vl10k['one'].toString() : '-';
+            if (coefficients.vl10k['one'] === undefined) oneCell.style.opacity = '0.3';
+            vl10kRow.appendChild(oneCell);
+
+            const smetCell = document.createElement('td');
+            smetCell.textContent = coefficients.vl10k['smet'] !== undefined ? coefficients.vl10k['smet'].toString() : '-';
+            if (coefficients.vl10k['smet'] === undefined) smetCell.style.opacity = '0.3';
+            vl10kRow.appendChild(smetCell);
+
+            // Add locomotive type cell
+            const typeCell = document.createElement('td');
+            typeCell.textContent = 'ВЛ10К';
+            vl10kRow.appendChild(typeCell);
 
             // Add coefficients for axle loads 6-23
             for (let axle = 6; axle <= 23; axle++) {
@@ -895,7 +1071,22 @@ class EnergyCalculator {
 
         if (coefficients.vl10uk && Object.keys(coefficients.vl10uk).length > 0) {
             const vl10ukRow = document.createElement('tr');
-            vl10ukRow.innerHTML = '<td>ВЛ10УК</td>';
+
+            // Add cells for 'one' and 'smet' values (max weights)
+            const oneCell = document.createElement('td');
+            oneCell.textContent = coefficients.vl10uk['one'] !== undefined ? coefficients.vl10uk['one'].toString() : '-';
+            if (coefficients.vl10uk['one'] === undefined) oneCell.style.opacity = '0.3';
+            vl10ukRow.appendChild(oneCell);
+
+            const smetCell = document.createElement('td');
+            smetCell.textContent = coefficients.vl10uk['smet'] !== undefined ? coefficients.vl10uk['smet'].toString() : '-';
+            if (coefficients.vl10uk['smet'] === undefined) smetCell.style.opacity = '0.3';
+            vl10ukRow.appendChild(smetCell);
+
+            // Add locomotive type cell
+            const typeCell = document.createElement('td');
+            typeCell.textContent = 'ВЛ10УК';
+            vl10ukRow.appendChild(typeCell);
 
             // Add coefficients for axle loads 6-23
             for (let axle = 6; axle <= 23; axle++) {
@@ -913,7 +1104,22 @@ class EnergyCalculator {
 
         if (coefficients['2es6'] && Object.keys(coefficients['2es6']).length > 0) {
             const es6Row = document.createElement('tr');
-            es6Row.innerHTML = '<td>2ЭС6</td>';
+
+            // Add cells for 'one' and 'smet' values (max weights)
+            const oneCell = document.createElement('td');
+            oneCell.textContent = coefficients['2es6']['one'] !== undefined ? coefficients['2es6']['one'].toString() : '-';
+            if (coefficients['2es6']['one'] === undefined) oneCell.style.opacity = '0.3';
+            es6Row.appendChild(oneCell);
+
+            const smetCell = document.createElement('td');
+            smetCell.textContent = coefficients['2es6']['smet'] !== undefined ? coefficients['2es6']['smet'].toString() : '-';
+            if (coefficients['2es6']['smet'] === undefined) smetCell.style.opacity = '0.3';
+            es6Row.appendChild(smetCell);
+
+            // Add locomotive type cell
+            const typeCell = document.createElement('td');
+            typeCell.textContent = '2ЭС6';
+            es6Row.appendChild(typeCell);
 
             // Add coefficients for axle loads 6-23
             for (let axle = 6; axle <= 23; axle++) {
@@ -942,43 +1148,67 @@ class EnergyCalculator {
                 cell.classList.remove('highlighted-coefficient');
             });
         }
-        
+
         // Get current form data to determine which coefficient should be highlighted
         const trainWeight = parseFloat(document.getElementById('trainWeight')?.value) || 0;
         const trainAxles = parseInt(document.getElementById('trainAxles')?.value) || 0;
         const routeSelect = document.getElementById('route');
         const routeValue = routeSelect ? routeSelect.value : '';
-        
+
         if (trainWeight > 0 && trainAxles > 0 && routeValue) {
             const axleLoad = trainWeight / trainAxles;
             const roundedAxleLoad = Math.round(axleLoad);
-            
+
             // Get selected locomotive type from the first locomotive card
             const locomotiveCard = document.querySelector('#locomotiveCard1 .locomotive-card');
             let selectedLocomotiveType = null;
-            
+
             if (locomotiveCard) {
                 selectedLocomotiveType = locomotiveCard.getAttribute('data-type') || 'vl10u';
             }
-            
-            if (selectedLocomotiveType && roundedAxleLoad >= 6 && roundedAxleLoad <= 23) {
+
+            if (selectedLocomotiveType) {
                 // Find the table cell corresponding to the selected locomotive and axle load
                 if (table) {
                     const rows = table.querySelectorAll('tbody tr');
-                    
+
                     for (const row of rows) {
-                        const locomotiveCell = row.cells[0];
+                        const locomotiveCell = row.cells[2]; // Locomotive type is in 3rd column (index 2)
                         if (locomotiveCell &&
                             ((selectedLocomotiveType === 'vl10u' && locomotiveCell.textContent.includes('ВЛ10У')) ||
                              (selectedLocomotiveType === 'vl10k' && locomotiveCell.textContent.includes('ВЛ10К')) ||
                              (selectedLocomotiveType === 'vl10uk' && locomotiveCell.textContent.includes('ВЛ10УК')) ||
                              (selectedLocomotiveType === '2es6' && locomotiveCell.textContent.includes('2ЭС6')))) {
-                            
-                            // Highlight the cell for the rounded axle load
-                            // Axle load 6 corresponds to column index 1 (first data column after locomotive name)
-                            const columnIndex = roundedAxleLoad - 6 + 1;
-                            if (row.cells[columnIndex]) {
-                                row.cells[columnIndex].classList.add('highlighted-coefficient');
+
+                            // Determine which cell to highlight based on locomotive count and axle load
+                            // In the new table format, 'Один' is column 0, 'СМЕТ' is column 1, locomotive type is column 2
+                            // Axle loads start from column 3
+                            const headerRow = document.getElementById('coefficientsHeaderRow');
+                            if (!headerRow) break; // Exit if header row is not found
+
+                            // Count active locomotives (excluding cold locomotives)
+                            const locomotiveCount = this.getFormData().locomotiveCount;
+
+                            // Highlight the "one" or "smet" max weight column based on locomotive count
+                            if (locomotiveCount === 1) {
+                                // Highlight the "Один" column (column 0)
+                                if (row.cells[0]) {
+                                    row.cells[0].classList.add('highlighted-coefficient');
+                                }
+                            } else if (locomotiveCount > 1) {
+                                // Highlight the "СМЕТ" column (column 1)
+                                if (row.cells[1]) {
+                                    row.cells[1].classList.add('highlighted-coefficient');
+                                }
+                            }
+
+                            // Highlight the coefficient for the calculated axle load
+                            if (roundedAxleLoad >= 6 && roundedAxleLoad <= 23) {
+                                // Axle load 6 corresponds to column index 3 (4th column), 7 to index 4, etc.
+                                const columnIndex = roundedAxleLoad - 6 + 3;
+                                if (row.cells[columnIndex]) {
+                                    row.cells[columnIndex].classList.add('highlighted-coefficient');
+                                }
                             }
                             break;
                         }
@@ -999,7 +1229,7 @@ class EnergyCalculator {
             console.log('Route select element not found');
             return;
         }
-        
+
         console.log('Updating route select dropdown with loaded routes...');
         console.log('Current ROUTE_DATA:', window.ROUTE_DATA);
 
@@ -1011,13 +1241,42 @@ class EnergyCalculator {
         // Add routes from window.ROUTE_DATA (loaded from files)
         const routeIds = Object.keys(window.ROUTE_DATA || {});
         console.log(`Adding ${routeIds.length} routes to dropdown:`, routeIds);
-        
+
         routeIds.forEach(routeId => {
             const route = (window.ROUTE_DATA || {})[routeId];
             console.log(`Adding route to dropdown: ${routeId} -> ${route.name} (${route.distance} км)`);
             const option = document.createElement('option');
             option.value = routeId;
-            option.textContent = `${route.name} (${route.distance} км)`;
+            // Include max weight in the option text if available
+            let optionText = `${route.name} (${route.distance} км`;
+            
+            // Check if route has specific max weights for 'one' or 'smet' operations
+            let hasSpecificWeights = false;
+            if (route.coefficients) {
+                for (const locType in route.coefficients) {
+                    const locData = route.coefficients[locType];
+                    if (locData['one'] !== undefined || locData['smet'] !== undefined) {
+                        optionText += ', ';
+                        if (locData['one'] !== undefined) {
+                            optionText += `Один: ${locData['one']}т`;
+                            hasSpecificWeights = true;
+                        }
+                        if (locData['smet'] !== undefined) {
+                            if (locData['one'] !== undefined) optionText += ', ';
+                            optionText += `СМЕТ: ${locData['smet']}т`;
+                            hasSpecificWeights = true;
+                        }
+                        break; // Just show the first locomotive type's weights
+                    }
+                }
+            }
+            
+            if (!hasSpecificWeights && route.maxWeight && route.maxWeight > 0) {
+                optionText += `, до ${route.maxWeight} т`;
+            }
+            
+            optionText += ')';
+            option.textContent = optionText;
             routeSelect.appendChild(option);
         });
 

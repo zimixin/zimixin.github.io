@@ -133,32 +133,34 @@ function parseRouteFromMarkdown(content, filename) {
         console.log(`Parsing route from file: ${filename}`);
         const lines = content.split('\n');
         console.log(`File contains ${lines.length} lines`);
-        
+
         let route = {
             name: '',
             distance: 0,
             travelTime: 0, // Время в пути
             description: `Маршрут из файла ${filename}`,
             coefficients: {
+                vl10: {},
                 vl10u: {},
                 '2es6': {},
                 vl10k: {},
                 vl10uk: {}
             }
         };
-        
+
         let parsingTable = false;
         let headerParsed = false;
-        
+        let headerCells = [];
+
         for (let i = 0; i < lines.length; i++) {
             const line = lines[i].trim();
-            
+
             // Parse route name (# Title)
             if (line.startsWith('#') && !line.startsWith('##')) {
                 route.name = line.substring(1).trim();
                 console.log(`Found route name: ${route.name}`);
             }
-            
+
             // Parse distance and travel time (using bullet points)
             else if (line.startsWith('-')) {
                 // Looking for distance pattern: "- XXX км"
@@ -167,15 +169,22 @@ function parseRouteFromMarkdown(content, filename) {
                     route.distance = parseInt(distanceMatch[1]);
                     console.log(`Found distance: ${route.distance} km`);
                 }
-                
+
                 // Looking for travel time pattern: "- XX,XX часа" or "- XX,XX часов"
                 const timeMatch = line.match(/\-\s*(\d+[,.]\d+)\s*час[ао]/);
                 if (timeMatch) {
                     route.travelTime = parseFloat(timeMatch[1].replace(',', '.'));
                     console.log(`Found travel time: ${route.travelTime} hours`);
                 }
+                
+                // Looking for max weight pattern: "- Допустимый вес: XXX т"
+                const weightMatch = line.match(/\-\s*Допустимый вес:\s*(\d+)\s*т/);
+                if (weightMatch) {
+                    route.maxWeight = parseInt(weightMatch[1]);
+                    console.log(`Found max weight: ${route.maxWeight} tons`);
+                }
             }
-            
+
             // Alternative: Parse distance (## Distance)
             else if (line.startsWith('##')) {
                 const distanceMatch = line.match(/##\s*(\d+)\s*км/);
@@ -184,83 +193,194 @@ function parseRouteFromMarkdown(content, filename) {
                     console.log(`Found distance: ${route.distance} km`);
                 }
             }
-            
+
             // Parse coefficient table
             else if (line.startsWith('|')) {
                 const cells = line.split('|').map(cell => cell.trim()).filter(cell => cell);
 
-                if (!headerParsed && cells[0].toLowerCase().includes('нагрузка')) {
+                if (!headerParsed && (cells[0].toLowerCase().includes('нагрузка') || cells[0].toLowerCase().includes('max вес'))) {
                     headerParsed = true;
                     parsingTable = true;
                     console.log('Found coefficient table header, starting to parse coefficients');
+                    console.log('Header cells:', cells);
                 } else if (parsingTable && cells.length > 1) {
-                    const locomotiveType = cells[0].toUpperCase();
+                    // Check if this is the row with "Один" and "СМЕТ" labels followed by numbers
+                    const hasOne = cells.some(cell => cell.toLowerCase().includes('один'));
+                    const hasSmet = cells.some(cell => cell.toLowerCase().includes('смет'));
+                    const hasNumbers = cells.some(cell => !isNaN(parseInt(cell.trim())) && parseInt(cell.trim()) >= 6 && parseInt(cell.trim()) <= 23);
+                    
+                    if (hasOne && hasSmet && hasNumbers) {
+                        // This is the header row with axle loads (6-23), store it as headerCells
+                        headerCells = cells;
+                        console.log('Found axle load header row:', headerCells);
+                    } else if (cells[2]?.toUpperCase() && (cells[2].toUpperCase().includes('ВЛ10') || cells[2].toUpperCase().includes('2ЭС6'))) {
+                        // This is a data row, check if it contains locomotive data
+                        const locomotiveType = cells[2]?.toUpperCase(); // Locomotive type is in 3rd column (index 2)
 
-                    if (locomotiveType.toUpperCase().includes('ВЛ10У') && !locomotiveType.toUpperCase().includes('ВЛ10УК')) {
-                        console.log(`Parsing ВЛ10У coefficients from line: ${line}`);
-                        // Parse ВЛ10У coefficients
-                        for (let j = 1; j < cells.length; j++) {
-                            const coeff = parseFloat(cells[j]);
-                            if (!isNaN(coeff)) {
-                                // Determine axle load from header row - assuming sequential from 6
-                                // The first data cell corresponds to axle load 6, second to 7, etc.
-                                const axleLoad = j + 5; // j starts from 1, so j+5 gives us 6, 7, 8...
-                                route.coefficients.vl10u[axleLoad] = coeff;
-                                console.log(`Set ВЛ10У coefficient for ${axleLoad} tons/axle: ${coeff}`);
+                        if (locomotiveType && locomotiveType.includes('ВЛ10') && !locomotiveType.includes('ВЛ10У') && !locomotiveType.includes('ВЛ10К') && !locomotiveType.includes('ВЛ10УК')) {
+                            console.log(`Parsing ВЛ10 coefficients from line: ${line}`);
+                            // First two columns are max weights for 'one' and 'smet'
+                            const oneWeight = parseFloat(cells[0]);
+                            const smetWeight = parseFloat(cells[1]);
+                            
+                            if (!isNaN(oneWeight)) {
+                                route.coefficients.vl10['one'] = oneWeight;
+                                console.log(`Set ВЛ10 max weight for 'one': ${oneWeight}`);
                             }
-                        }
-                    } else if (locomotiveType.toUpperCase().includes('ВЛ10К') && !locomotiveType.toUpperCase().includes('ВЛ10УК')) {
-                        console.log(`Parsing ВЛ10К coefficients from line: ${line}`);
-                        // Parse ВЛ10К coefficients
-                        for (let j = 1; j < cells.length; j++) {
-                            const coeff = parseFloat(cells[j]);
-                            if (!isNaN(coeff)) {
-                                // Determine axle load from header row - assuming sequential from 6
-                                // The first data cell corresponds to axle load 6, second to 7, etc.
-                                const axleLoad = j + 5; // j starts from 1, so j+5 gives us 6, 7, 8...
-                                route.coefficients.vl10k[axleLoad] = coeff;
-                                console.log(`Set ВЛ10К coefficient for ${axleLoad} tons/axle: ${coeff}`);
+                            if (!isNaN(smetWeight)) {
+                                route.coefficients.vl10['smet'] = smetWeight;
+                                console.log(`Set ВЛ10 max weight for 'smet': ${smetWeight}`);
                             }
-                        }
-                    } else if (locomotiveType.toUpperCase().includes('ВЛ10УК')) {
-                        console.log(`Parsing ВЛ10УК coefficients from line: ${line}`);
-                        // Parse ВЛ10УК coefficients
-                        for (let j = 1; j < cells.length; j++) {
-                            const coeff = parseFloat(cells[j]);
-                            if (!isNaN(coeff)) {
-                                // Determine axle load from header row - assuming sequential from 6
-                                // The first data cell corresponds to axle load 6, second to 7, etc.
-                                const axleLoad = j + 5; // j starts from 1, so j+5 gives us 6, 7, 8...
-                                route.coefficients.vl10uk[axleLoad] = coeff;
-                                console.log(`Set ВЛ10УК coefficient for ${axleLoad} tons/axle: ${coeff}`);
+                            
+                            // Parse coefficients starting from 4th column (index 3)
+                            for (let j = 3; j < cells.length && j < headerCells.length; j++) {
+                                const coeff = parseFloat(cells[j]);
+                                if (!isNaN(coeff)) {
+                                    const headerValue = headerCells[j]?.toLowerCase();
+
+                                    // Check if header is a number (axle load)
+                                    if (!isNaN(parseInt(headerValue))) {
+                                        // It's an axle load
+                                        const axleLoad = parseInt(headerValue);
+                                        route.coefficients.vl10[axleLoad] = coeff;
+                                        console.log(`Set ВЛ10 coefficient for ${axleLoad} tons/axle: ${coeff}`);
+                                    }
+                                }
                             }
-                        }
-                    } else if (locomotiveType.toUpperCase().includes('2ЭС6')) {
-                        console.log(`Parsing 2ЭС6 coefficients from line: ${line}`);
-                        // Parse 2ЭС6 coefficients
-                        for (let j = 1; j < cells.length; j++) {
-                            const coeff = parseFloat(cells[j]);
-                            if (!isNaN(coeff)) {
-                                // Determine axle load from header row - assuming sequential from 6
-                                // The first data cell corresponds to axle load 6, second to 7, etc.
-                                const axleLoad = j + 5; // j starts from 1, so j+5 gives us 6, 7, 8...
-                                route.coefficients['2es6'][axleLoad] = coeff;
-                                console.log(`Set 2ЭС6 coefficient for ${axleLoad} tons/axle: ${coeff}`);
+                        } else if (locomotiveType && locomotiveType.includes('ВЛ10У') && !locomotiveType.includes('ВЛ10УК')) {
+                            console.log(`Parsing ВЛ10У coefficients from line: ${line}`);
+                            // First two columns are max weights for 'one' and 'smet'
+                            const oneWeight = parseFloat(cells[0]);
+                            const smetWeight = parseFloat(cells[1]);
+                            
+                            if (!isNaN(oneWeight)) {
+                                route.coefficients.vl10u['one'] = oneWeight;
+                                console.log(`Set ВЛ10У max weight for 'one': ${oneWeight}`);
+                            }
+                            if (!isNaN(smetWeight)) {
+                                route.coefficients.vl10u['smet'] = smetWeight;
+                                console.log(`Set ВЛ10У max weight for 'smet': ${smetWeight}`);
+                            }
+                            
+                            // Parse coefficients starting from 4th column (index 3)
+                            for (let j = 3; j < cells.length && j < headerCells.length; j++) {
+                                const coeff = parseFloat(cells[j]);
+                                if (!isNaN(coeff)) {
+                                    const headerValue = headerCells[j]?.toLowerCase();
+
+                                    // Check if header is a number (axle load)
+                                    if (!isNaN(parseInt(headerValue))) {
+                                        // It's an axle load
+                                        const axleLoad = parseInt(headerValue);
+                                        route.coefficients.vl10u[axleLoad] = coeff;
+                                        console.log(`Set ВЛ10У coefficient for ${axleLoad} tons/axle: ${coeff}`);
+                                    }
+                                }
+                            }
+                        } else if (locomotiveType && locomotiveType.includes('ВЛ10К') && !locomotiveType.includes('ВЛ10УК')) {
+                            console.log(`Parsing ВЛ10К coefficients from line: ${line}`);
+                            // First two columns are max weights for 'one' and 'smet'
+                            const oneWeight = parseFloat(cells[0]);
+                            const smetWeight = parseFloat(cells[1]);
+                            
+                            if (!isNaN(oneWeight)) {
+                                route.coefficients.vl10k['one'] = oneWeight;
+                                console.log(`Set ВЛ10К max weight for 'one': ${oneWeight}`);
+                            }
+                            if (!isNaN(smetWeight)) {
+                                route.coefficients.vl10k['smet'] = smetWeight;
+                                console.log(`Set ВЛ10К max weight for 'smet': ${smetWeight}`);
+                            }
+                            
+                            // Parse coefficients starting from 4th column (index 3)
+                            for (let j = 3; j < cells.length && j < headerCells.length; j++) {
+                                const coeff = parseFloat(cells[j]);
+                                if (!isNaN(coeff)) {
+                                    const headerValue = headerCells[j]?.toLowerCase();
+
+                                    // Check if header is a number (axle load)
+                                    if (!isNaN(parseInt(headerValue))) {
+                                        // It's an axle load
+                                        const axleLoad = parseInt(headerValue);
+                                        route.coefficients.vl10k[axleLoad] = coeff;
+                                        console.log(`Set ВЛ10К coefficient for ${axleLoad} tons/axle: ${coeff}`);
+                                    }
+                                }
+                            }
+                        } else if (locomotiveType && locomotiveType.includes('ВЛ10УК')) {
+                            console.log(`Parsing ВЛ10УК coefficients from line: ${line}`);
+                            // First two columns are max weights for 'one' and 'smet'
+                            const oneWeight = parseFloat(cells[0]);
+                            const smetWeight = parseFloat(cells[1]);
+                            
+                            if (!isNaN(oneWeight)) {
+                                route.coefficients.vl10uk['one'] = oneWeight;
+                                console.log(`Set ВЛ10УК max weight for 'one': ${oneWeight}`);
+                            }
+                            if (!isNaN(smetWeight)) {
+                                route.coefficients.vl10uk['smet'] = smetWeight;
+                                console.log(`Set ВЛ10УК max weight for 'smet': ${smetWeight}`);
+                            }
+                            
+                            // Parse coefficients starting from 4th column (index 3)
+                            for (let j = 3; j < cells.length && j < headerCells.length; j++) {
+                                const coeff = parseFloat(cells[j]);
+                                if (!isNaN(coeff)) {
+                                    const headerValue = headerCells[j]?.toLowerCase();
+
+                                    // Check if header is a number (axle load)
+                                    if (!isNaN(parseInt(headerValue))) {
+                                        // It's an axle load
+                                        const axleLoad = parseInt(headerValue);
+                                        route.coefficients.vl10uk[axleLoad] = coeff;
+                                        console.log(`Set ВЛ10УК coefficient for ${axleLoad} tons/axle: ${coeff}`);
+                                    }
+                                }
+                            }
+                        } else if (locomotiveType && locomotiveType.includes('2ЭС6')) {
+                            console.log(`Parsing 2ЭС6 coefficients from line: ${line}`);
+                            // First two columns are max weights for 'one' and 'smet'
+                            const oneWeight = parseFloat(cells[0]);
+                            const smetWeight = parseFloat(cells[1]);
+                            
+                            if (!isNaN(oneWeight)) {
+                                route.coefficients['2es6']['one'] = oneWeight;
+                                console.log(`Set 2ЭС6 max weight for 'one': ${oneWeight}`);
+                            }
+                            if (!isNaN(smetWeight)) {
+                                route.coefficients['2es6']['smet'] = smetWeight;
+                                console.log(`Set 2ЭС6 max weight for 'smet': ${smetWeight}`);
+                            }
+                            
+                            // Parse coefficients starting from 4th column (index 3)
+                            for (let j = 3; j < cells.length && j < headerCells.length; j++) {
+                                const coeff = parseFloat(cells[j]);
+                                if (!isNaN(coeff)) {
+                                    const headerValue = headerCells[j]?.toLowerCase();
+
+                                    // Check if header is a number (axle load)
+                                    if (!isNaN(parseInt(headerValue))) {
+                                        // It's an axle load
+                                        const axleLoad = parseInt(headerValue);
+                                        route.coefficients['2es6'][axleLoad] = coeff;
+                                        console.log(`Set 2ЭС6 coefficient for ${axleLoad} tons/axle: ${coeff}`);
+                                    }
+                                }
                             }
                         }
                     }
                 }
             }
         }
-        
+
         console.log(`Completed parsing for ${filename}. Name: "${route.name}", Distance: ${route.distance} km, Travel Time: ${route.travelTime} hours`);
-        console.log(`Coefficients found - ВЛ10У: ${Object.keys(route.coefficients.vl10u).length}, 2ЭС6: ${Object.keys(route.coefficients['2es6']).length}, ВЛ10К: ${Object.keys(route.coefficients.vl10k).length}, ВЛ10УК: ${Object.keys(route.coefficients.vl10uk).length}`);
-        
+        console.log(`Coefficients found - ВЛ10: ${Object.keys(route.coefficients.vl10).length}, ВЛ10У: ${Object.keys(route.coefficients.vl10u).length}, 2ЭС6: ${Object.keys(route.coefficients['2es6']).length}, ВЛ10К: ${Object.keys(route.coefficients.vl10k).length}, ВЛ10УК: ${Object.keys(route.coefficients.vl10uk).length}`);
+
         if (route.name && route.distance > 0) {
             console.log(`Route successfully parsed: ${route.name} (${route.distance} km, ${route.travelTime} hours)`);
             return route;
         }
-        
+
         console.log(`Failed to parse route from ${filename}: missing name or distance`);
         return null;
     } catch (error) {
@@ -291,12 +411,12 @@ function getRouteData(routeCode) {
     return (window.ROUTE_DATA && window.ROUTE_DATA[routeCode]) || ROUTE_DATA[routeCode] || null;
 }
 
-function getEnergyCoefficient(locomotiveType, axleLoad, routeData = null) {
+function getEnergyCoefficient(locomotiveType, axleLoad, routeData = null, locomotiveCount = 1) {
     // Only use route-specific coefficients, no fallback to standard coefficients
     if (routeData && routeData.coefficients) {
         // Map locomotive types to their corresponding coefficient arrays
         let coefficientArray = null;
-        
+
         // Check for exact locomotive type match
         if (routeData.coefficients[locomotiveType]) {
             coefficientArray = routeData.coefficients[locomotiveType];
@@ -309,18 +429,25 @@ function getEnergyCoefficient(locomotiveType, axleLoad, routeData = null) {
         else if (locomotiveType === 'vl10u' && routeData.coefficients['vl10']) {
             coefficientArray = routeData.coefficients['vl10'];
         }
-        
+
         if (coefficientArray) {
             const roundedAxleLoad = Math.round(axleLoad);
             const customCoefficients = coefficientArray;
 
-            // Try exact match first
+            // Try exact match for regular axle loads
             if (customCoefficients[roundedAxleLoad] !== undefined) {
-                return customCoefficients[roundedAxleLoad];
+                // Make sure it's a numeric key (not 'one' or 'smet')
+                if (!isNaN(roundedAxleLoad)) {
+                    return customCoefficients[roundedAxleLoad];
+                }
             }
 
-            // Find closest match in custom coefficients
-            const availableLoads = Object.keys(customCoefficients).map(Number).sort((a, b) => a - b);
+            // Find closest match in custom coefficients for regular axle loads
+            const availableLoads = Object.keys(customCoefficients)
+                .filter(key => !isNaN(key) && key !== 'one' && key !== 'smet') // Exclude special values
+                .map(Number)
+                .sort((a, b) => a - b);
+                
             if (availableLoads.length > 0) {
                 let closestLoad = availableLoads[0];
                 let minDiff = Math.abs(roundedAxleLoad - closestLoad);

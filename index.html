@@ -64,6 +64,7 @@
                         <div class="route-info-card">
                             <h3 id="selectedRouteName">Информация о маршруте</h3>
                             <p class="route-distance">Расстояние: <strong id="selectedRouteDistance">0 км</strong></p>
+                            <p class="route-max-weight" style="display: none;">Допустимый вес: <strong id="selectedRouteMaxWeight">0 т</strong></p>
                             <p class="route-travel-time" style="display: none;">Время в пути: <strong id="selectedRouteTravelTime">0 ч</strong></p>
 
                             <button type="button" class="btn btn-secondary" id="showCoefficientsBtn">
@@ -72,11 +73,13 @@
                             </button>
 
                             <div class="coefficients-section" id="coefficientsSection" style="display: none;">
-                                <h4>Коэффициенты энергопотребления</h4>
+                                <h4>Коэффициенты и веса</h4>
                                 <div class="coefficients-table-container">
                                     <table class="coefficients-table" id="coefficientsTable">
                                         <thead>
-                                            <tr>
+                                            <tr id="coefficientsHeaderRow">
+                                                <th>Один</th>
+                                                <th>СМЕТ</th>
                                                 <th>Локомотив</th>
                                                 <th>6</th>
                                                 <th>7</th>
@@ -98,8 +101,10 @@
                                                 <th>23</th>
                                             </tr>
                                             <tr class="table-subheader">
-                                                <th>Нагрузка на ось (т/ось)</th>
-                                                <th colspan="18">Коэффициенты</th>
+                                                <th>Макс.вес</th>
+                                                <th>Макс.вес</th>
+                                                <th>Тип</th>
+                                                <th colspan="18">Нагрузка на ось (т/ось)</th>
                                             </tr>
                                         </thead>
                                         <tbody id="coefficientsTableBody">
@@ -299,6 +304,18 @@
                                 <p><strong>Коэффициенты энергопотребления</strong> загружаются из файлов маршрутов в папке /data</p>
                                 <p><strong>Длина вагона:</strong> 14 м (для расчета длины состава)</p>
                                 <p><strong>Нагрузка на ось</strong> рассчитывается как вес поезда, деленный на количество осей, и округляется до ближайшего целого числа</p>
+                            </div>
+
+                            <h3>Специальные значения</h3>
+                            <div class="info-grid">
+                                <div class="info-card">
+                                    <h4>"Один"</h4>
+                                    <p>Максимальный вес состава для одиночного локомотива</p>
+                                </div>
+                                <div class="info-card">
+                                    <h4>"СМЕТ"</h4>
+                                    <p>Максимальный вес состава для режима СМЕТ (несколько локомотивов)</p>
+                                </div>
                             </div>
                         </div>
                     </div>
