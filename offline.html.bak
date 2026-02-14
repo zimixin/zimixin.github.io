@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Офлайн - Калькулятор РЖД</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-align: center;
+            padding: 2rem;
+        }
+        
+        .offline-container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 3rem;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+        
+        .offline-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        .offline-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: #fff;
+        }
+        
+        .offline-message {
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+            line-height: 1.6;
+        }
+        
+        .offline-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 25px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            border-color: rgba(255, 255, 255, 0.6);
+            transform: translateY(-2px);
+        }
+        
+        .btn-primary {
+            background: rgba(0, 123, 255, 0.8);
+            border-color: rgba(0, 123, 255, 0.8);
+        }
+        
+        .btn-primary:hover {
+            background: rgba(0, 123, 255, 1);
+            border-color: rgba(0, 123, 255, 1);
+        }
+        
+        .features-list {
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .features-title {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            opacity: 0.9;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            text-align: left;
+        }
+        
+        .feature-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 1rem;
+            border-radius: 10px;
+            font-size: 0.9rem;
+        }
+        
+        .feature-item strong {
+            display: block;
+            margin-bottom: 0.25rem;
+            color: #fff;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        @media (max-width: 600px) {
+            .offline-container {
+                padding: 2rem;
+            }
+            
+            .offline-title {
+                font-size: 1.5rem;
+            }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="offline-container">
+        <div class="offline-icon">🚂</div>
+        <h1 class="offline-title">Нет подключения к сети</h1>
+        <p class="offline-message">
+            Калькулятор РЖД работает в автономном режиме. Основные функции доступны без интернета благодаря кешированным данным.
+        </p>
+        
+        <div class="offline-actions">
+            <button class="btn btn-primary" onclick="tryReconnect()">
+                🔄 Повторить подключение
+            </button>
+            <a href="/" class="btn">
+                🏠 На главную
+            </a>
+        </div>
+        
+        <div class="features-list">
+            <h2 class="features-title">Доступные функции офлайн:</h2>
+            <div class="features-grid">
+                <div class="feature-item">
+                    <strong>🧮 Расчеты</strong>
+                    Все функции калькулятора работают автономно
+                </div>
+                <div class="feature-item">
+                    <strong>📊 Маршруты</strong>
+                    Кешированные данные маршрутов доступны
+                </div>
+                <div class="feature-item">
+                    <strong>💾 История</strong>
+                    Просмотр сохраненной истории расчетов
+                </div>
+                <div class="feature-item">
+                    <strong>🎨 Темы</strong>
+                    Переключение светлой и тёмной темы
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function tryReconnect() {
+            const btn = event.target;
+            const originalText = btn.innerHTML;
+            
+            btn.innerHTML = '⏳ Проверка...';
+            btn.disabled = true;
+            
+            // Try to fetch the main page
+            fetch('/', { cache: 'no-cache' })
+                .then(response => {
+                    if (response.ok) {
+                        btn.innerHTML = '✅ Подключено!';
+                        setTimeout(() => {
+                            window.location.href = '/';
+                        }, 1000);
+                    } else {
+                        throw new Error('Network response was not ok');
+                    }
+                })
+                .catch(() => {
+                    btn.innerHTML = '❌ Всё ещё офлайн';
+                    setTimeout(() => {
+                        btn.innerHTML = originalText;
+                        btn.disabled = false;
+                    }, 2000);
+                });
+        }
+        
+        // Auto-check connection every 30 seconds
+        setInterval(() => {
+            fetch('/', { cache: 'no-cache' })
+                .then(response => {
+                    if (response.ok) {
+                        // Connection restored, redirect to main page
+                        window.location.href = '/';
+                    }
+                })
+                .catch(() => {
+                    // Still offline, do nothing
+                });
+        }, 30000);
+        
+        // Show install prompt hint if PWA is installable
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            
+            const installHint = document.createElement('div');
+            installHint.innerHTML = `
+                <div style="position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); 
+                            background: rgba(0, 123, 255, 0.9); color: white; padding: 1rem 2rem; 
+                            border-radius: 25px; text-align: center; z-index: 1000;">
+                    📱 Установите приложение для лучшей работы офлайн!
+                    <button onclick="installApp()" style="margin-left: 1rem; padding: 0.5rem 1rem; 
+                            border: none; background: white; color: #007bff; border-radius: 15px; 
+                            cursor: pointer; font-weight: 600;">Установить</button>
+                    <button onclick="this.parentElement.remove()" style="margin-left: 0.5rem; 
+                            background: none; border: none; color: white; cursor: pointer;">✕</button>
+                </div>
+            `;
+            document.body.appendChild(installHint.firstElementChild);
+            
+            window.deferredPrompt = e;
+        });
+        
+        function installApp() {
+            if (window.deferredPrompt) {
+                window.deferredPrompt.prompt();
+                window.deferredPrompt.userChoice.then((choiceResult) => {
+                    window.deferredPrompt = null;
+                });
+            }
+        }
+    </script>
+</body>
+</html>

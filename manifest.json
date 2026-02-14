@@ -32,5 +32,15 @@
       "url": "/",
       "icons": [{ "src": "icons/icon.svg", "sizes": "96x96", "type": "image/svg+xml" }]
     }
-  ]
+  ],
+  "prefer_related_applications": false,
+  "related_applications": [],
+  "background_color": "#ffffff",
+  "display_override": ["fullscreen", "minimal-ui"],
+  "dir": "ltr",
+  "serviceworker": {
+    "src": "sw.js",
+    "scope": "/",
+    "update_via_cache": "all"
+  }
 }

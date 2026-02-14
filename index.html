@@ -218,21 +218,23 @@
                     <div class="form-section">
                         <h2 class="section-title">Параметры поезда</h2>
                         <div class="train-params-card">
-                            <div class="input-group">
-                                <label for="trainWeight">Вес (тонн)</label>
-                                <input type="number" class="compact-input" id="trainWeight" name="trainWeight" min="100" max="10000" step="1" required>
-                            </div>
-                            <div class="input-group">
-                                <label for="trainAxles">Оси</label>
-                                <input type="number" class="compact-input" id="trainAxles" name="trainAxles" min="10" max="500" step="1" required>
-                            </div>
-                            <div class="input-group">
-                                <label for="actualWagons">Фактические вагоны</label>
-                                <input type="number" class="compact-input" id="actualWagons" name="actualWagons" min="0" max="1000" step="1">
-                            </div>
-                            <div class="input-group">
-                                <label for="conditionalWagons">Условные вагоны</label>
-                                <input type="number" class="compact-input" id="conditionalWagons" name="conditionalWagons" min="0" max="1000" step="1">
+                            <div class="input-grid">
+                                <div class="input-group">
+                                    <label for="trainWeight">Вес (тонн)</label>
+                                    <input type="number" class="compact-input" id="trainWeight" name="trainWeight" min="100" max="10000" step="1" required>
+                                </div>
+                                <div class="input-group">
+                                    <label for="trainAxles">Оси</label>
+                                    <input type="number" class="compact-input" id="trainAxles" name="trainAxles" min="10" max="500" step="1" required>
+                                </div>
+                                <div class="input-group">
+                                    <label for="actualWagons">Фактические вагоны</label>
+                                    <input type="number" class="compact-input" id="actualWagons" name="actualWagons" min="0" max="1000" step="1">
+                                </div>
+                                <div class="input-group">
+                                    <label for="conditionalWagons">Условные вагоны</label>
+                                    <input type="number" class="compact-input" id="conditionalWagons" name="conditionalWagons" min="0" max="1000" step="1">
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -325,6 +327,20 @@
                 navigator.serviceWorker.register('./sw.js')
                     .then((registration) => {
                         console.log('SW registered: ', registration);
+                        
+                        // Check if we're online/offline
+                        if (!navigator.onLine) {
+                            document.body.classList.add('offline');
+                        }
+                        
+                        // Listen for online/offline events
+                        window.addEventListener('online', () => {
+                            document.body.classList.remove('offline');
+                        });
+                        
+                        window.addEventListener('offline', () => {
+                            document.body.classList.add('offline');
+                        });
                     })
                     .catch((registrationError) => {
                         console.log('SW registration failed: ', registrationError);
@@ -341,7 +357,7 @@
             
             // Create install button
             const installButton = document.createElement('button');
-            installButton.className = 'btn btn-secondary';
+            installButton.className = 'btn btn-secondary pwa-install-button';
             installButton.innerHTML = '<span class="btn-icon">📱</span> Установить приложение';
             installButton.style.cssText = 'position: fixed; bottom: 20px; right: 20px; z-index: 1000; box-shadow: 0 4px 16px rgba(0,0,0,0.2);';
             

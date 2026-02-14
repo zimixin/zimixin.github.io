@@ -138,6 +138,15 @@ class PWAManager {
                 }
             });
         });
+        
+        // Add offline indicator to body when offline
+        window.addEventListener('offline', () => {
+            document.body.classList.add('offline');
+        });
+        
+        window.addEventListener('online', () => {
+            document.body.classList.remove('offline');
+        });
     }
     
     addFullscreenToggle() {
