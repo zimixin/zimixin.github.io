@@ -62,7 +62,17 @@ async function loadRoutesFromFiles() {
         for (const filename of routeFiles) {
             try {
                 console.log(`Checking existence of file: ./data/${filename}`);
-                const response = await fetch(`./data/${filename}`);
+                
+                // Using a more robust fetch with timeout
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+                
+                const response = await fetch(`./data/${filename}`, {
+                    signal: controller.signal
+                });
+                
+                clearTimeout(timeoutId);
+                
                 console.log(`Response for ${filename}: ${response.status} ${response.statusText}`);
 
                 if (response.ok) {
@@ -72,6 +82,31 @@ async function loadRoutesFromFiles() {
                     console.log(`✗ File does not exist, skipping: ./data/${filename}`);
                 }
             } catch (error) {
+                // Check if this is a network security error
+                if (error.name === 'TypeError' && error.message.includes('fetch')) {
+                    console.warn(`⚠️ Network security error (likely due to CORS or insecure context): ${error.message}`);
+                    
+                    // Update UI to show the issue
+                    updateRouteLoadingIndicator(0, false, 'Network security error: Try loading the page via HTTPS or check browser settings.');
+                    
+                    // Show an alert to the user with instructions
+                    if (typeof window !== 'undefined') {
+                        setTimeout(() => {
+                            if (!window.rzdNetworkSecurityWarningShown) {
+                                alert('Ошибка безопасности сети: Приложение не может загрузить маршруты из-за ограничений безопасности браузера.\n\n' +
+                                      'Решения:\n' +
+                                      '1. Запустите приложение через HTTPS (рекомендуется)\n' +
+                                      '2. Используйте флаг --unsafely-treat-insecure-origin-as-secure при запуске браузера\n' +
+                                      '3. Используйте другой браузер для локальной разработки\n\n' +
+                                      'Для получения дополнительной информации см. консоль разработчика.');
+                                window.rzdNetworkSecurityWarningShown = true;
+                            }
+                        }, 1000);
+                    }
+                    
+                    return; // Stop execution if it's a network security error
+                }
+                
                 console.log(`✗ Error checking file existence, skipping: ./data/${filename}`, error);
             }
         }
@@ -82,7 +117,17 @@ async function loadRoutesFromFiles() {
         for (const filename of existingFiles) {
             try {
                 console.log(`Loading route file: ${filename}`);
-                const response = await fetch(`./data/${filename}`);
+                
+                // Using a more robust fetch with timeout
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+                
+                const response = await fetch(`./data/${filename}`, {
+                    signal: controller.signal
+                });
+                
+                clearTimeout(timeoutId);
+                
                 console.log(`Fetched ${filename}: ${response.status} ${response.statusText}`);
 
                 if (response.ok) {
@@ -122,8 +167,58 @@ async function loadRoutesFromFiles() {
             console.log('Calculator not initialized yet, waiting for routesLoaded event');
         }
 
+        // Update UI to reflect that routes have been loaded
+        updateRouteLoadingIndicator(routeCount);
+
     } catch (error) {
         console.error('Error loading route files:', error);
+        
+        // Update UI to reflect that route loading failed
+        updateRouteLoadingIndicator(0, true);
+    }
+}
+
+// Function to update UI indicators for route loading status
+function updateRouteLoadingIndicator(count, hasError = false, errorMessage = null) {
+    // Update any loading indicators in the UI
+    const routeSelect = document.getElementById('route');
+    if (routeSelect) {
+        // Disable the route select while loading
+        routeSelect.disabled = (count === 0 && !hasError);
+        
+        if (count === 0 && !hasError) {
+            // Still loading
+            routeSelect.title = 'Загрузка маршрутов...';
+        } else if (hasError) {
+            // Error occurred
+            routeSelect.title = errorMessage || 'Ошибка загрузки маршрутов';
+        } else {
+            // Loaded successfully
+            routeSelect.title = `Загружено маршрутов: ${count}`;
+        }
+    }
+    
+    // Update any other UI elements that indicate route loading status
+    const routeLoader = document.querySelector('.route-loader');
+    if (routeLoader) {
+        if (count === 0 && !hasError) {
+            routeLoader.textContent = `Загрузка маршрутов...`;
+            routeLoader.classList.add('loading');
+        } else if (hasError) {
+            routeLoader.textContent = errorMessage || `Ошибка загрузки маршрутов`;
+            routeLoader.classList.remove('loading');
+            routeLoader.classList.add('error');
+        } else {
+            routeLoader.textContent = `Маршруты загружены: ${count}`;
+            routeLoader.classList.remove('loading');
+            routeLoader.classList.add('success');
+        }
+    }
+    
+    // If calculator is already initialized, update routes immediately
+    if (typeof window !== 'undefined' && window.calculator && window.calculator.updateRouteSelectWithFileRoutes) {
+        console.log('Calling calculator.updateRouteSelectWithFileRoutes() from updateRouteLoadingIndicator');
+        window.calculator.updateRouteSelectWithFileRoutes();
     }
 }
 

@@ -21,6 +21,12 @@ class EnergyCalculator {
         document.addEventListener('routesLoaded', () => {
             this.updateRouteSelectWithFileRoutes();
         });
+        
+        // Check if routes were already loaded before calculator initialization
+        if (window.ROUTE_DATA && Object.keys(window.ROUTE_DATA).length > 0) {
+            console.log('Routes already loaded, updating dropdown immediately');
+            this.updateRouteSelectWithFileRoutes();
+        }
     }
 
     initializeEventListeners() {

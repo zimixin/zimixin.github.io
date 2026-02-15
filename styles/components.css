@@ -523,12 +523,41 @@
     .route-info-card {
         padding: 0.8rem; /* Reduced padding for mobile */
     }
-    
+
     .result-card h3 {
         font-size: 0.7rem; /* Smaller font for mobile */
     }
-    
+
     .result-value {
         font-size: 0.9rem; /* Smaller font for mobile */
     }
+}
+
+/* Route loader */
+.route-loader {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    display: inline-block;
+    margin-top: 0.25rem;
+}
+
+.route-loader.loading {
+    color: var(--accent-color);
+    animation: pulse 1.5s infinite;
+}
+
+.route-loader.success {
+    color: var(--success-color);
+}
+
+.route-loader.error {
+    color: var(--danger-color);
+}
+
+@keyframes pulse {
+    0% { opacity: 0.6; }
+    50% { opacity: 1; }
+    100% { opacity: 0.6; }
 }
