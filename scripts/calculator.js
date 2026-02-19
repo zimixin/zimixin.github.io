@@ -420,6 +420,16 @@ class EnergyCalculator {
                 };
             }
 
+            // Check max weight limit if available
+            let maxWeight = null;
+            let maxWeightWarning = null;
+            if (routeData.maxWeights && routeData.maxWeights[locomotiveData.type]) {
+                maxWeight = routeData.maxWeights[locomotiveData.type];
+                if (data.trainWeight > maxWeight) {
+                    maxWeightWarning = `Вес поезда (${data.trainWeight} т) превышает предельную массу для ${locomotiveData.name} на этом маршруте (${maxWeight} т)`;
+                }
+            }
+
             // Calculate energy consumption using the formula:
             // (Weight * Coefficient * Distance) / 10000 / 100
             const energyConsumption = (data.trainWeight * coefficient * routeData.distance) / 10000 / 100;
@@ -458,7 +468,9 @@ class EnergyCalculator {
                     coefficient: coefficient,
                     locomotive: locomotiveData,
                     route: routeData,
-                    formData: data
+                    formData: data,
+                    maxWeight: maxWeight,
+                    maxWeightWarning: maxWeightWarning
                 }
             };
 
@@ -479,12 +491,31 @@ class EnergyCalculator {
         this.resultsSection.style.display = 'block';
         this.resultsSection.classList.add('fade-in');
 
+        // Show max weight warning if applicable
+        const warningElement = document.getElementById('maxWeightWarning');
+        if (data.maxWeightWarning) {
+            warningElement.textContent = '⚠️ ' + data.maxWeightWarning;
+            warningElement.style.display = 'block';
+        } else {
+            warningElement.style.display = 'none';
+        }
+
         // Update result values
         document.getElementById('consumptionResult').textContent =
             `${data.energyConsumption.toFixed(2)} кВт⋅ч`;
 
         document.getElementById('axleLoadResult').textContent =
             `${data.axleLoad.toFixed(2)} т/ось`;
+
+        // Show max weight if available
+        const maxWeightCard = document.getElementById('maxWeightCard');
+        if (data.maxWeight !== null && data.maxWeight !== undefined) {
+            document.getElementById('maxWeightResult').textContent =
+                `${data.maxWeight} т`;
+            maxWeightCard.style.display = 'block';
+        } else {
+            maxWeightCard.style.display = 'none';
+        }
 
         // Show train length if calculated
         const trainLengthCard = document.getElementById('trainLengthCard');

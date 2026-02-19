@@ -119,6 +119,7 @@
                 <!-- Results Section -->
                 <div class="results-section" id="resultsSection" style="display: none;">
                     <h2 class="section-title">Результаты расчета</h2>
+                    <div id="maxWeightWarning" class="warning-message" style="display: none; margin-bottom: 1rem; padding: 1rem; background-color: #fff3cd; border: 1px solid #ffc107; border-radius: 8px; color: #856404;"></div>
                     <div class="results-grid">
                         <div class="result-card">
                             <h3>Норма расхода за поездку</h3>
@@ -127,6 +128,10 @@
                         <div class="result-card">
                             <h3>Нагрузка на ось</h3>
                             <div class="result-value" id="axleLoadResult">0 т/ось</div>
+                        </div>
+                        <div class="result-card" id="maxWeightCard" style="display: none;">
+                            <h3>Предельная масса</h3>
+                            <div class="result-value" id="maxWeightResult">0 т</div>
                         </div>
                         <div class="result-card" id="trainLengthCard" style="display: none;">
                             <h3>Длина состава</h3>

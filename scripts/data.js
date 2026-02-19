@@ -144,11 +144,19 @@ function parseRouteFromMarkdown(content, filename) {
                 '2es6': {},
                 vl10k: {},
                 vl10uk: {}
+            },
+            maxWeights: {
+                vl10u: null,
+                vl10k: null,
+                vl10uk: null,
+                '2es6': null
             }
         };
-        
+
         let parsingTable = false;
         let headerParsed = false;
+        let parsingMaxWeights = false;
+        let maxWeightsHeaderParsed = false;
         
         for (let i = 0; i < lines.length; i++) {
             const line = lines[i].trim();
@@ -251,8 +259,48 @@ function parseRouteFromMarkdown(content, filename) {
                     }
                 }
             }
+
+            // Parse max weights section
+            else if (line.startsWith('###') && line.includes('Предельная масса')) {
+                parsingMaxWeights = true;
+                maxWeightsHeaderParsed = false;
+                console.log('Found max weights section');
+            }
+            else if (parsingMaxWeights && line.startsWith('|')) {
+                const cells = line.split('|').map(cell => cell.trim()).filter(cell => cell);
+                
+                // Skip header row
+                if (!maxWeightsHeaderParsed && cells[0].toLowerCase().includes('локомотив')) {
+                    maxWeightsHeaderParsed = true;
+                    continue;
+                }
+                
+                // Parse max weight rows
+                if (maxWeightsHeaderParsed && cells.length >= 2) {
+                    const locoName = cells[0].toUpperCase();
+                    const maxWeight = parseInt(cells[1]);
+                    
+                    if (!isNaN(maxWeight)) {
+                        if (locoName.includes('ВЛ10У') && !locoName.includes('ВЛ10УК')) {
+                            route.maxWeights.vl10u = maxWeight;
+                            console.log(`Set ВЛ10У max weight: ${maxWeight} т`);
+                        } else if (locoName.includes('ВЛ10К') && !locoName.includes('ВЛ10УК')) {
+                            route.maxWeights.vl10k = maxWeight;
+                            console.log(`Set ВЛ10К max weight: ${maxWeight} т`);
+                        } else if (locoName.includes('ВЛ10УК')) {
+                            route.maxWeights.vl10uk = maxWeight;
+                            console.log(`Set ВЛ10УК max weight: ${maxWeight} т`);
+                        } else if (locoName.includes('2ЭС6')) {
+                            route.maxWeights['2es6'] = maxWeight;
+                            console.log(`Set 2ЭС6 max weight: ${maxWeight} т`);
+                        }
+                    }
+                }
+            }
         }
-        
+
+        // Log max weights
+        console.log(`Max weights - ВЛ10У: ${route.maxWeights.vl10u}, 2ЭС6: ${route.maxWeights['2es6']}, ВЛ10К: ${route.maxWeights.vl10k}, ВЛ10УК: ${route.maxWeights.vl10uk}`);
         console.log(`Completed parsing for ${filename}. Name: "${route.name}", Distance: ${route.distance} km, Travel Time: ${route.travelTime} hours`);
         console.log(`Coefficients found - ВЛ10У: ${Object.keys(route.coefficients.vl10u).length}, 2ЭС6: ${Object.keys(route.coefficients['2es6']).length}, ВЛ10К: ${Object.keys(route.coefficients.vl10k).length}, ВЛ10УК: ${Object.keys(route.coefficients.vl10uk).length}`);
         
