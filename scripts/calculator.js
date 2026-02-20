@@ -872,17 +872,16 @@ class EnergyCalculator {
         // Helper function to get max weight for locomotive type
         const getMaxWeight = (type) => {
             if (!maxWeights || maxWeights[type] === null || maxWeights[type] === undefined) {
-                return null;
+                return '-';
             }
-            return maxWeights[type];
+            return maxWeights[type].toString();
         };
 
         // Create rows for each locomotive type
         if (coefficients.vl10 && Object.keys(coefficients.vl10).length > 0) {
             const vl10Row = document.createElement('tr');
             const maxWeight = getMaxWeight('vl10');
-            const maxWeightText = maxWeight ? ` (${maxWeight} т)` : '';
-            vl10Row.innerHTML = `<td>ВЛ10${maxWeightText}</td>`;
+            vl10Row.innerHTML = `<td>${maxWeight}</td><td>ВЛ10</td>`;
 
             // Add coefficients for axle loads 6-23
             for (let axle = 6; axle <= 23; axle++) {
@@ -901,8 +900,7 @@ class EnergyCalculator {
         if (coefficients.vl10u && Object.keys(coefficients.vl10u).length > 0) {
             const vl10uRow = document.createElement('tr');
             const maxWeight = getMaxWeight('vl10u');
-            const maxWeightText = maxWeight ? ` (${maxWeight} т)` : '';
-            vl10uRow.innerHTML = `<td>ВЛ10У${maxWeightText}</td>`;
+            vl10uRow.innerHTML = `<td>${maxWeight}</td><td>ВЛ10У</td>`;
 
             // Add coefficients for axle loads 6-23
             for (let axle = 6; axle <= 23; axle++) {
@@ -921,8 +919,7 @@ class EnergyCalculator {
         if (coefficients.vl10k && Object.keys(coefficients.vl10k).length > 0) {
             const vl10kRow = document.createElement('tr');
             const maxWeight = getMaxWeight('vl10k');
-            const maxWeightText = maxWeight ? ` (${maxWeight} т)` : '';
-            vl10kRow.innerHTML = `<td>ВЛ10К${maxWeightText}</td>`;
+            vl10kRow.innerHTML = `<td>${maxWeight}</td><td>ВЛ10К</td>`;
 
             // Add coefficients for axle loads 6-23
             for (let axle = 6; axle <= 23; axle++) {
@@ -941,8 +938,7 @@ class EnergyCalculator {
         if (coefficients.vl10uk && Object.keys(coefficients.vl10uk).length > 0) {
             const vl10ukRow = document.createElement('tr');
             const maxWeight = getMaxWeight('vl10uk');
-            const maxWeightText = maxWeight ? ` (${maxWeight} т)` : '';
-            vl10ukRow.innerHTML = `<td>ВЛ10УК${maxWeightText}</td>`;
+            vl10ukRow.innerHTML = `<td>${maxWeight}</td><td>ВЛ10УК</td>`;
 
             // Add coefficients for axle loads 6-23
             for (let axle = 6; axle <= 23; axle++) {
@@ -961,8 +957,7 @@ class EnergyCalculator {
         if (coefficients['2es6'] && Object.keys(coefficients['2es6']).length > 0) {
             const es6Row = document.createElement('tr');
             const maxWeight = getMaxWeight('2es6');
-            const maxWeightText = maxWeight ? ` (${maxWeight} т)` : '';
-            es6Row.innerHTML = `<td>2ЭС6${maxWeightText}</td>`;
+            es6Row.innerHTML = `<td>${maxWeight}</td><td>2ЭС6</td>`;
 
             // Add coefficients for axle loads 6-23
             for (let axle = 6; axle <= 23; axle++) {
