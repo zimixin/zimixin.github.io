@@ -212,33 +212,58 @@ body {
 }
 
 .locomotive-vl10.locomotive-card {
-    background: linear-gradient(135deg, #ff6b3d 0%, #d35400 100%);
+    background: linear-gradient(135deg, #003366 0%, #00509e 100%);
     color: white;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
 }
 
 .locomotive-vl10u.locomotive-card {
-    background: linear-gradient(135deg, #ff9a56 0%, #ff6b3d 100%);
+    background: linear-gradient(135deg, #004080 0%, #0066cc 100%);
     color: white;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
 }
 
 .locomotive-vl10k.locomotive-card {
-    background: linear-gradient(135deg, #ff6b3d 0%, #d35400 100%);
+    background: linear-gradient(135deg, #003366 0%, #00509e 100%);
     color: white;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
 }
 
 .locomotive-vl10uk.locomotive-card {
-    background: linear-gradient(135deg, #ff9a56 0%, #ff6b3d 100%);
+    background: linear-gradient(135deg, #004080 0%, #0066cc 100%);
     color: white;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
 }
 
 .locomotive-es6.locomotive-card {
-    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    background: linear-gradient(135deg, #0066cc 0%, #3399ff 100%);
     color: white;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
 }
 
 .locomotive-cold.locomotive-card {
-    background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+    background: linear-gradient(135deg, #5a6c7d 0%, #7d8fa3 100%);
     color: white;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+/* Diesel locomotives - brown/orange (older = more brown) */
+.locomotive-2te10m.locomotive-card {
+    background: linear-gradient(135deg, #8B4513 0%, #CD853F 100%);
+    color: white;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+.locomotive-2te25km.locomotive-card {
+    background: linear-gradient(135deg, #A0522D 0%, #DEB887 100%);
+    color: white;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+.locomotive-tep70bs.locomotive-card {
+    background: linear-gradient(135deg, #CD853F 0%, #F4A460 100%);
+    color: white;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
 }
 
 .locomotive-info h3 {
@@ -581,5 +606,239 @@ body {
     }
     100% {
         box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+    }
+}
+
+/* Fuel Calculation Section Styles - Table Design */
+.fuel-table-wrapper {
+    background: var(--card-bg, #fff);
+    border-radius: 12px;
+    padding: 1rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    overflow-x: auto;
+}
+
+.fuel-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 1rem;
+}
+
+.fuel-table-header {
+    background: var(--primary-color, #007bff);
+    color: white;
+    padding: 0.75rem 0.5rem;
+    text-align: center;
+    font-weight: 600;
+    font-size: 0.95rem;
+    border: 1px solid rgba(0, 123, 255, 0.3);
+}
+
+.fuel-coeff-header {
+    width: 100px;
+    background: var(--secondary-color, #6c757d);
+}
+
+.fuel-section-icon {
+    margin-right: 0.25rem;
+}
+
+.fuel-table-row {
+    background: var(--card-bg, #fff);
+}
+
+.fuel-table-row:nth-child(even) {
+    background: var(--input-bg, #f8f9fa);
+}
+
+.fuel-table-cell {
+    padding: 0.75rem 0.5rem;
+    border: 1px solid var(--border-color, #e0e0e0);
+    text-align: center;
+}
+
+.fuel-coeff-cell {
+    background: var(--input-bg, #f8f9fa);
+}
+
+.fuel-input-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.fuel-input-wrapper label {
+    font-size: 0.75rem;
+    color: var(--text-secondary, #6c757d);
+    font-weight: 500;
+}
+
+.fuel-table-input {
+    width: 80px;
+    padding: 0.4rem 0.5rem;
+    border: 1px solid var(--border-color, #e0e0e0);
+    border-radius: 6px;
+    font-size: 0.95rem;
+    text-align: center;
+    background: var(--card-bg, #fff);
+    color: var(--text-color, #333);
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.fuel-table-input:focus {
+    outline: none;
+    border-color: var(--primary-color, #007bff);
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+}
+
+.fuel-table-input::-webkit-outer-spin-button,
+.fuel-table-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.fuel-table-input[type=number] {
+    -moz-appearance: textfield;
+}
+
+.fuel-coeff-input {
+    width: 70px;
+    font-weight: 600;
+}
+
+.fuel-coeff-input-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.fuel-coeff-label {
+    font-size: 0.7rem;
+    color: var(--text-secondary, #6c757d);
+}
+
+.fuel-average-row {
+    background: var(--primary-color, #007bff) !important;
+}
+
+.fuel-average-cell {
+    color: white;
+    padding: 0.5rem;
+}
+
+.fuel-average-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.fuel-avg-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.fuel-avg-label {
+    font-size: 0.85rem;
+    opacity: 0.9;
+}
+
+.fuel-avg-value {
+    font-weight: 700;
+    font-size: 1rem;
+}
+
+.fuel-result-row {
+    padding-top: 0.35rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.3);
+    font-size: 0.85rem;
+}
+
+.fuel-result-label {
+    opacity: 0.8;
+    font-size: 0.8rem;
+}
+
+.fuel-result-liters {
+    opacity: 0.9;
+    font-weight: 500;
+}
+
+.fuel-result-kg {
+    font-weight: 700;
+    font-size: 0.95rem;
+}
+
+/* Traction Type Selector */
+.traction-type-selector {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.traction-btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    border: 2px solid var(--border-color, #e0e0e0);
+    border-radius: 8px;
+    background: var(--card-bg, #fff);
+    color: var(--text-color, #333);
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.traction-btn:hover {
+    border-color: var(--primary-color, #007bff);
+    background: rgba(0, 123, 255, 0.05);
+}
+
+.traction-btn.active {
+    border-color: var(--primary-color, #007bff);
+    background: var(--primary-color, #007bff);
+    color: white;
+}
+
+.traction-icon {
+    font-size: 1.2rem;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .fuel-table {
+        font-size: 0.85rem;
+    }
+
+    .fuel-table-input {
+        width: 60px;
+        padding: 0.3rem 0.25rem;
+        font-size: 0.85rem;
+    }
+
+    .fuel-coeff-input {
+        width: 55px;
+    }
+
+    .fuel-table-header,
+    .fuel-table-cell {
+        padding: 0.5rem 0.25rem;
+    }
+
+    .traction-type-selector {
+        flex-direction: column;
+    }
+
+    .fuel-results-table th,
+    .fuel-results-table td {
+        padding: 0.5rem 0.25rem;
+        font-size: 0.85rem;
     }
 }

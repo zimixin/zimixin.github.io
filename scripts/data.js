@@ -9,23 +9,43 @@ let ROUTE_DATA = {};
 const LOCOMOTIVE_DATA = {
     vl10: {
         name: 'ВЛ10',
-        length: 32 // meters
+        length: 32, // meters
+        type: 'electric'
     },
     vl10u: {
         name: 'ВЛ10У',
-        length: 32 // meters
+        length: 32, // meters
+        type: 'electric'
     },
     vl10k: {
         name: 'ВЛ10К',
-        length: 30 // meters
+        length: 30, // meters
+        type: 'electric'
     },
     vl10uk: {
         name: 'ВЛ10УК',
-        length: 32 // meters
+        length: 32, // meters
+        type: 'electric'
     },
     '2es6': {
         name: '2ЭС6',
-        length: 34 // meters
+        length: 34, // meters
+        type: 'electric'
+    },
+    '2te10m': {
+        name: '2ТЭ10М',
+        length: 34, // meters (per section)
+        type: 'diesel'
+    },
+    '2te25km': {
+        name: '2ТЭ25КМ',
+        length: 34, // meters (per section)
+        type: 'diesel'
+    },
+    'tep70bs': {
+        name: 'ТЭП70БС',
+        length: 21, // meters (single section)
+        type: 'diesel'
     }
 };
 

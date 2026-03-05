@@ -82,23 +82,40 @@
 
 /* Theme-specific locomotive cards */
 .theme-dark .locomotive-vl10.locomotive-card {
-    background: linear-gradient(135deg, #e55c00 0%, #c2410c 100%);
+    background: linear-gradient(135deg, #003366 0%, #00509e 100%);
 }
 
 .theme-dark .locomotive-vl10u.locomotive-card {
-    background: linear-gradient(135deg, #fd7e14 0%, #e55c00 100%);
+    background: linear-gradient(135deg, #004080 0%, #0066cc 100%);
 }
 
 .theme-dark .locomotive-vl10k.locomotive-card {
-    background: linear-gradient(135deg, #e55c00 0%, #c2410c 100%);
+    background: linear-gradient(135deg, #003366 0%, #00509e 100%);
 }
 
 .theme-dark .locomotive-vl10uk.locomotive-card {
-    background: linear-gradient(135deg, #fd7e14 0%, #e55c00 100%);
+    background: linear-gradient(135deg, #004080 0%, #0066cc 100%);
 }
 
 .theme-dark .locomotive-es6.locomotive-card {
-    background: linear-gradient(135deg, #4dabf7 0%, #339af0 100%);
+    background: linear-gradient(135deg, #0066cc 0%, #3399ff 100%);
+}
+
+/* Diesel locomotives - dark theme */
+.theme-dark .locomotive-2te10m.locomotive-card {
+    background: linear-gradient(135deg, #8B4513 0%, #CD853F 100%);
+}
+
+.theme-dark .locomotive-2te25km.locomotive-card {
+    background: linear-gradient(135deg, #A0522D 0%, #DEB887 100%);
+}
+
+.theme-dark .locomotive-tep70bs.locomotive-card {
+    background: linear-gradient(135deg, #CD853F 0%, #F4A460 100%);
+}
+
+.theme-dark .locomotive-cold.locomotive-card {
+    background: linear-gradient(135deg, #5a6c7d 0%, #7d8fa3 100%);
 }
 
 /* Compact locomotive card styling in light theme */
@@ -118,7 +135,48 @@
 
 /* Theme-specific locomotive cards in light theme */
 .theme-light .locomotive-vl10.locomotive-card {
-    background: linear-gradient(135deg, #ff6b3d 0%, #d35400 100%);
+    background: linear-gradient(135deg, #003366 0%, #00509e 100%);
+    color: white;
+}
+
+.theme-light .locomotive-vl10u.locomotive-card {
+    background: linear-gradient(135deg, #004080 0%, #0066cc 100%);
+    color: white;
+}
+
+.theme-light .locomotive-vl10k.locomotive-card {
+    background: linear-gradient(135deg, #003366 0%, #00509e 100%);
+    color: white;
+}
+
+.theme-light .locomotive-vl10uk.locomotive-card {
+    background: linear-gradient(135deg, #004080 0%, #0066cc 100%);
+    color: white;
+}
+
+.theme-light .locomotive-es6.locomotive-card {
+    background: linear-gradient(135deg, #0066cc 0%, #3399ff 100%);
+    color: white;
+}
+
+/* Diesel locomotives - light theme */
+.theme-light .locomotive-2te10m.locomotive-card {
+    background: linear-gradient(135deg, #8B4513 0%, #CD853F 100%);
+    color: white;
+}
+
+.theme-light .locomotive-2te25km.locomotive-card {
+    background: linear-gradient(135deg, #A0522D 0%, #DEB887 100%);
+    color: white;
+}
+
+.theme-light .locomotive-tep70bs.locomotive-card {
+    background: linear-gradient(135deg, #CD853F 0%, #F4A460 100%);
+    color: white;
+}
+
+.theme-light .locomotive-cold.locomotive-card {
+    background: linear-gradient(135deg, #5a6c7d 0%, #7d8fa3 100%);
     color: white;
 }
 
@@ -217,23 +275,40 @@
 
 /* Theme-specific locomotive cards */
 .theme-amoled .locomotive-vl10.locomotive-card {
-    background: linear-gradient(135deg, #e55c00 0%, #c2410c 100%);
+    background: linear-gradient(135deg, #003366 0%, #00509e 100%);
 }
 
 .theme-amoled .locomotive-vl10u.locomotive-card {
-    background: linear-gradient(135deg, #fd7e14 0%, #e55c00 100%);
+    background: linear-gradient(135deg, #004080 0%, #0066cc 100%);
 }
 
 .theme-amoled .locomotive-vl10k.locomotive-card {
-    background: linear-gradient(135deg, #e55c00 0%, #c2410c 100%);
+    background: linear-gradient(135deg, #003366 0%, #00509e 100%);
 }
 
 .theme-amoled .locomotive-vl10uk.locomotive-card {
-    background: linear-gradient(135deg, #fd7e14 0%, #e55c00 100%);
+    background: linear-gradient(135deg, #004080 0%, #0066cc 100%);
 }
 
 .theme-amoled .locomotive-es6.locomotive-card {
-    background: linear-gradient(135deg, #4dabf7 0%, #339af0 100%);
+    background: linear-gradient(135deg, #0066cc 0%, #3399ff 100%);
+}
+
+/* Diesel locomotives - AMOLED theme */
+.theme-amoled .locomotive-2te10m.locomotive-card {
+    background: linear-gradient(135deg, #8B4513 0%, #CD853F 100%);
+}
+
+.theme-amoled .locomotive-2te25km.locomotive-card {
+    background: linear-gradient(135deg, #A0522D 0%, #DEB887 100%);
+}
+
+.theme-amoled .locomotive-tep70bs.locomotive-card {
+    background: linear-gradient(135deg, #CD853F 0%, #F4A460 100%);
+}
+
+.theme-amoled .locomotive-cold.locomotive-card {
+    background: linear-gradient(135deg, #5a6c7d 0%, #7d8fa3 100%);
 }
 
 /* Compact locomotive card styling in AMOLED theme */
