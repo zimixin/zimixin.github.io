@@ -266,6 +266,12 @@ body {
     text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
 }
 
+.locomotive-3te10m.locomotive-card {
+    background: linear-gradient(135deg, #654321 0%, #8B4513 100%);
+    color: white;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+
 .locomotive-info h3 {
     font-size: 0.9rem; /* More compact font size */
     font-weight: 700;
@@ -661,6 +667,22 @@ body {
     background: var(--input-bg, #f8f9fa);
 }
 
+.fuel-v-cell {
+    background: var(--input-bg, #f8f9fa);
+}
+
+.fuel-average-row .fuel-v-cell {
+    background: var(--primary-color, #007bff) !important;
+    color: white;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+.fuel-average-cell {
+    color: white;
+    padding: 0.5rem;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+
 .fuel-input-wrapper {
     display: flex;
     flex-direction: column;
@@ -744,11 +766,13 @@ body {
 .fuel-avg-label {
     font-size: 0.85rem;
     opacity: 0.9;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 .fuel-avg-value {
     font-weight: 700;
     font-size: 1rem;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 .fuel-result-row {
@@ -760,16 +784,19 @@ body {
 .fuel-result-label {
     opacity: 0.8;
     font-size: 0.8rem;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 .fuel-result-liters {
     opacity: 0.9;
     font-weight: 500;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 .fuel-result-kg {
     font-weight: 700;
     font-size: 0.95rem;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 /* Traction Type Selector */

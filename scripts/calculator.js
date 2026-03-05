@@ -141,13 +141,19 @@ class EnergyCalculator {
                 // Show diesel locomotives, hide electric
                 if (electricLocoContainer) electricLocoContainer.style.display = 'none';
                 if (dieselLocoContainer) dieselLocoContainer.style.display = 'block';
+                // Check if 3TE10M is selected and show section V
+                const selectedLoco = dieselLocoContainer.querySelector('.locomotive-card');
+                if (selectedLoco) {
+                    const locoType = selectedLoco.getAttribute('data-type');
+                    toggleFuelSectionV(locoType === '3te10m');
+                }
                 // Recalculate fuel when showing the section
                 this.calculateFuel();
             });
         }
 
         // Fuel input fields
-        const fuelInputs = ['fuelA1', 'fuelA2', 'fuelB1', 'fuelB2', 'fuelCoefficient'];
+        const fuelInputs = ['fuelA1', 'fuelA2', 'fuelB1', 'fuelB2', 'fuelV1', 'fuelV2', 'fuelCoefficient'];
 
         fuelInputs.forEach(inputId => {
             const input = document.getElementById(inputId);
@@ -163,25 +169,32 @@ class EnergyCalculator {
         const fuelA2 = parseFloat(document.getElementById('fuelA2')?.value) || 0;
         const fuelB1 = parseFloat(document.getElementById('fuelB1')?.value) || 0;
         const fuelB2 = parseFloat(document.getElementById('fuelB2')?.value) || 0;
+        const fuelV1 = parseFloat(document.getElementById('fuelV1')?.value) || 0;
+        const fuelV2 = parseFloat(document.getElementById('fuelV2')?.value) || 0;
         const coefficient = parseFloat(document.getElementById('fuelCoefficient')?.value) || 0.842;
 
         // Calculate averages for each section
         const averageA = (fuelA1 + fuelA2) / 2;
         const averageB = (fuelB1 + fuelB2) / 2;
+        const averageV = (fuelV1 + fuelV2) / 2;
 
         // Calculate kg results
         const kgA = averageA * coefficient;
         const kgB = averageB * coefficient;
+        const kgV = averageV * coefficient;
 
         // Update results
         document.getElementById('fuelALitersResult').textContent = `${averageA.toFixed(0)} л`;
         document.getElementById('fuelAKgResult').textContent = `${kgA.toFixed(0)} кг`;
         document.getElementById('fuelBLitersResult').textContent = `${averageB.toFixed(0)} л`;
         document.getElementById('fuelBKgResult').textContent = `${kgB.toFixed(0)} кг`;
+        document.getElementById('fuelVLitersResult').textContent = `${averageV.toFixed(0)} л`;
+        document.getElementById('fuelVKgResult').textContent = `${kgV.toFixed(0)} кг`;
 
         // Show result rows if any fuel is entered
         const fuelAResultRow = document.getElementById('fuelAResultRow');
         const fuelBResultRow = document.getElementById('fuelBResultRow');
+        const fuelVResultRow = document.getElementById('fuelVResultRow');
         
         if (fuelA1 > 0 || fuelA2 > 0) {
             fuelAResultRow.style.display = 'flex';
@@ -194,6 +207,14 @@ class EnergyCalculator {
         } else {
             fuelBResultRow.style.display = 'none';
         }
+
+        if (fuelV1 > 0 || fuelV2 > 0) {
+            fuelVResultRow.style.display = 'flex';
+        } else {
+            fuelVResultRow.style.display = 'none';
+        }
+        
+        console.log('Fuel calculated:', { averageA, averageB, averageV, kgA, kgB, kgV });
     }
 
     setupRealTimeCalculation() {
@@ -274,6 +295,14 @@ class EnergyCalculator {
                             <div class="locomotive-info">
                                 <h3>ТЭП70БС</h3>
                                 <p>Длина: 21м</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="locomotive-option" onclick="selectLocomotiveTypeDiesel(${this.locomotiveCount}, '3te10m', '3ТЭ10М', 51)">
+                        <div class="locomotive-card locomotive-3te10m">
+                            <div class="locomotive-info">
+                                <h3>3ТЭ10М</h3>
+                                <p>Длина: 51м</p>
                             </div>
                         </div>
                     </div>
@@ -386,6 +415,14 @@ class EnergyCalculator {
                             <div class="locomotive-info">
                                 <h3>ТЭП70БС</h3>
                                 <p>Длина: 21м</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="locomotive-option" onclick="selectLocomotiveTypeDiesel(${this.locomotiveCount}, '3te10m', '3ТЭ10М', 51)">
+                        <div class="locomotive-card locomotive-3te10m">
+                            <div class="locomotive-info">
+                                <h3>3ТЭ10М</h3>
+                                <p>Длина: 51м</p>
                             </div>
                         </div>
                     </div>
@@ -1382,7 +1419,12 @@ function selectLocomotiveTypeDiesel(index, type, name, length) {
             locomotiveCard.classList.add('locomotive-2te25km');
         } else if (type === 'tep70bs') {
             locomotiveCard.classList.add('locomotive-tep70bs');
+        } else if (type === '3te10m') {
+            locomotiveCard.classList.add('locomotive-3te10m');
         }
+
+        // Show/hide section V based on locomotive type
+        toggleFuelSectionV(type === '3te10m');
 
         // Hide the selector after selection
         const selector = document.getElementById(`locomotiveSelector${index}Diesel`);
@@ -1397,6 +1439,33 @@ function selectLocomotiveTypeDiesel(index, type, name, length) {
                 window.calculator.performRealTimeCalculation();
             }, 10);
         }
+    }
+}
+
+function toggleFuelSectionV(show) {
+    const fuelVHeader = document.getElementById('fuelVHeader');
+    const fuelV1Cell = document.getElementById('fuelV1Cell');
+    const fuelV2Cell = document.getElementById('fuelV2Cell');
+    const fuelVResultCell = document.getElementById('fuelVResultCell');
+    const fuelVResultRow = document.getElementById('fuelVResultRow');
+    
+    if (show) {
+        if (fuelVHeader) fuelVHeader.style.display = 'table-cell';
+        if (fuelV1Cell) fuelV1Cell.style.display = 'table-cell';
+        if (fuelV2Cell) fuelV2Cell.style.display = 'table-cell';
+        if (fuelVResultCell) fuelVResultCell.style.display = 'table-cell';
+        // Show result row if there's data
+        const fuelV1 = parseFloat(document.getElementById('fuelV1')?.value) || 0;
+        const fuelV2 = parseFloat(document.getElementById('fuelV2')?.value) || 0;
+        if (fuelVResultRow) {
+            fuelVResultRow.style.display = (fuelV1 > 0 || fuelV2 > 0) ? 'flex' : 'none';
+        }
+    } else {
+        if (fuelVHeader) fuelVHeader.style.display = 'none';
+        if (fuelV1Cell) fuelV1Cell.style.display = 'none';
+        if (fuelV2Cell) fuelV2Cell.style.display = 'none';
+        if (fuelVResultCell) fuelVResultCell.style.display = 'none';
+        if (fuelVResultRow) fuelVResultRow.style.display = 'none';
     }
 }
 

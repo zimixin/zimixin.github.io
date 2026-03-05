@@ -257,6 +257,14 @@
                                             </div>
                                         </div>
                                     </div>
+                                    <div class="locomotive-option" onclick="selectLocomotiveTypeDiesel(1, '3te10m', '3ТЭ10М', 51)">
+                                        <div class="locomotive-card locomotive-3te10m">
+                                            <div class="locomotive-info">
+                                                <h3>3ТЭ10М</h3>
+                                                <p>Длина: 51м</p>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                                 <button class="remove-locomotive-btn" onclick="removeLocomotiveDiesel(1)">×</button>
                             </div>
@@ -295,19 +303,28 @@
                         <table class="fuel-table">
                             <thead>
                                 <tr>
-                                    <th class="fuel-table-header" colspan="2">
-                                        <span class="fuel-section-icon">🅰️</span> Секция A
-                                    </th>
                                     <th class="fuel-table-header fuel-coeff-header">
                                         Коэфф.
                                     </th>
                                     <th class="fuel-table-header" colspan="2">
-                                        <span class="fuel-section-icon">🅱️</span> Секция B
+                                        <span class="fuel-section-icon">🇦</span> Секция А
+                                    </th>
+                                    <th class="fuel-table-header" colspan="2">
+                                        <span class="fuel-section-icon">🇧</span> Секция Б
+                                    </th>
+                                    <th class="fuel-table-header" colspan="2" id="fuelVHeader" style="display: none;">
+                                        <span class="fuel-section-icon">🇻</span> Секция В
                                     </th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr class="fuel-table-row">
+                                    <td class="fuel-table-cell fuel-coeff-cell">
+                                        <div class="fuel-coeff-input-wrapper">
+                                            <input type="number" class="fuel-table-input fuel-coeff-input" id="fuelCoefficient" min="0" max="2" step="0.001" value="0.842">
+                                            <span class="fuel-coeff-label">л → кг</span>
+                                        </div>
+                                    </td>
                                     <td class="fuel-table-cell">
                                         <div class="fuel-input-wrapper">
                                             <label>Бак 1</label>
@@ -318,12 +335,6 @@
                                         <div class="fuel-input-wrapper">
                                             <label>Бак 2</label>
                                             <input type="number" class="fuel-table-input" id="fuelA2" min="0" max="10000" step="1" placeholder="0">
-                                        </div>
-                                    </td>
-                                    <td class="fuel-table-cell fuel-coeff-cell">
-                                        <div class="fuel-coeff-input-wrapper">
-                                            <input type="number" class="fuel-table-input fuel-coeff-input" id="fuelCoefficient" min="0" max="2" step="0.001" value="0.842">
-                                            <span class="fuel-coeff-label">л → кг</span>
                                         </div>
                                     </td>
                                     <td class="fuel-table-cell">
@@ -338,24 +349,45 @@
                                             <input type="number" class="fuel-table-input" id="fuelB2" min="0" max="10000" step="1" placeholder="0">
                                         </div>
                                     </td>
+                                    <td class="fuel-table-cell fuel-v-cell" id="fuelV1Cell" style="display: none;">
+                                        <div class="fuel-input-wrapper">
+                                            <label>Бак 1</label>
+                                            <input type="number" class="fuel-table-input" id="fuelV1" min="0" max="10000" step="1" placeholder="0">
+                                        </div>
+                                    </td>
+                                    <td class="fuel-table-cell fuel-v-cell" id="fuelV2Cell" style="display: none;">
+                                        <div class="fuel-input-wrapper">
+                                            <label>Бак 2</label>
+                                            <input type="number" class="fuel-table-input" id="fuelV2" min="0" max="10000" step="1" placeholder="0">
+                                        </div>
+                                    </td>
                                 </tr>
                                 <tr class="fuel-table-row fuel-average-row">
+                                    <td class="fuel-table-cell fuel-coeff-cell"></td>
                                     <td class="fuel-table-cell fuel-average-cell" colspan="2">
                                         <div class="fuel-average-content">
                                             <div class="fuel-avg-row fuel-result-row" id="fuelAResultRow" style="display: none;">
-                                                <span class="fuel-result-label">A (л):</span>
+                                                <span class="fuel-result-label">А (л):</span>
                                                 <span class="fuel-result-liters" id="fuelALitersResult">0 л</span>
                                                 <span class="fuel-result-kg" id="fuelAKgResult">0 кг</span>
                                             </div>
                                         </div>
                                     </td>
-                                    <td class="fuel-table-cell fuel-coeff-cell"></td>
                                     <td class="fuel-table-cell fuel-average-cell" colspan="2">
                                         <div class="fuel-average-content">
                                             <div class="fuel-avg-row fuel-result-row" id="fuelBResultRow" style="display: none;">
-                                                <span class="fuel-result-label">B (л):</span>
+                                                <span class="fuel-result-label">Б (л):</span>
                                                 <span class="fuel-result-liters" id="fuelBLitersResult">0 л</span>
                                                 <span class="fuel-result-kg" id="fuelBKgResult">0 кг</span>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="fuel-table-cell fuel-average-cell fuel-v-cell" colspan="2" id="fuelVResultCell" style="display: none;">
+                                        <div class="fuel-average-content">
+                                            <div class="fuel-avg-row fuel-result-row" id="fuelVResultRow" style="display: none;">
+                                                <span class="fuel-result-label">В (л):</span>
+                                                <span class="fuel-result-liters" id="fuelVLitersResult">0 л</span>
+                                                <span class="fuel-result-kg" id="fuelVKgResult">0 кг</span>
                                             </div>
                                         </div>
                                     </td>

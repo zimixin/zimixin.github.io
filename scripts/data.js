@@ -46,6 +46,11 @@ const LOCOMOTIVE_DATA = {
         name: 'ТЭП70БС',
         length: 21, // meters (single section)
         type: 'diesel'
+    },
+    '3te10m': {
+        name: '3ТЭ10М',
+        length: 51, // meters (3 sections: 34м + 17м)
+        type: 'diesel'
     }
 };
 

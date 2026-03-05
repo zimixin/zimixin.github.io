@@ -114,6 +114,10 @@
     background: linear-gradient(135deg, #CD853F 0%, #F4A460 100%);
 }
 
+.theme-dark .locomotive-3te10m.locomotive-card {
+    background: linear-gradient(135deg, #654321 0%, #8B4513 100%);
+}
+
 .theme-dark .locomotive-cold.locomotive-card {
     background: linear-gradient(135deg, #5a6c7d 0%, #7d8fa3 100%);
 }
@@ -172,6 +176,11 @@
 
 .theme-light .locomotive-tep70bs.locomotive-card {
     background: linear-gradient(135deg, #CD853F 0%, #F4A460 100%);
+    color: white;
+}
+
+.theme-light .locomotive-3te10m.locomotive-card {
+    background: linear-gradient(135deg, #654321 0%, #8B4513 100%);
     color: white;
 }
 
@@ -305,6 +314,10 @@
 
 .theme-amoled .locomotive-tep70bs.locomotive-card {
     background: linear-gradient(135deg, #CD853F 0%, #F4A460 100%);
+}
+
+.theme-amoled .locomotive-3te10m.locomotive-card {
+    background: linear-gradient(135deg, #654321 0%, #8B4513 100%);
 }
 
 .theme-amoled .locomotive-cold.locomotive-card {
