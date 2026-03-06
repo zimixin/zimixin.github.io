@@ -183,12 +183,9 @@ class EnergyCalculator {
         const kgB = averageB * coefficient;
         const kgV = averageV * coefficient;
 
-        // Update results
-        document.getElementById('fuelALitersResult').textContent = `${averageA.toFixed(0)} л`;
+        // Update results (kg only)
         document.getElementById('fuelAKgResult').textContent = `${kgA.toFixed(0)} кг`;
-        document.getElementById('fuelBLitersResult').textContent = `${averageB.toFixed(0)} л`;
         document.getElementById('fuelBKgResult').textContent = `${kgB.toFixed(0)} кг`;
-        document.getElementById('fuelVLitersResult').textContent = `${averageV.toFixed(0)} л`;
         document.getElementById('fuelVKgResult').textContent = `${kgV.toFixed(0)} кг`;
 
         // Show result rows if any fuel is entered

@@ -46,11 +46,11 @@
     --bg-primary: #1a1a1a;
     --bg-secondary: #2d2d2d;
     --card-bg: #2d2d2d;
-    --input-bg: #3d3d3d;
+    --input-bg: #4a4a4a;
     --result-bg: #3d3d3d;
-    --text-primary: #f8f9fa;
-    --text-secondary: #adb5bd;
-    --border-color: #495057;
+    --text-primary: #ffffff;
+    --text-secondary: #e0e0e0;
+    --border-color: #5a5a5a;
     --accent-color: #4dabf7;
     --accent-hover: #339af0;
     --accent-light: rgba(77, 171, 247, 0.1);
@@ -60,9 +60,35 @@
     --secondary-color: #6c757d;
     --secondary-hover: #5c636a;
     --shadow: rgba(0, 0, 0, 0.3);
-    
+
     background-color: var(--bg-primary);
     color: var(--text-primary);
+}
+
+/* Dark Theme - Fuel Table Input Visibility */
+.theme-dark .fuel-table-input {
+    background-color: #4a4a4a;
+    color: #ffffff;
+    border-color: #5a5a5a;
+}
+
+.theme-dark .fuel-table-input:focus {
+    background-color: #5a5a5a;
+    border-color: #4dabf7;
+}
+
+.theme-dark .fuel-table-input::placeholder {
+    color: #b0b0b0;
+}
+
+.theme-dark .fuel-coeff-input {
+    background-color: #4a4a4a;
+    color: #ffffff;
+}
+
+.theme-dark .fuel-input-wrapper label,
+.theme-dark .fuel-coeff-label {
+    color: #e0e0e0;
 }
 
 .theme-dark .header {
@@ -248,11 +274,11 @@
     --bg-primary: #000000;
     --bg-secondary: #000000;
     --card-bg: #000000;
-    --input-bg: #000000;
+    --input-bg: #1a1a1a;
     --result-bg: #000000;
-    --text-primary: #f8f9fa;
-    --text-secondary: #adb5bd;
-    --border-color: #343a40;
+    --text-primary: #ffffff;
+    --text-secondary: #d0d0d0;
+    --border-color: #444444;
     --accent-color: #4dabf7;
     --accent-hover: #339af0;
     --accent-light: rgba(77, 171, 247, 0.1);
@@ -265,6 +291,32 @@
 
     background-color: var(--bg-primary);
     color: var(--text-primary);
+}
+
+/* AMOLED Theme - Fuel Table Input Visibility */
+.theme-amoled .fuel-table-input {
+    background-color: #1a1a1a;
+    color: #ffffff;
+    border-color: #444444;
+}
+
+.theme-amoled .fuel-table-input:focus {
+    background-color: #2a2a2a;
+    border-color: #4dabf7;
+}
+
+.theme-amoled .fuel-table-input::placeholder {
+    color: #a0a0a0;
+}
+
+.theme-amoled .fuel-coeff-input {
+    background-color: #1a1a1a;
+    color: #ffffff;
+}
+
+.theme-amoled .fuel-input-wrapper label,
+.theme-amoled .fuel-coeff-label {
+    color: #d0d0d0;
 }
 
 .theme-amoled .header {
