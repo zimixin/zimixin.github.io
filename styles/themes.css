@@ -91,6 +91,13 @@
     color: #e0e0e0;
 }
 
+/* Dark Theme - Fuel Section V Cell Background Fix */
+.theme-dark .fuel-average-row .fuel-v-cell {
+    background: #007bff !important;
+    color: white;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+
 .theme-dark .header {
     background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-primary) 100%);
 }
@@ -317,6 +324,13 @@
 .theme-amoled .fuel-input-wrapper label,
 .theme-amoled .fuel-coeff-label {
     color: #d0d0d0;
+}
+
+/* AMOLED Theme - Fuel Section V Cell Background Fix */
+.theme-amoled .fuel-average-row .fuel-v-cell {
+    background: #007bff !important;
+    color: white;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
 }
 
 .theme-amoled .header {
