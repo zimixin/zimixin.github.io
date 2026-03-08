@@ -1,0 +1,117 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, master, audit-improvements-2026 ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  test:
+    name: Test & Lint
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run ESLint
+        run: npm run lint
+        continue-on-error: true
+
+      - name: Run tests
+        run: npm run test -- --coverage
+
+      - name: Upload coverage reports
+        uses: codecov/codecov-action@v3
+        with:
+          files: ./coverage/lcov.info
+          fail_ci_if_error: false
+
+  validate:
+    name: Validate Project Structure
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Validate project structure
+        run: |
+          echo "Checking required files..."
+          test -f index.html && echo "✓ index.html exists" || (echo "✗ index.html missing" && exit 1)
+          test -f manifest.json && echo "✓ manifest.json exists" || (echo "✗ manifest.json missing" && exit 1)
+          test -f sw.js && echo "✓ sw.js exists" || (echo "✗ sw.js missing" && exit 1)
+          test -d scripts && echo "✓ scripts/ directory exists" || (echo "✗ scripts/ directory missing" && exit 1)
+          test -d styles && echo "✓ styles/ directory exists" || (echo "✗ styles/ directory missing" && exit 1)
+          test -d data && echo "✓ data/ directory exists" || (echo "✗ data/ directory missing" && exit 1)
+          echo "All required files and directories present"
+
+      - name: Validate JavaScript syntax
+        run: |
+          node --check scripts/data.js
+          node --check scripts/calculator.js
+          node --check scripts/themes.js
+          node --check scripts/pwa.js
+          echo "✓ All JavaScript files have valid syntax"
+
+      - name: Validate JSON files
+        run: |
+          node -e "JSON.parse(require('fs').readFileSync('manifest.json'))"
+          echo "✓ manifest.json is valid JSON"
+
+  deploy:
+    name: Deploy to GitHub Pages
+    needs: [test, validate]
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests
+        run: npm run test
+        continue-on-error: true
+
+      - name: Build (if needed)
+        run: echo "No build step required for static site"
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./
+          force_orphan: true
+          full_commit_message: ${{ github.event.head_commit.message }}
+          
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}

@@ -111,6 +111,116 @@ class EnergyCalculator {
         if (showCoefficientsBtn) {
             showCoefficientsBtn.addEventListener('click', () => this.toggleCoefficientsTable());
         }
+
+        // Fuel calculation inputs
+        this.setupFuelCalculation();
+    }
+
+    setupFuelCalculation() {
+        // Traction type buttons
+        const electricBtn = document.getElementById('electricBtn');
+        const dieselBtn = document.getElementById('dieselBtn');
+        const fuelSection = document.getElementById('fuelSection');
+        const electricLocoContainer = document.querySelector('#locomotiveContainer [data-loco-type="electric"]');
+        const dieselLocoContainer = document.querySelector('#locomotiveContainer [data-loco-type="diesel"]');
+
+        let currentTraction = 'electric'; // Default
+
+        if (electricBtn) {
+            electricBtn.addEventListener('click', () => {
+                currentTraction = 'electric';
+                electricBtn.classList.add('active');
+                dieselBtn.classList.remove('active');
+                fuelSection.style.display = 'none';
+                // Show electric locomotives, hide diesel
+                if (electricLocoContainer) electricLocoContainer.style.display = 'block';
+                if (dieselLocoContainer) dieselLocoContainer.style.display = 'none';
+            });
+        }
+
+        if (dieselBtn) {
+            dieselBtn.addEventListener('click', () => {
+                currentTraction = 'diesel';
+                dieselBtn.classList.add('active');
+                electricBtn.classList.remove('active');
+                fuelSection.style.display = 'block';
+                // Show diesel locomotives, hide electric
+                if (electricLocoContainer) electricLocoContainer.style.display = 'none';
+                if (dieselLocoContainer) dieselLocoContainer.style.display = 'block';
+                // Check if 3TE10M is selected and show section V
+                const selectedLoco = dieselLocoContainer.querySelector('.locomotive-card');
+                if (selectedLoco) {
+                    const locoType = selectedLoco.getAttribute('data-type');
+                    toggleFuelSectionV(locoType === '3te10m');
+                }
+                // Recalculate fuel when showing the section
+                this.calculateFuel();
+            });
+        }
+
+        // Fuel input fields
+        const fuelInputs = ['fuelA1', 'fuelA2', 'fuelB1', 'fuelB2', 'fuelV1', 'fuelV2', 'fuelCoefficient'];
+
+        fuelInputs.forEach(inputId => {
+            const input = document.getElementById(inputId);
+            if (input) {
+                input.addEventListener('input', () => this.calculateFuel());
+            }
+        });
+    }
+
+    calculateFuel() {
+        // Get fuel values
+        const fuelA1 = parseFloat(document.getElementById('fuelA1')?.value) || 0;
+        const fuelA2 = parseFloat(document.getElementById('fuelA2')?.value) || 0;
+        const fuelB1 = parseFloat(document.getElementById('fuelB1')?.value) || 0;
+        const fuelB2 = parseFloat(document.getElementById('fuelB2')?.value) || 0;
+        const fuelV1 = parseFloat(document.getElementById('fuelV1')?.value) || 0;
+        const fuelV2 = parseFloat(document.getElementById('fuelV2')?.value) || 0;
+        const coefficient = parseFloat(document.getElementById('fuelCoefficient')?.value) || 0.842;
+
+        // Calculate averages for each section
+        const averageA = (fuelA1 + fuelA2) / 2;
+        const averageB = (fuelB1 + fuelB2) / 2;
+        const averageV = (fuelV1 + fuelV2) / 2;
+
+        // Calculate kg results
+        const kgA = averageA * coefficient;
+        const kgB = averageB * coefficient;
+        const kgV = averageV * coefficient;
+
+        // Update results
+        document.getElementById('fuelALitersResult').textContent = `${averageA.toFixed(0)} л`;
+        document.getElementById('fuelAKgResult').textContent = `${kgA.toFixed(0)} кг`;
+        document.getElementById('fuelBLitersResult').textContent = `${averageB.toFixed(0)} л`;
+        document.getElementById('fuelBKgResult').textContent = `${kgB.toFixed(0)} кг`;
+        document.getElementById('fuelVLitersResult').textContent = `${averageV.toFixed(0)} л`;
+        document.getElementById('fuelVKgResult').textContent = `${kgV.toFixed(0)} кг`;
+
+        // Show result rows if any fuel is entered
+        const fuelAResultRow = document.getElementById('fuelAResultRow');
+        const fuelBResultRow = document.getElementById('fuelBResultRow');
+        const fuelVResultRow = document.getElementById('fuelVResultRow');
+        
+        if (fuelA1 > 0 || fuelA2 > 0) {
+            fuelAResultRow.style.display = 'flex';
+        } else {
+            fuelAResultRow.style.display = 'none';
+        }
+        
+        if (fuelB1 > 0 || fuelB2 > 0) {
+            fuelBResultRow.style.display = 'flex';
+        } else {
+            fuelBResultRow.style.display = 'none';
+        }
+
+        if (fuelV1 > 0 || fuelV2 > 0) {
+            fuelVResultRow.style.display = 'flex';
+        } else {
+            fuelVResultRow.style.display = 'none';
+        }
+        
+        console.log('Fuel calculated:', { averageA, averageB, averageV, kgA, kgB, kgV });
     }
 
     setupRealTimeCalculation() {
@@ -148,145 +258,262 @@ class EnergyCalculator {
     }
 
     addLocomotive() {
+        // Check current traction type
+        const dieselBtn = document.getElementById('dieselBtn');
+        const isDiesel = dieselBtn && dieselBtn.classList.contains('active');
+        
         this.locomotiveCount++;
         const locomotiveContainer = document.getElementById('locomotiveContainer');
-        
+
         const locomotiveCard = document.createElement('div');
         locomotiveCard.className = 'locomotive-card-wrapper';
         locomotiveCard.id = `locomotiveCard${this.locomotiveCount}`;
-        
-        locomotiveCard.innerHTML = `
-            <div class="locomotive-card locomotive-vl10u" onclick="toggleLocomotiveSelection(${this.locomotiveCount})">
-                <div class="locomotive-info">
-                    <h3>ВЛ10У</h3>
-                    <p>Длина: 32м</p>
+        locomotiveCard.setAttribute('data-loco-type', isDiesel ? 'diesel' : 'electric');
+
+        if (isDiesel) {
+            // Diesel locomotives
+            locomotiveCard.innerHTML = `
+                <div class="locomotive-card locomotive-2te10m" onclick="toggleLocomotiveSelectionDiesel(${this.locomotiveCount})">
+                    <div class="locomotive-info">
+                        <h3>2ТЭ10М</h3>
+                        <p>Длина: 34м</p>
+                    </div>
                 </div>
-            </div>
-            <div class="locomotive-type-selector" id="locomotiveSelector${this.locomotiveCount}" style="display:none;">
-                <div class="locomotive-option" onclick="selectLocomotiveType(${this.locomotiveCount}, 'vl10', 'ВЛ10', 32)">
-                    <div class="locomotive-card locomotive-vl10">
-                        <div class="locomotive-info">
-                            <h3>ВЛ10</h3>
-                            <p>Длина: 32м</p>
+                <div class="locomotive-type-selector" id="locomotiveSelector${this.locomotiveCount}Diesel" style="display:none;">
+                    <div class="locomotive-option" onclick="selectLocomotiveTypeDiesel(${this.locomotiveCount}, '2te10m', '2ТЭ10М', 34)">
+                        <div class="locomotive-card locomotive-2te10m">
+                            <div class="locomotive-info">
+                                <h3>2ТЭ10М</h3>
+                                <p>Длина: 34м</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="locomotive-option" onclick="selectLocomotiveTypeDiesel(${this.locomotiveCount}, '2te25km', '2ТЭ25КМ', 34)">
+                        <div class="locomotive-card locomotive-2te25km">
+                            <div class="locomotive-info">
+                                <h3>2ТЭ25КМ</h3>
+                                <p>Длина: 34м</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="locomotive-option" onclick="selectLocomotiveTypeDiesel(${this.locomotiveCount}, 'tep70bs', 'ТЭП70БС', 21)">
+                        <div class="locomotive-card locomotive-tep70bs">
+                            <div class="locomotive-info">
+                                <h3>ТЭП70БС</h3>
+                                <p>Длина: 21м</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="locomotive-option" onclick="selectLocomotiveTypeDiesel(${this.locomotiveCount}, '3te10m', '3ТЭ10М', 51)">
+                        <div class="locomotive-card locomotive-3te10m">
+                            <div class="locomotive-info">
+                                <h3>3ТЭ10М</h3>
+                                <p>Длина: 51м</p>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="locomotive-option" onclick="selectLocomotiveType(${this.locomotiveCount}, 'vl10u', 'ВЛ10У', 32)">
-                    <div class="locomotive-card locomotive-vl10u">
-                        <div class="locomotive-info">
-                            <h3>ВЛ10У</h3>
-                            <p>Длина: 32м</p>
+                <button class="remove-locomotive-btn" onclick="removeLocomotiveDiesel(${this.locomotiveCount})">×</button>
+            `;
+        } else {
+            // Electric locomotives
+            locomotiveCard.innerHTML = `
+                <div class="locomotive-card locomotive-vl10u" onclick="toggleLocomotiveSelection(${this.locomotiveCount})">
+                    <div class="locomotive-info">
+                        <h3>ВЛ10У</h3>
+                        <p>Длина: 32м</p>
+                    </div>
+                </div>
+                <div class="locomotive-type-selector" id="locomotiveSelector${this.locomotiveCount}" style="display:none;">
+                    <div class="locomotive-option" onclick="selectLocomotiveType(${this.locomotiveCount}, 'vl10', 'ВЛ10', 32)">
+                        <div class="locomotive-card locomotive-vl10">
+                            <div class="locomotive-info">
+                                <h3>ВЛ10</h3>
+                                <p>Длина: 32м</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="locomotive-option" onclick="selectLocomotiveType(${this.locomotiveCount}, 'vl10u', 'ВЛ10У', 32)">
+                        <div class="locomotive-card locomotive-vl10u">
+                            <div class="locomotive-info">
+                                <h3>ВЛ10У</h3>
+                                <p>Длина: 32м</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="locomotive-option" onclick="selectLocomotiveType(${this.locomotiveCount}, '2es6', '2ЭС6', 34)">
+                        <div class="locomotive-card locomotive-es6">
+                            <div class="locomotive-info">
+                                <h3>2ЭС6</h3>
+                                <p>Длина: 34м</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="locomotive-option" onclick="selectLocomotiveType(${this.locomotiveCount}, 'vl10k', 'ВЛ10К', 30)">
+                        <div class="locomotive-card locomotive-vl10k">
+                            <div class="locomotive-info">
+                                <h3>ВЛ10К</h3>
+                                <p>Длина: 30м</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="locomotive-option" onclick="selectLocomotiveType(${this.locomotiveCount}, 'vl10uk', 'ВЛ10УК', 32)">
+                        <div class="locomotive-card locomotive-vl10uk">
+                            <div class="locomotive-info">
+                                <h3>ВЛ10УК</h3>
+                                <p>Длина: 32м</p>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="locomotive-option" onclick="selectLocomotiveType(${this.locomotiveCount}, '2es6', '2ЭС6', 34)">
-                    <div class="locomotive-card locomotive-es6">
-                        <div class="locomotive-info">
-                            <h3>2ЭС6</h3>
-                            <p>Длина: 34м</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="locomotive-option" onclick="selectLocomotiveType(${this.locomotiveCount}, 'vl10k', 'ВЛ10К', 30)">
-                    <div class="locomotive-card locomotive-vl10k">
-                        <div class="locomotive-info">
-                            <h3>ВЛ10К</h3>
-                            <p>Длина: 30м</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="locomotive-option" onclick="selectLocomotiveType(${this.locomotiveCount}, 'vl10uk', 'ВЛ10УК', 32)">
-                    <div class="locomotive-card locomotive-vl10uk">
-                        <div class="locomotive-info">
-                            <h3>ВЛ10УК</h3>
-                            <p>Длина: 32м</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <button class="remove-locomotive-btn" onclick="removeLocomotive(${this.locomotiveCount})">×</button>
-        `;
-        
+                <button class="remove-locomotive-btn" onclick="removeLocomotive(${this.locomotiveCount})">×</button>
+            `;
+        }
+
         locomotiveContainer.appendChild(locomotiveCard);
-        
+
         // Trigger recalculation after adding locomotive
         this.performRealTimeCalculation();
         this.highlightSelectedCoefficient();
     }
 
     addColdLocomotive() {
+        // Check current traction type
+        const dieselBtn = document.getElementById('dieselBtn');
+        const isDiesel = dieselBtn && dieselBtn.classList.contains('active');
+        
         this.locomotiveCount++;
         const locomotiveContainer = document.getElementById('locomotiveContainer');
-        
+
         const locomotiveCard = document.createElement('div');
         locomotiveCard.className = 'locomotive-card-wrapper';
         locomotiveCard.id = `locomotiveCard${this.locomotiveCount}`;
-        
-        locomotiveCard.innerHTML = `
-            <div class="locomotive-card locomotive-cold" data-type="cold" data-length="32" onclick="toggleLocomotiveSelection(${this.locomotiveCount})">
-                <div class="locomotive-info">
-                    <h3>Х</h3>
-                    <p>Длина: 32м</p>
+        locomotiveCard.setAttribute('data-loco-type', isDiesel ? 'diesel' : 'electric');
+
+        if (isDiesel) {
+            // Diesel cold locomotive
+            locomotiveCard.innerHTML = `
+                <div class="locomotive-card locomotive-cold" data-type="cold" data-length="34" onclick="toggleLocomotiveSelectionDiesel(${this.locomotiveCount})">
+                    <div class="locomotive-info">
+                        <h3>Х</h3>
+                        <p>Длина: 34м</p>
+                    </div>
                 </div>
-            </div>
-            <div class="locomotive-type-selector" id="locomotiveSelector${this.locomotiveCount}" style="display:none;">
-                <div class="locomotive-option" onclick="selectLocomotiveType(${this.locomotiveCount}, 'vl10', 'ВЛ10', 32)">
-                    <div class="locomotive-card locomotive-vl10">
-                        <div class="locomotive-info">
-                            <h3>ВЛ10</h3>
-                            <p>Длина: 32м</p>
+                <div class="locomotive-type-selector" id="locomotiveSelector${this.locomotiveCount}Diesel" style="display:none;">
+                    <div class="locomotive-option" onclick="selectLocomotiveTypeDiesel(${this.locomotiveCount}, '2te10m', '2ТЭ10М', 34)">
+                        <div class="locomotive-card locomotive-2te10m">
+                            <div class="locomotive-info">
+                                <h3>2ТЭ10М</h3>
+                                <p>Длина: 34м</p>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="locomotive-option" onclick="selectLocomotiveType(${this.locomotiveCount}, 'vl10u', 'ВЛ10У', 32)">
-                    <div class="locomotive-card locomotive-vl10u">
-                        <div class="locomotive-info">
-                            <h3>ВЛ10У</h3>
-                            <p>Длина: 32м</p>
+                    <div class="locomotive-option" onclick="selectLocomotiveTypeDiesel(${this.locomotiveCount}, '2te25km', '2ТЭ25КМ', 34)">
+                        <div class="locomotive-card locomotive-2te25km">
+                            <div class="locomotive-info">
+                                <h3>2ТЭ25КМ</h3>
+                                <p>Длина: 34м</p>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="locomotive-option" onclick="selectLocomotiveType(${this.locomotiveCount}, '2es6', '2ЭС6', 34)">
-                    <div class="locomotive-card locomotive-es6">
-                        <div class="locomotive-info">
-                            <h3>2ЭС6</h3>
-                            <p>Длина: 34м</p>
+                    <div class="locomotive-option" onclick="selectLocomotiveTypeDiesel(${this.locomotiveCount}, 'tep70bs', 'ТЭП70БС', 21)">
+                        <div class="locomotive-card locomotive-tep70bs">
+                            <div class="locomotive-info">
+                                <h3>ТЭП70БС</h3>
+                                <p>Длина: 21м</p>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="locomotive-option" onclick="selectLocomotiveType(${this.locomotiveCount}, 'vl10k', 'ВЛ10К', 30)">
-                    <div class="locomotive-card locomotive-vl10k">
-                        <div class="locomotive-info">
-                            <h3>ВЛ10К</h3>
-                            <p>Длина: 30м</p>
+                    <div class="locomotive-option" onclick="selectLocomotiveTypeDiesel(${this.locomotiveCount}, '3te10m', '3ТЭ10М', 51)">
+                        <div class="locomotive-card locomotive-3te10m">
+                            <div class="locomotive-info">
+                                <h3>3ТЭ10М</h3>
+                                <p>Длина: 51м</p>
+                            </div>
                         </div>
                     </div>
+                    <div class="locomotive-custom-option">
+                        <div class="input-group">
+                            <label>Произвольный тип:</label>
+                            <input type="text" id="customType${this.locomotiveCount}" placeholder="например, 2ТЭ10М" value="Х">
+                        </div>
+                        <div class="input-group">
+                            <label>Длина (м):</label>
+                            <input type="number" class="compact-input" id="customLength${this.locomotiveCount}" value="34" min="1" max="100">
+                        </div>
+                        <button class="btn btn-secondary" onclick="setCustomLocomotiveDiesel(${this.locomotiveCount})">Установить</button>
+                    </div>
                 </div>
-                <div class="locomotive-option" onclick="selectLocomotiveType(${this.locomotiveCount}, 'vl10uk', 'ВЛ10УК', 32)">
-                    <div class="locomotive-card locomotive-vl10uk">
-                        <div class="locomotive-info">
-                            <h3>ВЛ10УК</h3>
-                            <p>Длина: 32м</p>
+                <button class="remove-locomotive-btn" onclick="removeLocomotiveDiesel(${this.locomotiveCount})">×</button>
+            `;
+        } else {
+            // Electric cold locomotive
+            locomotiveCard.innerHTML = `
+                <div class="locomotive-card locomotive-cold" data-type="cold" data-length="32" onclick="toggleLocomotiveSelection(${this.locomotiveCount})">
+                    <div class="locomotive-info">
+                        <h3>Х</h3>
+                        <p>Длина: 32м</p>
+                    </div>
+                </div>
+                <div class="locomotive-type-selector" id="locomotiveSelector${this.locomotiveCount}" style="display:none;">
+                    <div class="locomotive-option" onclick="selectLocomotiveType(${this.locomotiveCount}, 'vl10', 'ВЛ10', 32)">
+                        <div class="locomotive-card locomotive-vl10">
+                            <div class="locomotive-info">
+                                <h3>ВЛ10</h3>
+                                <p>Длина: 32м</p>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="locomotive-custom-option">
-                    <div class="input-group">
-                        <label>Произвольный тип:</label>
-                        <input type="text" id="customType${this.locomotiveCount}" placeholder="например, ТЭ3" value="Х">
+                    <div class="locomotive-option" onclick="selectLocomotiveType(${this.locomotiveCount}, 'vl10u', 'ВЛ10У', 32)">
+                        <div class="locomotive-card locomotive-vl10u">
+                            <div class="locomotive-info">
+                                <h3>ВЛ10У</h3>
+                                <p>Длина: 32м</p>
+                            </div>
+                        </div>
                     </div>
-                    <div class="input-group">
-                        <label>Длина (м):</label>
-                        <input type="number" class="compact-input" id="customLength${this.locomotiveCount}" value="32" min="1" max="100">
+                    <div class="locomotive-option" onclick="selectLocomotiveType(${this.locomotiveCount}, '2es6', '2ЭС6', 34)">
+                        <div class="locomotive-card locomotive-es6">
+                            <div class="locomotive-info">
+                                <h3>2ЭС6</h3>
+                                <p>Длина: 34м</p>
+                            </div>
+                        </div>
                     </div>
-                    <button class="btn btn-secondary" onclick="setCustomLocomotive(${this.locomotiveCount})">Установить</button>
+                    <div class="locomotive-option" onclick="selectLocomotiveType(${this.locomotiveCount}, 'vl10k', 'ВЛ10К', 30)">
+                        <div class="locomotive-card locomotive-vl10k">
+                            <div class="locomotive-info">
+                                <h3>ВЛ10К</h3>
+                                <p>Длина: 30м</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="locomotive-option" onclick="selectLocomotiveType(${this.locomotiveCount}, 'vl10uk', 'ВЛ10УК', 32)">
+                        <div class="locomotive-card locomotive-vl10uk">
+                            <div class="locomotive-info">
+                                <h3>ВЛ10УК</h3>
+                                <p>Длина: 32м</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="locomotive-custom-option">
+                        <div class="input-group">
+                            <label>Произвольный тип:</label>
+                            <input type="text" id="customType${this.locomotiveCount}" placeholder="например, ВЛ10" value="Х">
+                        </div>
+                        <div class="input-group">
+                            <label>Длина (м):</label>
+                            <input type="number" class="compact-input" id="customLength${this.locomotiveCount}" value="32" min="1" max="100">
+                        </div>
+                        <button class="btn btn-secondary" onclick="setCustomLocomotive(${this.locomotiveCount})">Установить</button>
+                    </div>
                 </div>
-            </div>
-            <button class="remove-locomotive-btn" onclick="removeLocomotive(${this.locomotiveCount})">×</button>
-        `;
-        
+                <button class="remove-locomotive-btn" onclick="removeLocomotive(${this.locomotiveCount})">×</button>
+            `;
+        }
+
         locomotiveContainer.appendChild(locomotiveCard);
-        
+
         // Trigger recalculation after adding locomotive
         this.performRealTimeCalculation();
         this.highlightSelectedCoefficient();
@@ -526,9 +753,10 @@ class EnergyCalculator {
         const inputGroup = field.closest('.input-group');
         let isValid = true;
         let errorMessage = '';
+        let isWarning = false; // Flag for warnings (non-blocking issues)
 
         // Remove existing error classes and messages
-        inputGroup.classList.remove('error', 'success');
+        inputGroup.classList.remove('error', 'success', 'warning');
         const existingError = inputGroup.querySelector('.error-message');
         if (existingError) {
             existingError.remove();
@@ -566,27 +794,69 @@ class EnergyCalculator {
 
             if (trainWeight && axleCount) {
                 const axleLoad = trainWeight / axleCount;
+                
+                // Critical error - exceeds maximum allowed
                 if (axleLoad > 25) {
                     isValid = false;
                     errorMessage = 'Нагрузка на ось превышает допустимые значения (>25 т/ось)';
-                } else if (axleLoad < 5) {
-                    isValid = false;
-                    errorMessage = 'Нагрузка на ось слишком мала (<5 т/ось)';
+                } 
+                // Warning - too low but still calculable
+                else if (axleLoad < 5) {
+                    isWarning = true;
+                    errorMessage = 'Нагрузка на ось слишком мала (<5 т/ось). Проверьте данные.';
                 }
+                // Warning - edge case near boundaries
+                else if (axleLoad > 23) {
+                    isWarning = true;
+                    errorMessage = 'Нагрузка на ось близка к максимальной. Проверьте данные.';
+                }
+                else if (axleLoad < 6) {
+                    isWarning = true;
+                    errorMessage = 'Нагрузка на ось ниже стандартных значений. Проверьте данные.';
+                }
+            }
+        }
+
+        // Validate train weight
+        if (field.name === 'trainWeight' && field.value.trim()) {
+            const trainWeight = parseFloat(field.value);
+            
+            if (trainWeight < 500) {
+                isWarning = true;
+                errorMessage = 'Вес поезда очень мал. Проверьте данные.';
+            } else if (trainWeight > 8000) {
+                isWarning = true;
+                errorMessage = 'Вес поезда превышает типичные значения. Проверьте данные.';
+            }
+        }
+
+        // Validate wagon counts
+        if ((field.name === 'actualWagons' || field.name === 'conditionalWagons') && field.value.trim()) {
+            const wagonCount = parseInt(field.value);
+            
+            if (wagonCount > 500) {
+                isWarning = true;
+                errorMessage = 'Количество вагонов превышает типичные значения.';
             }
         }
 
         // Apply validation styles and messages
         if (isValid) {
-            inputGroup.classList.add('success');
+            if (isWarning) {
+                inputGroup.classList.add('warning');
+            } else {
+                inputGroup.classList.add('success');
+            }
         } else {
             inputGroup.classList.add('error');
-            if (errorMessage) {
-                const errorElement = document.createElement('small');
-                errorElement.className = 'error-message';
-                errorElement.textContent = errorMessage;
-                inputGroup.appendChild(errorElement);
-            }
+        }
+        
+        if (errorMessage) {
+            const errorElement = document.createElement('small');
+            errorElement.className = 'error-message';
+            errorElement.setAttribute('role', 'alert');
+            errorElement.textContent = errorMessage;
+            inputGroup.appendChild(errorElement);
         }
 
         return isValid;
@@ -1091,27 +1361,62 @@ function selectLocomotiveType(index, type, name, length) {
 function setCustomLocomotive(index) {
     const customTypeInput = document.getElementById(`customType${index}`);
     const customLengthInput = document.getElementById(`customLength${index}`);
-    
+
     if (customTypeInput && customLengthInput) {
         const customType = customTypeInput.value || 'Х';
         const customLength = parseFloat(customLengthInput.value) || 32;
-        
+
         const locomotiveCard = document.querySelector(`#locomotiveCard${index} .locomotive-card`);
         if (locomotiveCard) {
             locomotiveCard.setAttribute('data-type', 'cold');
             locomotiveCard.setAttribute('data-length', customLength);
             locomotiveCard.querySelector('h3').textContent = customType;
             locomotiveCard.querySelector('p').textContent = `Длина: ${customLength}м`;
-            
+
             // Update class based on locomotive type
             locomotiveCard.className = 'locomotive-card locomotive-cold';
-            
+
             // Hide the selector after selection
             const selector = document.getElementById(`locomotiveSelector${index}`);
             if (selector) {
                 selector.style.display = 'none';
             }
-            
+
+            // Update coefficient highlighting and recalculate after locomotive type change
+            if (window.calculator) {
+                setTimeout(() => {
+                    window.calculator.highlightSelectedCoefficient();
+                    window.calculator.performRealTimeCalculation();
+                }, 10);
+            }
+        }
+    }
+}
+
+function setCustomLocomotiveDiesel(index) {
+    const customTypeInput = document.getElementById(`customType${index}`);
+    const customLengthInput = document.getElementById(`customLength${index}`);
+
+    if (customTypeInput && customLengthInput) {
+        const customType = customTypeInput.value || 'Х';
+        const customLength = parseFloat(customLengthInput.value) || 34;
+
+        const locomotiveCard = document.querySelector(`#locomotiveCard${index}Diesel .locomotive-card`);
+        if (locomotiveCard) {
+            locomotiveCard.setAttribute('data-type', 'cold');
+            locomotiveCard.setAttribute('data-length', customLength);
+            locomotiveCard.querySelector('h3').textContent = customType;
+            locomotiveCard.querySelector('p').textContent = `Длина: ${customLength}м`;
+
+            // Update class based on locomotive type
+            locomotiveCard.className = 'locomotive-card locomotive-cold';
+
+            // Hide the selector after selection
+            const selector = document.getElementById(`locomotiveSelector${index}Diesel`);
+            if (selector) {
+                selector.style.display = 'none';
+            }
+
             // Update coefficient highlighting and recalculate after locomotive type change
             if (window.calculator) {
                 setTimeout(() => {
@@ -1133,6 +1438,102 @@ function removeLocomotive(index) {
                 window.calculator.highlightSelectedCoefficient();
             }
         }, 10);
+    }
+}
+
+// Diesel locomotive management functions
+function toggleLocomotiveSelectionDiesel(index) {
+    const selector = document.getElementById(`locomotiveSelector${index}Diesel`);
+    if (selector) {
+        if (selector.style.display === 'none' || selector.style.display === '') {
+            selector.style.display = 'block';
+        } else {
+            selector.style.display = 'none';
+        }
+    }
+}
+
+function selectLocomotiveTypeDiesel(index, type, name, length) {
+    const locomotiveCard = document.querySelector(`#locomotiveCard${index}Diesel .locomotive-card`);
+    if (locomotiveCard) {
+        locomotiveCard.setAttribute('data-type', type);
+        locomotiveCard.querySelector('h3').textContent = name;
+        locomotiveCard.querySelector('p').textContent = `Длина: ${length}м`;
+
+        // Update class based on locomotive type
+        locomotiveCard.className = 'locomotive-card';
+        if (type === '2te10m') {
+            locomotiveCard.classList.add('locomotive-2te10m');
+        } else if (type === '2te25km') {
+            locomotiveCard.classList.add('locomotive-2te25km');
+        } else if (type === 'tep70bs') {
+            locomotiveCard.classList.add('locomotive-tep70bs');
+        } else if (type === '3te10m') {
+            locomotiveCard.classList.add('locomotive-3te10m');
+        }
+
+        // Show/hide section V based on locomotive type
+        toggleFuelSectionV(type === '3te10m');
+
+        // Hide the selector after selection
+        const selector = document.getElementById(`locomotiveSelector${index}Diesel`);
+        if (selector) {
+            selector.style.display = 'none';
+        }
+
+        // Update coefficient highlighting and recalculate after locomotive type change
+        if (window.calculator) {
+            setTimeout(() => {
+                window.calculator.highlightSelectedCoefficient();
+                window.calculator.performRealTimeCalculation();
+            }, 10);
+        }
+    }
+}
+
+function toggleFuelSectionV(show) {
+    const fuelVHeader = document.getElementById('fuelVHeader');
+    const fuelV1Cell = document.getElementById('fuelV1Cell');
+    const fuelV2Cell = document.getElementById('fuelV2Cell');
+    const fuelVResultCell = document.getElementById('fuelVResultCell');
+    const fuelVResultRow = document.getElementById('fuelVResultRow');
+    
+    if (show) {
+        if (fuelVHeader) fuelVHeader.style.display = 'table-cell';
+        if (fuelV1Cell) fuelV1Cell.style.display = 'table-cell';
+        if (fuelV2Cell) fuelV2Cell.style.display = 'table-cell';
+        if (fuelVResultCell) fuelVResultCell.style.display = 'table-cell';
+        // Show result row if there's data
+        const fuelV1 = parseFloat(document.getElementById('fuelV1')?.value) || 0;
+        const fuelV2 = parseFloat(document.getElementById('fuelV2')?.value) || 0;
+        if (fuelVResultRow) {
+            fuelVResultRow.style.display = (fuelV1 > 0 || fuelV2 > 0) ? 'flex' : 'none';
+        }
+    } else {
+        if (fuelVHeader) fuelVHeader.style.display = 'none';
+        if (fuelV1Cell) fuelV1Cell.style.display = 'none';
+        if (fuelV2Cell) fuelV2Cell.style.display = 'none';
+        if (fuelVResultCell) fuelVResultCell.style.display = 'none';
+        if (fuelVResultRow) fuelVResultRow.style.display = 'none';
+    }
+}
+
+function removeLocomotiveDiesel(index) {
+    const locomotiveCard = document.getElementById(`locomotiveCard${index}Diesel`);
+    if (locomotiveCard) {
+        // Prevent removal of the first locomotive
+        if (index === 1) {
+            alert('Нельзя удалить первый локомотив. Поезд должен иметь хотя бы один локомотив.');
+            return;
+        }
+        locomotiveCard.remove();
+        if (window.calculator) {
+            window.calculator.locomotiveCount--;
+            setTimeout(() => {
+                window.calculator.performRealTimeCalculation();
+                window.calculator.highlightSelectedCoefficient();
+            }, 10);
+        }
     }
 }
 

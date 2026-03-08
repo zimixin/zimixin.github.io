@@ -303,6 +303,17 @@
     display: block;
 }
 
+/* Warning state for edge cases */
+.input-group.warning input,
+.input-group.warning select,
+.input-group.warning textarea {
+    border-color: var(--warning-color);
+}
+
+.input-group.warning .error-message {
+    color: var(--warning-color);
+}
+
 /* Compact input styles for numeric values */
 .compact-input {
     max-width: 120px;
