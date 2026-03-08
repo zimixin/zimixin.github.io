@@ -80,3 +80,8 @@ temp/
 *.bak
 *.backup
 *.old
+
+# Obsidian/Obsidian-like files
+QWEN.md
+PROMPT *.md
+*.md!
