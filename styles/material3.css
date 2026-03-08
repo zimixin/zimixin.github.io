@@ -1,0 +1,246 @@
+/* ========================================
+   Material Design 3 Expressive
+   Design Tokens для Калькулятора РЖД
+   ======================================== */
+
+:root {
+    /* ====================================
+       COLOR TOKENS (Material 3 System)
+       ==================================== */
+    
+    /* Primary Brand Colors - РЖД стиль (синий/красный) */
+    --md-sys-color-primary-light: #0061A4;
+    --md-sys-color-primary-dark: #B8CCE6;
+    
+    /* Secondary - акцентный оранжевый */
+    --md-sys-color-secondary-light: #D4441A;
+    --md-sys-color-secondary-dark: #FFB4AB;
+    
+    /* Tertiary - дополнительный зелёный */
+    --md-sys-color-tertiary-light: #006E1C;
+    --md-sys-color-tertiary-dark: #B5FAB6;
+    
+    /* Error colors */
+    --md-sys-color-error-light: #BA1A1A;
+    --md-sys-color-error-dark: #FFB4AB;
+    
+    /* ====================================
+       LIGHT THEME
+       ==================================== */
+    
+    /* Background colors */
+    --md-sys-color-background-light: #FDFCFF;
+    --md-sys-color-on-background-light: #1A1C1E;
+    
+    /* Surface colors */
+    --md-sys-color-surface-light: #FDFCFF;
+    --md-sys-color-surface-container-light: #F0F0F4;
+    --md-sys-color-surface-container-high-light: #E8E8EC;
+    --md-sys-color-surface-container-highest-light: #E2E2E6;
+    --md-sys-color-surface-container-low-light: #F8F8FC;
+    --md-sys-color-on-surface-light: #1A1C1E;
+    --md-sys-color-on-surface-variant-light: #44474F;
+    
+    /* Outline */
+    --md-sys-color-outline-light: #74777F;
+    --md-sys-color-outline-variant-light: #C4C7CF;
+    
+    /* Inverse */
+    --md-sys-color-inverse-surface-light: #2F3033;
+    --md-sys-color-inverse-on-surface-light: #F1F0F4;
+    --md-sys-color-inverse-primary-light: #B8CCE6;
+    
+    /* ====================================
+       DARK THEME
+       ==================================== */
+    
+    /* Background colors */
+    --md-sys-color-background-dark: #1A1C1E;
+    --md-sys-color-on-background-dark: #E2E2E6;
+    
+    /* Surface colors */
+    --md-sys-color-surface-dark: #1A1C1E;
+    --md-sys-color-surface-container-dark: #212326;
+    --md-sys-color-surface-container-high-dark: #2B2D30;
+    --md-sys-color-surface-container-highest-dark: #36383B;
+    --md-sys-color-surface-container-low-dark: #1D1F21;
+    --md-sys-color-on-surface-dark: #E2E2E6;
+    --md-sys-color-on-surface-variant-dark: #C4C7CF;
+    
+    /* Outline */
+    --md-sys-color-outline-dark: #8E9099;
+    --md-sys-color-outline-variant-dark: #44474F;
+    
+    /* Inverse */
+    --md-sys-color-inverse-surface-dark: #E2E2E6;
+    --md-sys-color-inverse-on-surface-dark: #2F3033;
+    --md-sys-color-inverse-primary-dark: #0061A4;
+    
+    /* ====================================
+       TYPOGRAPHY (Material 3 Expressive)
+       ==================================== */
+    
+    /* Font Families */
+    --md-sys-typescale-display-font: 'Roboto Flex', sans-serif;
+    --md-sys-typescale-headline-font: 'Roboto Flex', sans-serif;
+    --md-sys-typescale-title-font: 'Roboto Flex', sans-serif;
+    --md-sys-typescale-body-font: 'Roboto Flex', sans-serif;
+    --md-sys-typescale-label-font: 'Roboto Flex', sans-serif;
+    
+    /* Display */
+    --md-sys-typescale-display-large-size: 3.5625rem; /* 57px */
+    --md-sys-typescale-display-large-line-height: 4rem; /* 64px */
+    --md-sys-typescale-display-large-weight: 400;
+    --md-sys-typescale-display-large-tracking: -0.015625rem; /* -0.25px */
+    
+    --md-sys-typescale-display-medium-size: 2.8125rem; /* 45px */
+    --md-sys-typescale-display-medium-line-height: 3.25rem; /* 52px */
+    --md-sys-typescale-display-medium-weight: 400;
+    
+    --md-sys-typescale-display-small-size: 2.25rem; /* 36px */
+    --md-sys-typescale-display-small-line-height: 2.75rem; /* 44px */
+    --md-sys-typescale-display-small-weight: 400;
+    
+    /* Headline */
+    --md-sys-typescale-headline-large-size: 2rem; /* 32px */
+    --md-sys-typescale-headline-large-line-height: 2.5rem; /* 40px */
+    --md-sys-typescale-headline-large-weight: 400;
+    
+    --md-sys-typescale-headline-medium-size: 1.5rem; /* 24px */
+    --md-sys-typescale-headline-medium-line-height: 2rem; /* 32px */
+    --md-sys-typescale-headline-medium-weight: 500;
+    
+    --md-sys-typescale-headline-small-size: 1.25rem; /* 20px */
+    --md-sys-typescale-headline-small-line-height: 1.625rem; /* 26px */
+    --md-sys-typescale-headline-small-weight: 500;
+    
+    /* Title */
+    --md-sys-typescale-title-large-size: 1.125rem; /* 18px */
+    --md-sys-typescale-title-large-line-height: 1.5rem; /* 24px */
+    --md-sys-typescale-title-large-weight: 500;
+    
+    --md-sys-typescale-title-medium-size: 0.875rem; /* 14px */
+    --md-sys-typescale-title-medium-line-height: 1.25rem; /* 20px */
+    --md-sys-typescale-title-medium-weight: 500;
+    --md-sys-typescale-title-medium-tracking: 0.00625rem; /* 0.1px */
+    
+    --md-sys-typescale-title-small-size: 0.75rem; /* 12px */
+    --md-sys-typescale-title-small-line-height: 1rem; /* 16px */
+    --md-sys-typescale-title-small-weight: 500;
+    --md-sys-typescale-title-small-tracking: 0.00625rem; /* 0.1px */
+    
+    /* Body */
+    --md-sys-typescale-body-large-size: 1rem; /* 16px */
+    --md-sys-typescale-body-large-line-height: 1.5rem; /* 24px */
+    --md-sys-typescale-body-large-weight: 400;
+    
+    --md-sys-typescale-body-medium-size: 0.875rem; /* 14px */
+    --md-sys-typescale-body-medium-line-height: 1.25rem; /* 20px */
+    --md-sys-typescale-body-medium-weight: 400;
+    
+    --md-sys-typescale-body-small-size: 0.75rem; /* 12px */
+    --md-sys-typescale-body-small-line-height: 1rem; /* 16px */
+    --md-sys-typescale-body-small-weight: 400;
+    
+    /* Label */
+    --md-sys-typescale-label-large-size: 0.875rem; /* 14px */
+    --md-sys-typescale-label-large-line-height: 1.25rem; /* 20px */
+    --md-sys-typescale-label-large-weight: 500;
+    --md-sys-typescale-label-large-tracking: 0.00625rem; /* 0.1px */
+    
+    --md-sys-typescale-label-medium-size: 0.75rem; /* 12px */
+    --md-sys-typescale-label-medium-line-height: 1rem; /* 16px */
+    --md-sys-typescale-label-medium-weight: 500;
+    --md-sys-typescale-label-medium-tracking: 0.03125rem; /* 0.5px */
+    
+    --md-sys-typescale-label-small-size: 0.6875rem; /* 11px */
+    --md-sys-typescale-label-small-line-height: 1rem; /* 16px */
+    --md-sys-typescale-label-small-weight: 500;
+    --md-sys-typescale-label-small-tracking: 0.03125rem; /* 0.5px */
+    
+    /* ====================================
+       SPACING & LAYOUT
+       ==================================== */
+    
+    /* Spacing scale (4px base) */
+    --md-sys-spacing-xxs: 0.25rem; /* 4px */
+    --md-sys-spacing-xs: 0.5rem; /* 8px */
+    --md-sys-spacing-sm: 0.75rem; /* 12px */
+    --md-sys-spacing-md: 1rem; /* 16px */
+    --md-sys-spacing-lg: 1.5rem; /* 24px */
+    --md-sys-spacing-xl: 2rem; /* 32px */
+    --md-sys-spacing-xxl: 3rem; /* 48px */
+    --md-sys-spacing-xxxl: 4rem; /* 64px */
+    
+    /* Layout */
+    --md-sys-layout-max-width: 1200px;
+    --md-sys-layout-padding: var(--md-sys-spacing-lg);
+    
+    /* ====================================
+       SHAPE (Border Radius)
+       ==================================== */
+    
+    /* Corner radius */
+    --md-sys-shape-corner-none: 0;
+    --md-sys-shape-corner-extra-small: 0.25rem; /* 4px */
+    --md-sys-shape-corner-small: 0.5rem; /* 8px */
+    --md-sys-shape-corner-medium: 0.75rem; /* 12px */
+    --md-sys-shape-corner-large: 1rem; /* 16px */
+    --md-sys-shape-corner-extra-large: 1.5rem; /* 24px */
+    --md-sys-shape-corner-full: 9999px;
+    
+    /* ====================================
+       ELEVATION (Shadows)
+       ==================================== */
+    
+    /* Light theme shadows */
+    --md-sys-elevation-level0: none;
+    
+    --md-sys-elevation-level1: 0 1px 2px rgba(0, 0, 0, 0.12), 0 1px 3px rgba(0, 0, 0, 0.08);
+    --md-sys-elevation-level2: 0 2px 4px rgba(0, 0, 0, 0.12), 0 2px 6px rgba(0, 0, 0, 0.08);
+    --md-sys-elevation-level3: 0 4px 8px rgba(0, 0, 0, 0.12), 0 4px 12px rgba(0, 0, 0, 0.08);
+    --md-sys-elevation-level4: 0 6px 12px rgba(0, 0, 0, 0.12), 0 6px 18px rgba(0, 0, 0, 0.08);
+    --md-sys-elevation-level5: 0 8px 16px rgba(0, 0, 0, 0.12), 0 8px 24px rgba(0, 0, 0, 0.08);
+    
+    /* Dark theme shadows */
+    --md-sys-elevation-level1-dark: 0 1px 2px rgba(0, 0, 0, 0.3), 0 1px 3px rgba(0, 0, 0, 0.2);
+    --md-sys-elevation-level2-dark: 0 2px 4px rgba(0, 0, 0, 0.3), 0 2px 6px rgba(0, 0, 0, 0.2);
+    --md-sys-elevation-level3-dark: 0 4px 8px rgba(0, 0, 0, 0.3), 0 4px 12px rgba(0, 0, 0, 0.2);
+    --md-sys-elevation-level4-dark: 0 6px 12px rgba(0, 0, 0, 0.3), 0 6px 18px rgba(0, 0, 0, 0.2);
+    --md-sys-elevation-level5-dark: 0 8px 16px rgba(0, 0, 0, 0.3), 0 8px 24px rgba(0, 0, 0, 0.2);
+    
+    /* ====================================
+       MOTION (Animation & Timing)
+       ==================================== */
+    
+    /* Duration */
+    --md-sys-motion-duration-short: 150ms;
+    --md-sys-motion-duration-medium: 300ms;
+    --md-sys-motion-duration-long: 500ms;
+    
+    /* Easing */
+    --md-sys-motion-easing-linear: cubic-bezier(0, 0, 1, 1);
+    --md-sys-motion-easing-standard: cubic-bezier(0.2, 0, 0, 1);
+    --md-sys-motion-easing-decelerate: cubic-bezier(0, 0, 0.2, 1);
+    --md-sys-motion-easing-emphasized: cubic-bezier(0.2, 0, 0, 1);
+    
+    /* ====================================
+       STATE (Interaction States)
+       ==================================== */
+    
+    /* State layers */
+    --md-sys-state-hover-opacity: 0.08;
+    --md-sys-state-focus-opacity: 0.12;
+    --md-sys-state-pressed-opacity: 0.12;
+    --md-sys-state-dragged-opacity: 0.16;
+    
+    /* ====================================
+       ICONS
+       ==================================== */
+    
+    /* Icon sizes */
+    --md-sys-icon-size-small: 1.125rem; /* 18px */
+    --md-sys-icon-size-medium: 1.5rem; /* 24px */
+    --md-sys-icon-size-large: 2rem; /* 32px */
+    --md-sys-icon-size-extra-large: 3rem; /* 48px */
+}

@@ -71,13 +71,13 @@ class ThemeManager {
 
     updateThemeIcon(theme) {
         if (this.themeIcon) {
-            // The CSS handles the icon content based on theme class
+            // Update Material Symbols icon based on theme
             if (theme === 'light') {
-                this.themeIcon.textContent = '🌙';
+                this.themeIcon.textContent = 'dark_mode';
             } else if (theme === 'dark') {
-                this.themeIcon.textContent = '☀️';
+                this.themeIcon.textContent = 'light_mode';
             } else if (theme === 'amoled') {
-                this.themeIcon.textContent = '⚫'; // Black circle for AMOLED theme
+                this.themeIcon.textContent = 'brightness_auto';
             }
         }
     }

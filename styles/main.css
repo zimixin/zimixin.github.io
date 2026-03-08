@@ -1,585 +1,758 @@
-/* Main Styles */
-* {
+/* ========================================
+   Material Design 3 Expressive
+   Main Styles - Калькулятор РЖД
+   ======================================== */
+
+@import url('material3.css');
+
+/* ========================================
+   BASE & RESET
+   ======================================== */
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
     margin: 0;
     padding: 0;
-    box-sizing: border-box;
+}
+
+html {
+    font-size: 16px;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
 }
 
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    line-height: 1.6;
-    transition: background-color 0.3s ease, color 0.3s ease;
+    font-family: var(--md-sys-typescale-body-medium-font);
+    font-size: var(--md-sys-typescale-body-medium-size);
+    line-height: var(--md-sys-typescale-body-medium-line-height);
+    font-weight: var(--md-sys-typescale-body-medium-weight);
+    background-color: var(--md-sys-color-background);
+    color: var(--md-sys-color-on-background);
+    min-height: 100vh;
+    overflow-x: hidden;
 }
 
+/* ========================================
+   LAYOUT
+   ======================================== */
+
 .container {
-    max-width: 1200px;
+    max-width: var(--md-sys-layout-max-width);
     margin: 0 auto;
+    padding: var(--md-sys-layout-padding);
     min-height: 100vh;
     display: flex;
     flex-direction: column;
 }
 
-/* Header Styles */
+/* ========================================
+   HEADER
+   ======================================== */
+
 .header {
-    padding: 1.5rem 1rem; /* Reduced padding */
+    padding: var(--md-sys-spacing-xl) var(--md-sys-spacing-md);
     text-align: center;
     position: relative;
+    background: linear-gradient(
+        135deg,
+        var(--md-sys-color-surface-container) 0%,
+        var(--md-sys-color-surface) 100%
+    );
+    border-radius: var(--md-sys-shape-corner-extra-large);
+    margin-bottom: var(--md-sys-spacing-lg);
+}
+
+.header-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--md-sys-spacing-xs);
 }
 
 .header-title {
-    font-size: 1.8rem; /* Smaller font */
-    font-weight: 700;
-    margin-bottom: 0.2rem; /* Reduced margin */
+    font-family: var(--md-sys-typescale-display-small-font);
+    font-size: var(--md-sys-typescale-display-small-size);
+    line-height: var(--md-sys-typescale-display-small-line-height);
+    font-weight: var(--md-sys-typescale-display-small-weight);
+    color: var(--md-sys-color-on-surface);
     display: flex;
     align-items: center;
-    justify-content: center;
-    gap: 0.4rem; /* Reduced gap */
+    gap: var(--md-sys-spacing-sm);
+    letter-spacing: var(--md-sys-typescale-display-small-tracking, 0);
 }
 
 .header-icon {
-    font-size: 1.5rem;
+    font-size: var(--md-sys-icon-size-extra-large);
 }
 
 .header-subtitle {
-    font-size: 0.9rem; /* Smaller font */
-    opacity: 0.8;
+    font-family: var(--md-sys-typescale-body-large-font);
+    font-size: var(--md-sys-typescale-body-large-size);
+    line-height: var(--md-sys-typescale-body-large-line-height);
+    color: var(--md-sys-color-on-surface-variant);
 }
 
+/* Theme Toggle Button */
 .theme-toggle {
     position: absolute;
-    top: 0.75rem;
-    right: 0.75rem;
-    background: none;
-    border: 2px solid;
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
+    top: var(--md-sys-spacing-md);
+    right: var(--md-sys-spacing-md);
+    background: var(--md-sys-color-surface-container-high);
+    border: 1px solid var(--md-sys-color-outline-variant);
+    border-radius: var(--md-sys-shape-corner-full);
+    width: 48px;
+    height: 48px;
     cursor: pointer;
-    font-size: 1.2rem;
-    transition: all 0.3s ease;
     display: flex;
     align-items: center;
     justify-content: center;
+    transition: all var(--md-sys-motion-duration-short) var(--md-sys-motion-easing-standard);
 }
 
 .theme-toggle:hover {
-    transform: scale(1.1);
+    background: var(--md-sys-color-surface-container-highest);
+    box-shadow: var(--md-sys-elevation-level1);
+    transform: scale(1.05);
 }
 
-/* Main Content */
+.theme-toggle:active {
+    transform: scale(0.95);
+}
+
+.theme-icon {
+    font-size: var(--md-sys-icon-size-medium);
+}
+
+/* ========================================
+   MAIN CONTENT
+   ======================================== */
+
 .main {
     flex: 1;
-    padding: 0 0.8rem 1.5rem; /* Reduced padding */
+    display: flex;
+    flex-direction: column;
+    gap: var(--md-sys-spacing-lg);
 }
+
+/* ========================================
+   CARDS (Surface containers)
+   ======================================== */
 
 .calculator-card {
-    background: var(--card-bg);
-    border-radius: 12px;
-    padding: 1.2rem; /* Reduced padding */
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
-    margin-bottom: 1.2rem; /* Reduced margin */
+    background: var(--md-sys-color-surface-container-low);
+    border-radius: var(--md-sys-shape-corner-extra-large);
+    padding: var(--md-sys-spacing-xl);
+    box-shadow: var(--md-sys-elevation-level1);
+    border: 1px solid var(--md-sys-color-outline-variant);
 }
 
-/* Form Sections */
+/* ========================================
+   FORM SECTIONS
+   ======================================== */
+
 .form-section {
-    margin-bottom: 0.8rem; /* More compact margin */
+    margin-bottom: var(--md-sys-spacing-xl);
 }
 
-.section-title {
-    font-size: 1rem; /* More compact font size */
-    font-weight: 600;
-    margin-bottom: 0.4rem; /* Reduced margin */
-    padding-bottom: 0.1rem; /* Reduced padding */
-    border-bottom: 2px solid var(--accent-color);
-}
-
-/* Train Parameters Card */
-.train-params-card {
-    background: var(--card-bg);
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    padding: 0.5rem; /* Reduced padding */
-    margin-bottom: 1rem;
-}
-
-.train-params-card .input-group {
-    margin-bottom: 0.4rem; /* Reduced margin */
-}
-
-.train-params-card .input-group:last-child {
+.form-section:last-child {
     margin-bottom: 0;
 }
 
-/* Coefficients table */
-.coefficients-table {
-    font-size: 0.8rem; /* Smaller font size */
-    width: 100%;
-    border-collapse: collapse;
+.section-title {
+    font-family: var(--md-sys-typescale-headline-medium-font);
+    font-size: var(--md-sys-typescale-headline-medium-size);
+    line-height: var(--md-sys-typescale-headline-medium-line-height);
+    font-weight: var(--md-sys-typescale-headline-medium-weight);
+    color: var(--md-sys-color-on-surface);
+    margin-bottom: var(--md-sys-spacing-md);
+    padding-bottom: var(--md-sys-spacing-xs);
+    border-bottom: 2px solid var(--md-sys-color-primary);
 }
 
-.coefficients-table th,
-.coefficients-table td {
-    padding: 0.2rem; /* Reduced padding */
-    text-align: center;
-    border: 1px solid var(--border-color);
-}
+/* ========================================
+   INPUT GROUPS
+   ======================================== */
 
-/* Highlighted coefficient in the table */
-.highlighted-coefficient {
-    background-color: var(--accent-color) !important;
-    color: white !important;
-    font-weight: bold;
-    border-radius: 4px;
-    transition: background-color 0.3s ease;
-}
-
-/* Wagon Cards */
-.wagon-card-container {
-    margin-bottom: 1rem;
-}
-
-.wagon-card {
-    background: var(--card-bg);
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    padding: 0.75rem; /* Reduced padding */
-    margin-bottom: 0.75rem; /* Reduced margin */
-    position: relative;
-}
-
-.wagon-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 0.75rem; /* Reduced margin */
-    padding-bottom: 0.4rem; /* Reduced padding */
-    border-bottom: 1px solid var(--border-color);
-}
-
-.wagon-header h3 {
-    margin: 0;
-    font-size: 1rem; /* Smaller font */
-    font-weight: 600;
-}
-
-.remove-wagon-btn {
-    background: var(--danger-color);
-    color: white;
-    border: none;
-    border-radius: 50%;
-    width: 20px; /* Smaller size */
-    height: 20px; /* Smaller size */
-    cursor: pointer;
-    font-size: 0.8rem; /* Smaller font */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.wagon-inputs {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); /* More compact min width */
-    gap: 0.5rem; /* Reduced gap */
-}
-
-/* Locomotive Selection */
-.locomotive-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.75rem; /* Consistent spacing */
-    margin-bottom: 0.75rem; /* Reduced margin */
-}
-
-.locomotive-card-wrapper {
-    position: relative;
-    display: inline-block;
-}
-
-.locomotive-card {
-    display: block;
-    padding: 0.5rem; /* More compact padding */
-    border: 2px solid var(--border-color);
-    border-radius: 10px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    text-align: center;
-    min-width: 100px; /* Reduced min width */
-}
-
-.locomotive-card:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-.locomotive-vl10.locomotive-card {
-    background: linear-gradient(135deg, #ff6b3d 0%, #d35400 100%);
-    color: white;
-}
-
-.locomotive-vl10u.locomotive-card {
-    background: linear-gradient(135deg, #ff9a56 0%, #ff6b3d 100%);
-    color: white;
-}
-
-.locomotive-vl10k.locomotive-card {
-    background: linear-gradient(135deg, #ff6b3d 0%, #d35400 100%);
-    color: white;
-}
-
-.locomotive-vl10uk.locomotive-card {
-    background: linear-gradient(135deg, #ff9a56 0%, #ff6b3d 100%);
-    color: white;
-}
-
-.locomotive-es6.locomotive-card {
-    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-    color: white;
-}
-
-.locomotive-cold.locomotive-card {
-    background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
-    color: white;
-}
-
-.locomotive-info h3 {
-    font-size: 0.9rem; /* More compact font size */
-    font-weight: 700;
-    margin-bottom: 0.05rem; /* Reduced margin */
-}
-
-.locomotive-info p {
-    opacity: 0.9;
-    font-size: 0.75rem; /* Smaller font size */
-    margin: 0; /* Remove default margin */
-}
-
-.locomotive-type-selector {
-    position: absolute;
-    top: calc(100% + 5px);
-    left: 0;
-    background: var(--card-bg);
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    padding: 0.5rem;
-    z-index: 100;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    min-width: 150px;
-}
-
-.locomotive-custom-option {
-    padding: 0.5rem;
-    border-top: 1px solid var(--border-color);
-    margin-top: 0.5rem;
-}
-
-.locomotive-custom-option .input-group {
-    margin-bottom: 0.5rem;
-}
-
-.locomotive-custom-option label {
-    display: block;
-    font-size: 0.8rem;
-    margin-bottom: 0.1rem;
-    color: var(--text-secondary);
-}
-
-.locomotive-custom-option input {
-    width: 100%;
-    padding: 0.2rem;
-    border: 1px solid var(--border-color);
-    border-radius: 4px;
-    font-size: 0.8rem;
-}
-
-.remove-locomotive-btn {
-    position: absolute;
-    top: -6px; /* Adjusted position */
-    right: -6px; /* Adjusted position */
-    background: var(--danger-color);
-    color: white;
-    border: none;
-    border-radius: 50%;
-    width: 20px; /* Smaller size */
-    height: 20px; /* Smaller size */
-    cursor: pointer;
-    font-size: 0.8rem; /* Smaller font */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 101;
-}
-
-.locomotive-controls, .wagon-controls {
-    display: flex;
-    gap: 1rem; /* Standard gap to match spacing between locomotives */
-    margin-top: 0.5rem;
-    margin-bottom: 0.75rem; /* Add bottom margin for better spacing */
-}
-
-/* Input Groups */
 .input-group {
-    margin-bottom: 0.4rem; /* More compact margin */
+    display: flex;
+    flex-direction: column;
+    gap: var(--md-sys-spacing-xxs);
+    margin-bottom: var(--md-sys-spacing-md);
+}
+
+.input-group:last-child {
+    margin-bottom: 0;
 }
 
 .input-group label {
-    display: block;
-    font-weight: 600;
-    margin-bottom: 0.2rem; /* Reduced margin */
-    color: var(--text-primary);
-    font-size: 0.85rem; /* Smaller font size */
+    font-family: var(--md-sys-typescale-label-medium-font);
+    font-size: var(--md-sys-typescale-label-medium-size);
+    line-height: var(--md-sys-typescale-label-medium-line-height);
+    font-weight: var(--md-sys-typescale-label-medium-weight);
+    color: var(--md-sys-color-on-surface-variant);
+    letter-spacing: var(--md-sys-typescale-label-medium-tracking);
 }
+
+/* ========================================
+   INPUT FIELDS (M3 Outlined Text Field)
+   ======================================== */
 
 .input-group input,
 .input-group select {
     width: 100%;
-    padding: 0.3rem; /* Reduced padding */
-    border: 2px solid var(--border-color);
-    border-radius: 6px;
-    font-size: 0.85rem; /* Smaller font size */
-    transition: border-color 0.3s ease;
-    background: var(--input-bg);
-    color: var(--text-primary);
+    padding: var(--md-sys-spacing-md) var(--md-sys-spacing-md);
+    font-family: var(--md-sys-typescale-body-large-font);
+    font-size: var(--md-sys-typescale-body-large-size);
+    color: var(--md-sys-color-on-surface);
+    background: var(--md-sys-color-surface);
+    border: 1px solid var(--md-sys-color-outline);
+    border-radius: var(--md-sys-shape-corner-extra-small);
+    outline: none;
+    transition: all var(--md-sys-motion-duration-short) var(--md-sys-motion-easing-standard);
 }
 
-/* Specific styles for numeric inputs */
-.input-group input[type="number"] {
-    max-width: 150px; /* Limit width for numeric inputs */
-    text-align: center; /* Center-align numbers */
+.input-group input:hover,
+.input-group select:hover {
+    border-color: var(--md-sys-color-on-surface);
 }
 
 .input-group input:focus,
 .input-group select:focus {
-    outline: none;
-    border-color: var(--accent-color);
+    border-color: var(--md-sys-color-primary);
+    border-width: 2px;
+    padding: calc(var(--md-sys-spacing-md) - 1px) calc(var(--md-sys-spacing-md) - 1px);
 }
 
-.input-hint {
-    display: block;
-    margin-top: 0.2rem; /* Reduced margin */
-    font-size: 0.85rem; /* Smaller font */
+.input-group input::placeholder {
+    color: var(--md-sys-color-on-surface-variant);
     opacity: 0.7;
 }
 
-.input-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); /* More compact min width */
-    gap: 0.6rem; /* Reduced gap */
+/* Input states */
+.input-group.error input,
+.input-group.error select {
+    border-color: var(--md-sys-color-error);
 }
 
-/* Buttons */
-.form-actions {
-    text-align: center;
-    margin-top: 1.5rem; /* Reduced margin */
+.input-group.warning input,
+.input-group.warning select {
+    border-color: var(--md-sys-color-secondary);
 }
+
+.input-group.success input,
+.input-group.success select {
+    border-color: var(--md-sys-color-tertiary);
+}
+
+/* Error message */
+.error-message {
+    font-family: var(--md-sys-typescale-label-small-font);
+    font-size: var(--md-sys-typescale-label-small-size);
+    line-height: var(--md-sys-typescale-label-small-line-height);
+    color: var(--md-sys-color-error);
+}
+
+.input-group.warning .error-message {
+    color: var(--md-sys-color-secondary);
+}
+
+/* ========================================
+   BUTTONS (M3 Filled & Outlined)
+   ======================================== */
 
 .btn {
     display: inline-flex;
     align-items: center;
-    gap: 0.4rem; /* Reduced gap */
-    padding: 0.6rem 1.2rem; /* More compact padding */
+    justify-content: center;
+    gap: var(--md-sys-spacing-xs);
+    padding: var(--md-sys-spacing-sm) var(--md-sys-spacing-lg);
+    font-family: var(--md-sys-typescale-label-large-font);
+    font-size: var(--md-sys-typescale-label-large-size);
+    font-weight: var(--md-sys-typescale-label-large-weight);
+    letter-spacing: var(--md-sys-typescale-label-large-tracking);
+    border-radius: var(--md-sys-shape-corner-full);
     border: none;
-    border-radius: 8px;
-    font-size: 0.9rem; /* Smaller font */
-    font-weight: 600;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all var(--md-sys-motion-duration-short) var(--md-sys-motion-easing-standard);
     text-decoration: none;
+    white-space: nowrap;
 }
 
+.btn:disabled {
+    opacity: 0.38;
+    cursor: not-allowed;
+}
+
+/* Filled Button */
 .btn-primary {
-    background: var(--accent-color);
+    background: var(--md-sys-color-primary);
     color: white;
 }
 
-.btn-primary:hover {
-    background: var(--accent-hover);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 16px rgba(0, 123, 255, 0.3);
+.btn-primary:hover:not(:disabled) {
+    box-shadow: var(--md-sys-elevation-level1);
+    transform: translateY(-1px);
 }
 
-.btn-primary:active {
-    background: var(--bg-primary);
-    color: var(--text-primary);
-    border: 2px solid var(--accent-color);
-    transform: translateY(1px);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+.btn-primary:active:not(:disabled) {
+    transform: translateY(0);
 }
 
-.btn-calculate {
-    font-size: 1rem; /* Smaller font */
-    padding: 0.8rem 1.5rem; /* More compact padding */
-}
-
+/* Outlined Button */
 .btn-secondary {
-    background: var(--secondary-color);
-    color: var(--text-primary);
+    background: transparent;
+    color: var(--md-sys-color-primary);
+    border: 1px solid var(--md-sys-color-outline);
 }
 
-.btn-secondary:hover {
-    background: var(--secondary-hover);
+.btn-secondary:hover:not(:disabled) {
+    background: var(--md-sys-color-surface-container-high);
 }
 
-/* Results Section */
+/* Text Button */
+.btn-text {
+    background: transparent;
+    color: var(--md-sys-color-primary);
+    padding: var(--md-sys-spacing-xs) var(--md-sys-spacing-sm);
+}
+
+.btn-text:hover:not(:disabled) {
+    background: var(--md-sys-color-surface-container-high);
+}
+
+/* Icon Button */
+.btn-icon {
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    border-radius: var(--md-sys-shape-corner-full);
+}
+
+/* ========================================
+   RESULTS SECTION
+   ======================================== */
+
 .results-section {
-    margin-top: 1rem; /* Reduced margin */
-    padding-top: 1rem; /* Reduced padding */
-    border-top: 2px solid var(--border-color);
+    background: var(--md-sys-color-surface-container);
+    border-radius: var(--md-sys-shape-corner-extra-large);
+    padding: var(--md-sys-spacing-xl);
+    margin-top: var(--md-sys-spacing-lg);
 }
 
 .results-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); /* More compact min width */
-    gap: 0.4rem; /* Reduced gap */
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--md-sys-spacing-md);
+    margin-bottom: var(--md-sys-spacing-lg);
 }
 
 .result-card {
-    background: var(--result-bg);
-    padding: 0.5rem; /* Reduced padding */
-    border-radius: 6px;
+    background: var(--md-sys-color-surface);
+    border-radius: var(--md-sys-shape-corner-large);
+    padding: var(--md-sys-spacing-lg);
     text-align: center;
-    border: 1px solid var(--border-color);
+    border: 1px solid var(--md-sys-color-outline-variant);
 }
 
 .result-card h3 {
-    font-size: 0.75rem; /* Smaller font */
-    font-weight: 600;
-    margin-bottom: 0.15rem; /* Reduced margin */
-    opacity: 0.8;
+    font-family: var(--md-sys-typescale-title-small-font);
+    font-size: var(--md-sys-typescale-title-small-size);
+    color: var(--md-sys-color-on-surface-variant);
+    margin-bottom: var(--md-sys-spacing-xs);
 }
 
 .result-value {
-    font-size: 1rem; /* Smaller font */
-    font-weight: 700;
-    color: var(--accent-color);
-    font-family: 'Courier New', monospace;
+    font-family: var(--md-sys-typescale-display-small-font);
+    font-size: var(--md-sys-typescale-display-small-size);
+    color: var(--md-sys-color-primary);
+    font-weight: 600;
 }
 
-/* Footer */
-.footer {
+/* Result Actions */
+.result-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--md-sys-spacing-sm);
+    justify-content: center;
+}
+
+/* ========================================
+   LOCOMOTIVE CARDS
+   ======================================== */
+
+.locomotive-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--md-sys-spacing-md);
+    margin-top: var(--md-sys-spacing-md);
+}
+
+.locomotive-card-wrapper {
+    position: relative;
+    flex: 1;
+    min-width: 150px;
+    max-width: 200px;
+}
+
+.locomotive-card {
+    background: var(--md-sys-color-surface-container-high);
+    border-radius: var(--md-sys-shape-corner-large);
+    padding: var(--md-sys-spacing-md);
+    cursor: pointer;
+    transition: all var(--md-sys-motion-duration-short) var(--md-sys-motion-easing-standard);
+    border: 2px solid transparent;
+}
+
+.locomotive-card:hover {
+    background: var(--md-sys-color-surface-container-highest);
+    transform: translateY(-2px);
+    box-shadow: var(--md-sys-elevation-level1);
+}
+
+.locomotive-card.selected {
+    border-color: var(--md-sys-color-primary);
+    background: var(--md-sys-color-surface-container-highest);
+}
+
+.locomotive-info h3 {
+    font-family: var(--md-sys-typescale-title-medium-font);
+    font-size: var(--md-sys-typescale-title-medium-size);
+    color: var(--md-sys-color-on-surface);
+    margin-bottom: var(--md-sys-spacing-xxs);
+}
+
+.locomotive-info p {
+    font-family: var(--md-sys-typescale-body-small-font);
+    font-size: var(--md-sys-typescale-body-small-size);
+    color: var(--md-sys-color-on-surface-variant);
+}
+
+/* Remove locomotive button */
+.remove-locomotive-btn {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    width: 24px;
+    height: 24px;
+    border-radius: var(--md-sys-shape-corner-full);
+    background: var(--md-sys-color-error);
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity var(--md-sys-motion-duration-short) var(--md-sys-motion-easing-standard);
+}
+
+.locomotive-card-wrapper:hover .remove-locomotive-btn {
+    opacity: 1;
+}
+
+/* Locomotive type selector */
+.locomotive-type-selector {
+    display: none;
+    flex-direction: column;
+    gap: var(--md-sys-spacing-xs);
+    margin-top: var(--md-sys-spacing-sm);
+    background: var(--md-sys-color-surface);
+    border-radius: var(--md-sys-shape-corner-medium);
+    padding: var(--md-sys-spacing-sm);
+    border: 1px solid var(--md-sys-color-outline-variant);
+}
+
+.locomotive-option {
+    cursor: pointer;
+    transition: background var(--md-sys-motion-duration-short) var(--md-sys-motion-easing-standard);
+    border-radius: var(--md-sys-shape-corner-small);
+}
+
+.locomotive-option:hover {
+    background: var(--md-sys-color-surface-container-high);
+}
+
+/* Add locomotive buttons */
+.locomotive-controls {
+    display: flex;
+    gap: var(--md-sys-spacing-sm);
+    margin-top: var(--md-sys-spacing-sm);
+}
+
+/* ========================================
+   TRACTION TYPE SELECTOR
+   ======================================== */
+
+.traction-type-selector {
+    display: flex;
+    gap: var(--md-sys-spacing-sm);
+    margin-bottom: var(--md-sys-spacing-md);
+}
+
+.traction-btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--md-sys-spacing-xs);
+    padding: var(--md-sys-spacing-md) var(--md-sys-spacing-lg);
+    background: var(--md-sys-color-surface-container-high);
+    border: 2px solid var(--md-sys-color-outline-variant);
+    border-radius: var(--md-sys-shape-corner-medium);
+    font-family: var(--md-sys-typescale-label-large-font);
+    font-size: var(--md-sys-typescale-label-large-size);
+    font-weight: var(--md-sys-typescale-label-large-weight);
+    color: var(--md-sys-color-on-surface-variant);
+    cursor: pointer;
+    transition: all var(--md-sys-motion-duration-short) var(--md-sys-motion-easing-standard);
+}
+
+.traction-btn.active {
+    background: var(--md-sys-color-primary);
+    border-color: var(--md-sys-color-primary);
+    color: white;
+}
+
+.traction-btn:hover:not(.active) {
+    background: var(--md-sys-color-surface-container-highest);
+}
+
+.traction-icon {
+    font-size: var(--md-sys-icon-size-medium);
+}
+
+/* ========================================
+   FUEL TABLE
+   ======================================== */
+
+.fuel-table-wrapper {
+    overflow-x: auto;
+    border-radius: var(--md-sys-shape-corner-medium);
+    border: 1px solid var(--md-sys-color-outline-variant);
+}
+
+.fuel-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--md-sys-color-surface);
+}
+
+.fuel-table-header {
+    font-family: var(--md-sys-typescale-label-medium-font);
+    font-size: var(--md-sys-typescale-label-medium-size);
+    color: var(--md-sys-color-on-surface-variant);
+    padding: var(--md-sys-spacing-sm);
     text-align: center;
-    padding: 0.8rem; /* Reduced padding */
-    opacity: 0.7;
-    font-size: 0.85rem; /* Smaller font */
+    background: var(--md-sys-color-surface-container);
+    border-bottom: 1px solid var(--md-sys-color-outline-variant);
 }
 
-/* Responsive Design */
-@media (max-width: 768px) {
-    .header-title {
-        font-size: 1.6rem; /* Smaller font */
-        flex-direction: column;
-        gap: 0.2rem; /* Reduced gap */
-    }
-
-    .calculator-card {
-        padding: 0.8rem; /* Reduced padding */
-    }
-
-    .wagon-inputs {
-        grid-template-columns: 1fr;
-    }
-
-    .locomotive-container {
-        flex-direction: column;
-    }
-
-    .input-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .theme-toggle {
-        top: 0.4rem; /* Reduced position */
-        right: 0.4rem; /* Reduced position */
-        width: 36px; /* Smaller size */
-        height: 36px; /* Smaller size */
-        font-size: 1.1rem; /* Smaller font */
-    }
-    
-    .results-grid {
-        grid-template-columns: repeat(auto-fit, minmax(80px, 1fr)); /* More compact min width */
-        gap: 0.3rem; /* Reduced gap */
-    }
-    
-    .result-card {
-        padding: 0.4rem; /* Reduced padding */
-    }
-    
-    .result-card h3 {
-        font-size: 0.7rem; /* Smaller font */
-    }
-    
-    .result-value {
-        font-size: 0.9rem; /* Smaller font */
-    }
+.fuel-table-cell {
+    padding: var(--md-sys-spacing-sm);
+    text-align: center;
+    border-right: 1px solid var(--md-sys-color-outline-variant);
 }
 
-@media (max-width: 480px) {
-    .header {
-        padding: 0.8rem; /* Reduced padding */
-    }
-
-    .header-title {
-        font-size: 1.4rem; /* Smaller font */
-    }
-
-    .btn-calculate {
-        font-size: 0.9rem; /* Smaller font */
-        padding: 0.7rem 1.2rem; /* More compact padding */
-    }
-
-    .wagon-inputs {
-        grid-template-columns: 1fr;
-    }
-    
-    .results-grid {
-        grid-template-columns: repeat(auto-fit, minmax(70px, 1fr)); /* More compact min width */
-    }
-    
-    .result-card {
-        padding: 0.3rem; /* Reduced padding */
-    }
-    
-    .result-card h3 {
-        font-size: 0.65rem; /* Smaller font */
-    }
-    
-    .result-value {
-        font-size: 0.85rem; /* Smaller font */
-    }
+.fuel-table-input {
+    width: 100%;
+    padding: var(--md-sys-spacing-xs);
+    text-align: center;
+    border: 1px solid var(--md-sys-color-outline);
+    border-radius: var(--md-sys-shape-corner-extra-small);
+    font-size: var(--md-sys-typescale-body-medium-size);
 }
 
-/* PWA Styles */
-@media (display-mode: standalone) {
-    /* Styles when app is running as PWA */
-    .header {
-        padding-top: max(2rem, env(safe-area-inset-top));
-    }
+/* ========================================
+   HISTORY SECTION
+   ======================================== */
 
-    .container {
-        padding-left: env(safe-area-inset-left);
-        padding-right: env(safe-area-inset-right);
-        padding-bottom: env(safe-area-inset-bottom);
-    }
+.history-section {
+    margin-top: var(--md-sys-spacing-xl);
+    padding-top: var(--md-sys-spacing-xl);
+    border-top: 1px solid var(--md-sys-color-outline-variant);
 }
 
-/* Install button styles */
-.install-button {
+.history-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--md-sys-spacing-sm);
+    max-height: 400px;
+    overflow-y: auto;
+    margin-bottom: var(--md-sys-spacing-md);
+}
+
+.history-item {
+    background: var(--md-sys-color-surface);
+    border-radius: var(--md-sys-shape-corner-medium);
+    padding: var(--md-sys-spacing-md);
+    border: 1px solid var(--md-sys-color-outline-variant);
+    transition: all var(--md-sys-motion-duration-short) var(--md-sys-motion-easing-standard);
+}
+
+.history-item:hover {
+    background: var(--md-sys-color-surface-container-low);
+    transform: translateX(4px);
+}
+
+.history-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--md-sys-spacing-xs);
+}
+
+.history-date {
+    font-family: var(--md-sys-typescale-label-small-font);
+    color: var(--md-sys-color-on-surface-variant);
+}
+
+.history-details {
+    font-family: var(--md-sys-typescale-body-small-font);
+    color: var(--md-sys-color-on-surface-variant);
+    margin-bottom: var(--md-sys-spacing-xs);
+}
+
+.history-result {
+    font-family: var(--md-sys-typescale-title-medium-font);
+    color: var(--md-sys-color-primary);
+    font-weight: 600;
+}
+
+/* ========================================
+   MODAL (M3 Dialog)
+   ======================================== */
+
+.modal {
     position: fixed;
-    bottom: 20px;
-    right: 20px;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
     z-index: 1000;
-    box-shadow: 0 4px 16px rgba(0,0,0,0.2);
-    border-radius: 12px;
-    animation: pulse 2s infinite;
+    backdrop-filter: blur(4px);
+    opacity: 0;
+    visibility: hidden;
+    transition: all var(--md-sys-motion-duration-medium) var(--md-sys-motion-easing-standard);
 }
 
-@keyframes pulse {
-    0% {
-        box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+.modal.open {
+    opacity: 1;
+    visibility: visible;
+}
+
+.modal-content {
+    background: var(--md-sys-color-surface);
+    border-radius: var(--md-sys-shape-corner-extra-large);
+    max-width: 600px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+    padding: var(--md-sys-spacing-xl);
+    box-shadow: var(--md-sys-elevation-level3);
+    transform: scale(0.9);
+    transition: transform var(--md-sys-motion-duration-medium) var(--md-sys-motion-easing-standard);
+}
+
+.modal.open .modal-content {
+    transform: scale(1);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--md-sys-spacing-lg);
+}
+
+.modal-title {
+    font-family: var(--md-sys-typescale-headline-medium-font);
+    font-size: var(--md-sys-typescale-headline-medium-size);
+    color: var(--md-sys-color-on-surface);
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: var(--md-sys-spacing-xs);
+    border-radius: var(--md-sys-shape-corner-full);
+    transition: background var(--md-sys-motion-duration-short) var(--md-sys-motion-easing-standard);
+}
+
+.modal-close:hover {
+    background: var(--md-sys-color-surface-container-high);
+}
+
+/* ========================================
+   UTILITY CLASSES
+   ======================================== */
+
+.fade-in {
+    animation: fadeIn var(--md-sys-motion-duration-medium) var(--md-sys-motion-easing-standard);
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
     }
-    50% {
-        box-shadow: 0 4px 24px rgba(0,123,255,0.4);
+    to {
+        opacity: 1;
+        transform: translateY(0);
     }
-    100% {
-        box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+}
+
+/* Screen reader only */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* ========================================
+   RESPONSIVE
+   ======================================== */
+
+@media (max-width: 768px) {
+    .container {
+        padding: var(--md-sys-spacing-sm);
+    }
+    
+    .header {
+        padding: var(--md-sys-spacing-lg) var(--md-sys-spacing-sm);
+    }
+    
+    .header-title {
+        font-size: var(--md-sys-typescale-headline-large-size);
+    }
+    
+    .calculator-card {
+        padding: var(--md-sys-spacing-md);
+    }
+    
+    .results-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .traction-type-selector {
+        flex-direction: column;
+    }
+    
+    .locomotive-card-wrapper {
+        max-width: 100%;
     }
 }
