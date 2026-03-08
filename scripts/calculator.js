@@ -747,9 +747,10 @@ class EnergyCalculator {
         const inputGroup = field.closest('.input-group');
         let isValid = true;
         let errorMessage = '';
+        let isWarning = false; // Flag for warnings (non-blocking issues)
 
         // Remove existing error classes and messages
-        inputGroup.classList.remove('error', 'success');
+        inputGroup.classList.remove('error', 'success', 'warning');
         const existingError = inputGroup.querySelector('.error-message');
         if (existingError) {
             existingError.remove();
@@ -787,27 +788,69 @@ class EnergyCalculator {
 
             if (trainWeight && axleCount) {
                 const axleLoad = trainWeight / axleCount;
+                
+                // Critical error - exceeds maximum allowed
                 if (axleLoad > 25) {
                     isValid = false;
                     errorMessage = 'Нагрузка на ось превышает допустимые значения (>25 т/ось)';
-                } else if (axleLoad < 5) {
-                    isValid = false;
-                    errorMessage = 'Нагрузка на ось слишком мала (<5 т/ось)';
+                } 
+                // Warning - too low but still calculable
+                else if (axleLoad < 5) {
+                    isWarning = true;
+                    errorMessage = 'Нагрузка на ось слишком мала (<5 т/ось). Проверьте данные.';
                 }
+                // Warning - edge case near boundaries
+                else if (axleLoad > 23) {
+                    isWarning = true;
+                    errorMessage = 'Нагрузка на ось близка к максимальной. Проверьте данные.';
+                }
+                else if (axleLoad < 6) {
+                    isWarning = true;
+                    errorMessage = 'Нагрузка на ось ниже стандартных значений. Проверьте данные.';
+                }
+            }
+        }
+
+        // Validate train weight
+        if (field.name === 'trainWeight' && field.value.trim()) {
+            const trainWeight = parseFloat(field.value);
+            
+            if (trainWeight < 500) {
+                isWarning = true;
+                errorMessage = 'Вес поезда очень мал. Проверьте данные.';
+            } else if (trainWeight > 8000) {
+                isWarning = true;
+                errorMessage = 'Вес поезда превышает типичные значения. Проверьте данные.';
+            }
+        }
+
+        // Validate wagon counts
+        if ((field.name === 'actualWagons' || field.name === 'conditionalWagons') && field.value.trim()) {
+            const wagonCount = parseInt(field.value);
+            
+            if (wagonCount > 500) {
+                isWarning = true;
+                errorMessage = 'Количество вагонов превышает типичные значения.';
             }
         }
 
         // Apply validation styles and messages
         if (isValid) {
-            inputGroup.classList.add('success');
+            if (isWarning) {
+                inputGroup.classList.add('warning');
+            } else {
+                inputGroup.classList.add('success');
+            }
         } else {
             inputGroup.classList.add('error');
-            if (errorMessage) {
-                const errorElement = document.createElement('small');
-                errorElement.className = 'error-message';
-                errorElement.textContent = errorMessage;
-                inputGroup.appendChild(errorElement);
-            }
+        }
+        
+        if (errorMessage) {
+            const errorElement = document.createElement('small');
+            errorElement.className = 'error-message';
+            errorElement.setAttribute('role', 'alert');
+            errorElement.textContent = errorMessage;
+            inputGroup.appendChild(errorElement);
         }
 
         return isValid;

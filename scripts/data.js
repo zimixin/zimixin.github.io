@@ -60,8 +60,9 @@ const WAGON_LENGTH = 14; // meters per wagon
 
 // Function to discover and load all .md files from data directory
 async function loadRoutesFromFiles() {
+    const loadingStartTime = Date.now();
     try {
-        console.log('Starting route loading...');
+        console.log('[Route Loader] Starting route loading...');
 
         // Define the list of known route files by scanning the data directory
         // Since we can't dynamically scan the server directory with JavaScript,
@@ -80,76 +81,139 @@ async function loadRoutesFromFiles() {
             'syzran-abdulino.md'
         ];
 
-        console.log(`Total route files defined: ${routeFiles.length}`);
+        console.log(`[Route Loader] Total route files defined: ${routeFiles.length}`);
+
+        // Track loading statistics
+        const stats = {
+            total: routeFiles.length,
+            existing: 0,
+            loaded: 0,
+            failed: 0,
+            parseErrors: 0
+        };
 
         // Filter out files that don't exist
         const existingFiles = [];
         for (const filename of routeFiles) {
             try {
-                console.log(`Checking existence of file: ./data/${filename}`);
-                const response = await fetch(`./data/${filename}`);
-                console.log(`Response for ${filename}: ${response.status} ${response.statusText}`);
+                const response = await fetch(`./data/${filename}`, { method: 'HEAD' });
 
                 if (response.ok) {
                     existingFiles.push(filename);
-                    console.log(`✓ File exists: ./data/${filename}`);
+                    stats.existing++;
+                    console.log(`[Route Loader] ✓ File exists: ./data/${filename}`);
                 } else {
-                    console.log(`✗ File does not exist, skipping: ./data/${filename}`);
+                    console.log(`[Route Loader] ✗ File does not exist, skipping: ./data/${filename}`);
                 }
             } catch (error) {
-                console.log(`✗ Error checking file existence, skipping: ./data/${filename}`, error);
+                console.log(`[Route Loader] ✗ Error checking file existence, skipping: ./data/${filename}`, error.message);
             }
         }
 
-        console.log(`Found ${existingFiles.length} existing route files:`, existingFiles);
+        console.log(`[Route Loader] Found ${existingFiles.length} existing route files`);
 
         // Load each .md file that exists
         for (const filename of existingFiles) {
             try {
-                console.log(`Loading route file: ${filename}`);
                 const response = await fetch(`./data/${filename}`);
-                console.log(`Fetched ${filename}: ${response.status} ${response.statusText}`);
 
                 if (response.ok) {
                     const content = await response.text();
-                    console.log(`Successfully retrieved content from ${filename}, length: ${content.length}`);
-
                     const route = parseRouteFromMarkdown(content, filename);
+                    
                     if (route) {
+                        // Validate route data
+                        const validation = validateRouteData(route, filename);
+                        if (!validation.valid) {
+                            console.warn(`[Route Loader] ⚠️ Route validation warning for ${filename}:`, validation.errors);
+                            stats.failed++;
+                            continue;
+                        }
+                        
                         const routeId = generateRouteId(route.name);
                         ROUTE_DATA[routeId] = route;
-                        console.log(`✓ Successfully parsed and loaded route: ${route.name} (${route.distance} км)`);
+                        stats.loaded++;
+                        console.log(`[Route Loader] ✓ Successfully loaded route: ${route.name} (${route.distance} км)`);
                     } else {
-                        console.warn(`✗ Failed to parse route from ${filename}`);
+                        console.warn(`[Route Loader] ✗ Failed to parse route from ${filename}`);
+                        stats.parseErrors++;
                     }
                 } else {
-                    console.warn(`✗ Could not load route file: ${filename} (HTTP ${response.status})`);
+                    console.warn(`[Route Loader] ✗ Could not load route file: ${filename} (HTTP ${response.status})`);
+                    stats.failed++;
                 }
             } catch (error) {
-                console.error(`✗ Error loading route file ${filename}:`, error);
+                console.error(`[Route Loader] ✗ Error loading route file ${filename}:`, error.message);
+                stats.failed++;
             }
         }
 
         const routeCount = Object.keys(ROUTE_DATA).length;
-        console.log(`Route loading completed. Total routes loaded: ${routeCount}`);
-        console.log('Available routes:', Object.keys(ROUTE_DATA).map(id => ROUTE_DATA[id].name));
+        const loadingTime = Date.now() - loadingStartTime;
+        
+        console.log(`[Route Loader] ========================================`);
+        console.log(`[Route Loader] Route loading completed in ${loadingTime}ms`);
+        console.log(`[Route Loader] Total routes loaded: ${routeCount}`);
+        console.log(`[Route Loader] Statistics:`, stats);
+        console.log(`[Route Loader] Available routes:`, Object.keys(ROUTE_DATA).map(id => `${ROUTE_DATA[id].name} (${ROUTE_DATA[id].distance} км)`));
+        console.log(`[Route Loader] ========================================`);
 
         // Dispatch a custom event to notify that routes have been loaded
-        const event = new CustomEvent('routesLoaded', { detail: { routeCount: Object.keys(ROUTE_DATA).length } });
-        console.log(`Dispatching routesLoaded event with route count: ${routeCount}`);
+        const event = new CustomEvent('routesLoaded', { 
+            detail: { 
+                routeCount: routeCount,
+                stats: stats,
+                loadingTime: loadingTime
+            } 
+        });
         document.dispatchEvent(event);
 
         // If calculator is already initialized, update routes immediately
         if (typeof window !== 'undefined' && window.calculator && window.calculator.updateRouteSelectWithFileRoutes) {
-            console.log('Calling calculator.updateRouteSelectWithFileRoutes()');
             window.calculator.updateRouteSelectWithFileRoutes();
-        } else {
-            console.log('Calculator not initialized yet, waiting for routesLoaded event');
         }
 
     } catch (error) {
-        console.error('Error loading route files:', error);
+        console.error('[Route Loader] Critical error loading route files:', error);
     }
+}
+
+// Validate route data for correctness
+function validateRouteData(route, filename) {
+    const errors = [];
+    
+    // Check required fields
+    if (!route.name || route.name.trim() === '') {
+        errors.push('Route name is missing or empty');
+    }
+    
+    if (!route.distance || route.distance <= 0) {
+        errors.push('Route distance must be a positive number');
+    }
+    
+    if (route.distance > 10000) {
+        errors.push('Route distance seems too large (>10000 km)');
+    }
+    
+    // Check coefficients if they exist
+    if (route.coefficients) {
+        const locomotiveTypes = ['vl10u', 'vl10k', 'vl10uk', '2es6'];
+        for (const type of locomotiveTypes) {
+            if (route.coefficients[type]) {
+                const coeffs = route.coefficients[type];
+                for (const [axleLoad, coeff] of Object.entries(coeffs)) {
+                    if (coeff < 0 || coeff > 200) {
+                        errors.push(`Invalid coefficient for ${type} at axle load ${axleLoad}: ${coeff}`);
+                    }
+                }
+            }
+        }
+    }
+    
+    return {
+        valid: errors.length === 0,
+        errors: errors
+    };
 }
 
 // Parse route data from markdown content
