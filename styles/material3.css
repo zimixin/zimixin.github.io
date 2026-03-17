@@ -109,12 +109,12 @@
        TYPOGRAPHY (Material 3 Expressive)
        ==================================== */
 
-    /* Font Families - Expressive: более современные шрифты */
-    --md-sys-typescale-display-font: 'Roboto Flex', 'Segoe UI', sans-serif;
-    --md-sys-typescale-headline-font: 'Roboto Flex', 'Segoe UI', sans-serif;
-    --md-sys-typescale-title-font: 'Roboto Flex', 'Segoe UI', sans-serif;
-    --md-sys-typescale-body-font: 'Roboto Flex', 'Segoe UI', sans-serif;
-    --md-sys-typescale-label-font: 'Roboto Flex', 'Segoe UI', sans-serif;
+    /* Font Families - Expressive: современные, читаемые шрифты */
+    --md-sys-typescale-display-font: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --md-sys-typescale-headline-font: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --md-sys-typescale-title-font: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --md-sys-typescale-body-font: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --md-sys-typescale-label-font: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 
     /* Display - Expressive: крупные, выразительные заголовки */
     --md-sys-typescale-display-large-size: 3.5625rem; /* 57px */

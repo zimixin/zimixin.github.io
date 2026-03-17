@@ -3,11 +3,61 @@
 
 class PWAManager {
     constructor() {
+        this.deferredPrompt = null;
         this.initializeNetworkStatus();
         this.initializeCacheStatus();
         this.initializeBackgroundSync();
         this.detectPWAMode();
         this.initializeOfflineHandling();
+        this.initializeInstallPrompt();
+    }
+
+    initializeInstallPrompt() {
+        // Handle PWA install prompt
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            this.deferredPrompt = e;
+            this.showInstallButton();
+        });
+
+        // Handle app installed event
+        window.addEventListener('appinstalled', () => {
+            this.deferredPrompt = null;
+            const installBtn = document.querySelector('.pwa-install-button');
+            if (installBtn) {
+                installBtn.remove();
+            }
+        });
+    }
+
+    showInstallButton() {
+        // Check if button already exists
+        if (document.querySelector('.pwa-install-button')) {
+            return;
+        }
+
+        const installButton = document.createElement('button');
+        installButton.className = 'btn btn-primary pwa-install-button';
+        installButton.innerHTML = `
+            <span class="material-symbols-outlined" style="font-size: 1.25rem;">download</span>
+            Установить приложение
+        `;
+        installButton.setAttribute('aria-label', 'Установить приложение');
+        installButton.setAttribute('title', 'Установить приложение');
+
+        installButton.addEventListener('click', async () => {
+            if (this.deferredPrompt) {
+                this.deferredPrompt.prompt();
+                const { outcome } = await this.deferredPrompt.userChoice;
+                console.log(`Install prompt result: ${outcome}`);
+                if (outcome === 'accepted') {
+                    installButton.remove();
+                }
+                this.deferredPrompt = null;
+            }
+        });
+
+        document.body.appendChild(installButton);
     }
     
     initializeNetworkStatus() {

@@ -239,20 +239,22 @@ class EnergyCalculator {
     }
 
     performRealTimeCalculation() {
-        // Check if all required fields are filled
-        const routeSelect = document.getElementById('route');
+        // Check if required fields are filled (route is optional for basic calculation)
         const trainWeight = document.getElementById('trainWeight');
         const trainAxles = document.getElementById('trainAxles');
-        
-        if (routeSelect && routeSelect.value && 
-            trainWeight && trainWeight.value && 
+
+        // Calculate if we have weight and axles (minimum required data)
+        if (trainWeight && trainWeight.value &&
             trainAxles && trainAxles.value) {
-            
+
             const formData = this.getFormData();
             const result = this.calculateEnergyConsumption(formData);
 
             if (result.success) {
                 this.displayResults(result.data);
+            } else {
+                // Show error message if calculation failed
+                console.log('Calculation failed:', result.error);
             }
         }
     }

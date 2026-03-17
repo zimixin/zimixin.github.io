@@ -25,11 +25,11 @@
     <meta name="mobile-web-app-capable" content="yes">
 
     <!-- Material Design 3 -->
-    <!-- Google Fonts: Roboto Flex -->
+    <!-- Google Fonts: Roboto (аналог Google Sans) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,300;8..144,400;8..144,500;8..144,600;8..144,700&display=swap" rel="stylesheet">
-    
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
     <!-- Material Symbols Outlined -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,GRAD@24,400,0" />
 
@@ -524,32 +524,8 @@
                     });
             });
         }
-        
-        // PWA Install Prompt
-        let deferredPrompt;
-        
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
-            
-            // Create install button
-            const installButton = document.createElement('button');
-            installButton.className = 'btn btn-secondary pwa-install-button';
-            installButton.innerHTML = '<span class="btn-icon">📱</span> Установить приложение';
-            installButton.style.cssText = 'position: fixed; bottom: 20px; right: 20px; z-index: 1000; box-shadow: 0 4px 16px rgba(0,0,0,0.2);';
-            
-            installButton.addEventListener('click', async () => {
-                if (deferredPrompt) {
-                    deferredPrompt.prompt();
-                    const { outcome } = await deferredPrompt.userChoice;
-                    console.log(`Install prompt result: ${outcome}`);
-                    deferredPrompt = null;
-                    installButton.remove();
-                }
-            });
-            
-            document.body.appendChild(installButton);
-        });
+
+        // PWA Install Prompt - обрабатывается в scripts/pwa.js
     </script>
 
 </body>

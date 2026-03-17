@@ -1,51 +1,64 @@
 <svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <!-- Background -->
-  <rect width="512" height="512" rx="64" fill="#007bff"/>
+  <!-- Background gradient -->
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0061A4;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0078D4;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="trainGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFFFFF;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#E8F4FF;stop-opacity:1" />
+    </linearGradient>
+  </defs>
   
-  <!-- Train icon -->
-  <g transform="translate(64, 128)">
+  <!-- Background -->
+  <rect width="512" height="512" rx="100" fill="url(#bgGradient)"/>
+  
+  <!-- Train icon (Material Design style) -->
+  <g transform="translate(106, 120)">
     <!-- Main locomotive body -->
-    <rect x="0" y="80" width="320" height="120" rx="16" fill="#ffffff"/>
+    <rect x="0" y="60" width="300" height="180" rx="24" fill="url(#trainGradient)"/>
     
-    <!-- Locomotive front -->
-    <path d="M320 80 L384 120 L384 160 L320 200 Z" fill="#ffffff"/>
+    <!-- Front window -->
+    <rect x="40" y="90" width="220" height="80" rx="12" fill="#0061A4"/>
     
-    <!-- Windows -->
-    <rect x="40" y="110" width="60" height="40" rx="8" fill="#007bff"/>
-    <rect x="120" y="110" width="60" height="40" rx="8" fill="#007bff"/>
-    <rect x="200" y="110" width="60" height="40" rx="8" fill="#007bff"/>
+    <!-- Window reflection -->
+    <rect x="50" y="100" width="100" height="30" rx="6" fill="rgba(255,255,255,0.3)"/>
+    
+    <!-- Headlights -->
+    <circle cx="60" cy="200" r="12" fill="#FFD700"/>
+    <circle cx="240" cy="200" r="12" fill="#FFD700"/>
+    
+    <!-- Grill -->
+    <rect x="80" y="230" width="140" height="10" rx="4" fill="#0061A4"/>
+    <rect x="80" y="245" width="140" height="10" rx="4" fill="#0061A4"/>
     
     <!-- Wheels -->
-    <circle cx="60" cy="220" r="20" fill="#333333"/>
-    <circle cx="140" cy="220" r="20" fill="#333333"/>
-    <circle cx="220" cy="220" r="20" fill="#333333"/>
-    <circle cx="300" cy="220" r="20" fill="#333333"/>
+    <circle cx="70" cy="260" r="24" fill="#333333"/>
+    <circle cx="150" cy="260" r="24" fill="#333333"/>
+    <circle cx="230" cy="260" r="24" fill="#333333"/>
     
     <!-- Wheel centers -->
-    <circle cx="60" cy="220" r="8" fill="#666666"/>
-    <circle cx="140" cy="220" r="8" fill="#666666"/>
-    <circle cx="220" cy="220" r="8" fill="#666666"/>
-    <circle cx="300" cy="220" r="8" fill="#666666"/>
+    <circle cx="70" cy="260" r="10" fill="#666666"/>
+    <circle cx="150" cy="260" r="10" fill="#666666"/>
+    <circle cx="230" cy="260" r="10" fill="#666666"/>
     
-    <!-- Lightning bolt (energy symbol) -->
-    <path d="M160 40 L200 40 L170 80 L190 80 L150 120 L180 80 L160 80 Z" fill="#ffd43b"/>
+    <!-- Pantograph (energy symbol for electric train) -->
+    <path d="M100 60 L120 30 L140 60" stroke="#FFD700" stroke-width="6" stroke-linecap="round" fill="none"/>
+    <line x1="120" y1="30" x2="120" y2="10" stroke="#FFD700" stroke-width="6" stroke-linecap="round"/>
   </g>
   
   <!-- Rail tracks -->
-  <rect x="0" y="380" width="512" height="8" fill="#666666"/>
-  <rect x="0" y="400" width="512" height="8" fill="#666666"/>
+  <rect x="60" y="380" width="392" height="12" rx="6" fill="#666666"/>
+  <rect x="60" y="405" width="392" height="12" rx="6" fill="#666666"/>
   
   <!-- Rail ties -->
-  <rect x="40" y="375" width="12" height="38" fill="#8b4513"/>
-  <rect x="80" y="375" width="12" height="38" fill="#8b4513"/>
-  <rect x="120" y="375" width="12" height="38" fill="#8b4513"/>
-  <rect x="160" y="375" width="12" height="38" fill="#8b4513"/>
-  <rect x="200" y="375" width="12" height="38" fill="#8b4513"/>
-  <rect x="240" y="375" width="12" height="38" fill="#8b4513"/>
-  <rect x="280" y="375" width="12" height="38" fill="#8b4513"/>
-  <rect x="320" y="375" width="12" height="38" fill="#8b4513"/>
-  <rect x="360" y="375" width="12" height="38" fill="#8b4513"/>
-  <rect x="400" y="375" width="12" height="38" fill="#8b4513"/>
-  <rect x="440" y="375" width="12" height="38" fill="#8b4513"/>
-  <rect x="480" y="375" width="12" height="38" fill="#8b4513"/>
+  <rect x="80" y="375" width="16" height="47" rx="4" fill="#8B4513"/>
+  <rect x="130" y="375" width="16" height="47" rx="4" fill="#8B4513"/>
+  <rect x="180" y="375" width="16" height="47" rx="4" fill="#8B4513"/>
+  <rect x="230" y="375" width="16" height="47" rx="4" fill="#8B4513"/>
+  <rect x="280" y="375" width="16" height="47" rx="4" fill="#8B4513"/>
+  <rect x="330" y="375" width="16" height="47" rx="4" fill="#8B4513"/>
+  <rect x="380" y="375" width="16" height="47" rx="4" fill="#8B4513"/>
+  <rect x="430" y="375" width="16" height="47" rx="4" fill="#8B4513"/>
 </svg>
