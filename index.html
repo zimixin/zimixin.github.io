@@ -7,22 +7,34 @@
     <meta name="description" content="Калькулятор для расчета норм расхода электроэнергии и топлива в грузовом движении на тягу поездов">
     <meta name="keywords" content="РЖД, калькулятор, электроэнергия, топливо, локомотив, грузовое движение">
     <meta name="author" content="РЖД Калькулятор">
-    <meta name="theme-color" content="#007bff">
-    
+    <meta name="theme-color" content="#0061A4">
+
     <!-- PWA Manifest -->
     <link rel="manifest" href="manifest.json">
-    
+
     <!-- Icons -->
     <link rel="icon" type="image/svg+xml" href="icons/icon.svg">
     <link rel="apple-touch-icon" href="icons/icon.svg">
-    
+
     <!-- iOS PWA Support -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="РЖД Калькулятор">
-    
+
     <!-- Android PWA Support -->
     <meta name="mobile-web-app-capable" content="yes">
+
+    <!-- Material Design 3 -->
+    <!-- Google Fonts: Montserrat (аналог Google Sans) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Material Symbols Outlined -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,GRAD@24,400,0" />
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="styles/material3.css">
     <link rel="stylesheet" href="styles/main.css">
     <link rel="stylesheet" href="styles/themes.css">
     <link rel="stylesheet" href="styles/components.css">
@@ -34,12 +46,12 @@
         <header class="header">
             <div class="header-content">
                 <h1 class="header-title">
-                    <span class="header-icon">🚂</span>
+                    <span class="material-symbols-outlined header-icon" aria-hidden="true">directions_railway</span>
                     Калькулятор РЖД
                 </h1>
                 <p class="header-subtitle">Расчет энергопотребления и топлива в грузовом движении</p>
-                <button class="theme-toggle" id="themeToggle" aria-label="Переключить тему">
-                    <span class="theme-icon">🌙</span>
+                <button class="theme-toggle" id="themeToggle" aria-label="Переключить тему" title="Переключить тему">
+                    <span class="material-symbols-outlined theme-icon" aria-hidden="true">dark_mode</span>
                 </button>
             </div>
         </header>
@@ -55,6 +67,7 @@
                         <select id="route" name="route" required>
                             <option value="">-- Выберите маршрут --</option>
                         </select>
+                        <div class="route-loader" id="routeLoader">Загрузка маршрутов...</div>
                     </div>
                     
                     <!-- Custom Route Input -->
@@ -137,15 +150,15 @@
                     <!-- Export and Actions -->
                     <div class="result-actions">
                         <button type="button" class="btn btn-secondary" id="exportBtn">
-                            <span class="btn-icon">📊</span>
+                            <span class="material-symbols-outlined" aria-hidden="true">download</span>
                             Экспорт результата
                         </button>
                         <button type="button" class="btn btn-secondary" id="saveToHistoryBtn">
-                            <span class="btn-icon">💾</span>
+                            <span class="material-symbols-outlined" aria-hidden="true">save</span>
                             Сохранить в историю
                         </button>
                         <button type="button" class="btn btn-secondary" id="showInfoBtn">
-                            <span class="btn-icon">ℹ️</span>
+                            <span class="material-symbols-outlined" aria-hidden="true">info</span>
                             Справка
                         </button>
                     </div>
@@ -159,16 +172,20 @@
                         <!-- Traction Type Selector -->
                         <div class="traction-type-selector">
                             <button type="button" class="traction-btn active" id="electricBtn" data-type="electric">
-                                <span class="traction-icon">⚡</span> Электровозы
+                                <span class="material-symbols-outlined traction-icon" aria-hidden="true">bolt</span> Электровозы
                             </button>
                             <button type="button" class="traction-btn" id="dieselBtn" data-type="diesel">
-                                <span class="traction-icon">🛢️</span> Тепловозы
+                                <span class="material-symbols-outlined traction-icon" aria-hidden="true">local_gas_station</span> Тепловозы
                             </button>
                         </div>
                         
                         <div class="locomotive-controls">
-                            <button type="button" class="btn btn-secondary" id="addLocomotiveBtn">+Л</button>
-                            <button type="button" class="btn btn-secondary" id="addColdLocomotiveBtn">+Х</button>
+                            <button type="button" class="btn btn-secondary" id="addLocomotiveBtn">
+                                <span class="material-symbols-outlined" aria-hidden="true">add</span> Л
+                            </button>
+                            <button type="button" class="btn btn-secondary" id="addColdLocomotiveBtn">
+                                <span class="material-symbols-outlined" aria-hidden="true">do_not_disturb_on</span> Х
+                            </button>
                         </div>
                         <div class="locomotive-container" id="locomotiveContainer">
                             <!-- Electric Locomotives (default visible) -->
@@ -275,21 +292,23 @@
                     <div class="form-section">
                         <h2 class="section-title">Параметры поезда</h2>
                         <div class="train-params-card">
-                            <div class="input-group">
-                                <label for="trainWeight">Вес (тонн)</label>
-                                <input type="number" class="compact-input" id="trainWeight" name="trainWeight" min="100" max="10000" step="1" required>
-                            </div>
-                            <div class="input-group">
-                                <label for="trainAxles">Оси</label>
-                                <input type="number" class="compact-input" id="trainAxles" name="trainAxles" min="10" max="500" step="1" required>
-                            </div>
-                            <div class="input-group">
-                                <label for="actualWagons">Фактические вагоны</label>
-                                <input type="number" class="compact-input" id="actualWagons" name="actualWagons" min="0" max="1000" step="1">
-                            </div>
-                            <div class="input-group">
-                                <label for="conditionalWagons">Условные вагоны</label>
-                                <input type="number" class="compact-input" id="conditionalWagons" name="conditionalWagons" min="0" max="1000" step="1">
+                            <div class="input-grid">
+                                <div class="input-group">
+                                    <label for="trainWeight">Вес (тонн)</label>
+                                    <input type="number" class="compact-input" id="trainWeight" name="trainWeight" min="100" max="10000" step="1" required>
+                                </div>
+                                <div class="input-group">
+                                    <label for="trainAxles">Оси</label>
+                                    <input type="number" class="compact-input" id="trainAxles" name="trainAxles" min="10" max="500" step="1" required>
+                                </div>
+                                <div class="input-group">
+                                    <label for="actualWagons">Фактические вагоны</label>
+                                    <input type="number" class="compact-input" id="actualWagons" name="actualWagons" min="0" max="1000" step="1">
+                                </div>
+                                <div class="input-group">
+                                    <label for="conditionalWagons">Условные вагоны</label>
+                                    <input type="number" class="compact-input" id="conditionalWagons" name="conditionalWagons" min="0" max="1000" step="1">
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -366,7 +385,7 @@
                                     <td class="fuel-table-cell fuel-coeff-cell"></td>
                                     <td class="fuel-table-cell fuel-average-cell" colspan="2">
                                         <div class="fuel-average-content">
-                                            <div class="fuel-avg-row" id="fuelAResultRow" style="display: none;">
+                                            <div class="fuel-avg-row fuel-result-row" id="fuelAResultRow" style="display: none;">
                                                 <span class="fuel-result-liters" id="fuelALitersResult">0 л</span>
                                                 <span class="fuel-result-kg" id="fuelAKgResult">0 кг</span>
                                             </div>
@@ -374,7 +393,7 @@
                                     </td>
                                     <td class="fuel-table-cell fuel-average-cell" colspan="2">
                                         <div class="fuel-average-content">
-                                            <div class="fuel-avg-row" id="fuelBResultRow" style="display: none;">
+                                            <div class="fuel-avg-row fuel-result-row" id="fuelBResultRow" style="display: none;">
                                                 <span class="fuel-result-liters" id="fuelBLitersResult">0 л</span>
                                                 <span class="fuel-result-kg" id="fuelBKgResult">0 кг</span>
                                             </div>
@@ -382,7 +401,7 @@
                                     </td>
                                     <td class="fuel-table-cell fuel-average-cell fuel-v-cell" colspan="2" id="fuelVResultCell" style="display: none;">
                                         <div class="fuel-average-content">
-                                            <div class="fuel-avg-row" id="fuelVResultRow" style="display: none;">
+                                            <div class="fuel-avg-row fuel-result-row" id="fuelVResultRow" style="display: none;">
                                                 <span class="fuel-result-liters" id="fuelVLitersResult">0 л</span>
                                                 <span class="fuel-result-kg" id="fuelVKgResult">0 кг</span>
                                             </div>
@@ -400,7 +419,7 @@
                     <div id="historyList" class="history-list"></div>
                     <div class="history-actions">
                         <button type="button" class="btn btn-secondary" id="clearHistoryBtn">
-                            <span class="btn-icon">🗑️</span>
+                            <span class="material-symbols-outlined" aria-hidden="true">delete</span>
                             Очистить историю
                         </button>
                     </div>
@@ -410,8 +429,10 @@
                 <div class="modal" id="infoModal" style="display: none;">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h2>Справочная информация</h2>
-                            <button class="modal-close" id="closeModalBtn">&times;</button>
+                            <h2 class="modal-title">Справочная информация</h2>
+                            <button class="modal-close" id="closeModalBtn" aria-label="Закрыть">
+                                <span class="material-symbols-outlined" aria-hidden="true">close</span>
+                            </button>
                         </div>
                         <div class="modal-body">
                             <h3>Локомотивы</h3>
@@ -480,38 +501,28 @@
                 navigator.serviceWorker.register('./sw.js')
                     .then((registration) => {
                         console.log('SW registered: ', registration);
+                        
+                        // Check if we're online/offline
+                        if (!navigator.onLine) {
+                            document.body.classList.add('offline');
+                        }
+                        
+                        // Listen for online/offline events
+                        window.addEventListener('online', () => {
+                            document.body.classList.remove('offline');
+                        });
+                        
+                        window.addEventListener('offline', () => {
+                            document.body.classList.add('offline');
+                        });
                     })
                     .catch((registrationError) => {
                         console.log('SW registration failed: ', registrationError);
                     });
             });
         }
-        
-        // PWA Install Prompt
-        let deferredPrompt;
-        
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
-            
-            // Create install button
-            const installButton = document.createElement('button');
-            installButton.className = 'btn btn-secondary';
-            installButton.innerHTML = '<span class="btn-icon">📱</span> Установить приложение';
-            installButton.style.cssText = 'position: fixed; bottom: 20px; right: 20px; z-index: 1000; box-shadow: 0 4px 16px rgba(0,0,0,0.2);';
-            
-            installButton.addEventListener('click', async () => {
-                if (deferredPrompt) {
-                    deferredPrompt.prompt();
-                    const { outcome } = await deferredPrompt.userChoice;
-                    console.log(`Install prompt result: ${outcome}`);
-                    deferredPrompt = null;
-                    installButton.remove();
-                }
-            });
-            
-            document.body.appendChild(installButton);
-        });
+
+        // PWA Install Prompt - обрабатывается в scripts/pwa.js
     </script>
 
 </body>

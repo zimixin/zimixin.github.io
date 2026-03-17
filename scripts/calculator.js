@@ -21,6 +21,12 @@ class EnergyCalculator {
         document.addEventListener('routesLoaded', () => {
             this.updateRouteSelectWithFileRoutes();
         });
+        
+        // Check if routes were already loaded before calculator initialization
+        if (window.ROUTE_DATA && Object.keys(window.ROUTE_DATA).length > 0) {
+            console.log('Routes already loaded, updating dropdown immediately');
+            this.updateRouteSelectWithFileRoutes();
+        }
     }
 
     initializeEventListeners() {
@@ -233,20 +239,22 @@ class EnergyCalculator {
     }
 
     performRealTimeCalculation() {
-        // Check if all required fields are filled
-        const routeSelect = document.getElementById('route');
+        // Check if required fields are filled (route is optional for basic calculation)
         const trainWeight = document.getElementById('trainWeight');
         const trainAxles = document.getElementById('trainAxles');
-        
-        if (routeSelect && routeSelect.value && 
-            trainWeight && trainWeight.value && 
+
+        // Calculate if we have weight and axles (minimum required data)
+        if (trainWeight && trainWeight.value &&
             trainAxles && trainAxles.value) {
-            
+
             const formData = this.getFormData();
             const result = this.calculateEnergyConsumption(formData);
 
             if (result.success) {
                 this.displayResults(result.data);
+            } else {
+                // Show error message if calculation failed
+                console.log('Calculation failed:', result.error);
             }
         }
     }
@@ -747,9 +755,10 @@ class EnergyCalculator {
         const inputGroup = field.closest('.input-group');
         let isValid = true;
         let errorMessage = '';
+        let isWarning = false; // Flag for warnings (non-blocking issues)
 
         // Remove existing error classes and messages
-        inputGroup.classList.remove('error', 'success');
+        inputGroup.classList.remove('error', 'success', 'warning');
         const existingError = inputGroup.querySelector('.error-message');
         if (existingError) {
             existingError.remove();
@@ -787,27 +796,69 @@ class EnergyCalculator {
 
             if (trainWeight && axleCount) {
                 const axleLoad = trainWeight / axleCount;
+                
+                // Critical error - exceeds maximum allowed
                 if (axleLoad > 25) {
                     isValid = false;
                     errorMessage = 'Нагрузка на ось превышает допустимые значения (>25 т/ось)';
-                } else if (axleLoad < 5) {
-                    isValid = false;
-                    errorMessage = 'Нагрузка на ось слишком мала (<5 т/ось)';
+                } 
+                // Warning - too low but still calculable
+                else if (axleLoad < 5) {
+                    isWarning = true;
+                    errorMessage = 'Нагрузка на ось слишком мала (<5 т/ось). Проверьте данные.';
                 }
+                // Warning - edge case near boundaries
+                else if (axleLoad > 23) {
+                    isWarning = true;
+                    errorMessage = 'Нагрузка на ось близка к максимальной. Проверьте данные.';
+                }
+                else if (axleLoad < 6) {
+                    isWarning = true;
+                    errorMessage = 'Нагрузка на ось ниже стандартных значений. Проверьте данные.';
+                }
+            }
+        }
+
+        // Validate train weight
+        if (field.name === 'trainWeight' && field.value.trim()) {
+            const trainWeight = parseFloat(field.value);
+            
+            if (trainWeight < 500) {
+                isWarning = true;
+                errorMessage = 'Вес поезда очень мал. Проверьте данные.';
+            } else if (trainWeight > 8000) {
+                isWarning = true;
+                errorMessage = 'Вес поезда превышает типичные значения. Проверьте данные.';
+            }
+        }
+
+        // Validate wagon counts
+        if ((field.name === 'actualWagons' || field.name === 'conditionalWagons') && field.value.trim()) {
+            const wagonCount = parseInt(field.value);
+            
+            if (wagonCount > 500) {
+                isWarning = true;
+                errorMessage = 'Количество вагонов превышает типичные значения.';
             }
         }
 
         // Apply validation styles and messages
         if (isValid) {
-            inputGroup.classList.add('success');
+            if (isWarning) {
+                inputGroup.classList.add('warning');
+            } else {
+                inputGroup.classList.add('success');
+            }
         } else {
             inputGroup.classList.add('error');
-            if (errorMessage) {
-                const errorElement = document.createElement('small');
-                errorElement.className = 'error-message';
-                errorElement.textContent = errorMessage;
-                inputGroup.appendChild(errorElement);
-            }
+        }
+        
+        if (errorMessage) {
+            const errorElement = document.createElement('small');
+            errorElement.className = 'error-message';
+            errorElement.setAttribute('role', 'alert');
+            errorElement.textContent = errorMessage;
+            inputGroup.appendChild(errorElement);
         }
 
         return isValid;

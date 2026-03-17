@@ -1,425 +1,533 @@
-/* Theme Variables */
-:root {
-    /* Light Theme */
-    --bg-primary: #ffffff;
-    --bg-secondary: #f8f9fa;
-    --card-bg: #ffffff;
-    --input-bg: #ffffff;
-    --result-bg: #f8f9fa;
-    --text-primary: #212529;
-    --text-secondary: #6c757d;
-    --border-color: #dee2e6;
-    --accent-color: #007bff;
-    --accent-hover: #0056b3;
-    --accent-light: rgba(0, 123, 255, 0.1);
-    --success-color: #28a745;
-    --warning-color: #ffc107;
-    --danger-color: #dc3545;
-    --secondary-color: #6c757d;
-    --secondary-hover: #545b62;
-    --shadow: rgba(0, 0, 0, 0.1);
-}
+/* ========================================
+   Material Design 3 Expressive
+   Theme System - Калькулятор РЖД
+   ======================================== */
 
-/* Light Theme Class */
+/* ========================================
+   LIGHT THEME (Default) - Expressive
+   ======================================== */
+
 .theme-light {
-    background-color: var(--bg-primary);
-    color: var(--text-primary);
+    /* Primary colors - Expressive: насыщенные, живые */
+    --md-sys-color-primary: var(--md-sys-color-primary-light);
+    --md-sys-color-on-primary: #FFFFFF;
+    --md-sys-color-primary-container: var(--md-sys-color-primary-container-light);
+    --md-sys-color-on-primary-container: var(--md-sys-color-on-primary-container-light);
+
+    /* Secondary colors - Expressive: теплый коралловый акцент */
+    --md-sys-color-secondary: var(--md-sys-color-secondary-light);
+    --md-sys-color-on-secondary: #FFFFFF;
+    --md-sys-color-secondary-container: var(--md-sys-color-secondary-container-light);
+    --md-sys-color-on-secondary-container: var(--md-sys-color-on-secondary-container-light);
+
+    /* Tertiary colors - Expressive: природный зеленый */
+    --md-sys-color-tertiary: var(--md-sys-color-tertiary-light);
+    --md-sys-color-on-tertiary: #FFFFFF;
+    --md-sys-color-tertiary-container: var(--md-sys-color-tertiary-container-light);
+    --md-sys-color-on-tertiary-container: var(--md-sys-color-on-tertiary-container-light);
+
+    /* Error colors */
+    --md-sys-color-error: var(--md-sys-color-error-light);
+    --md-sys-color-on-error: #FFFFFF;
+    --md-sys-color-error-container: #FFDAD6;
+    --md-sys-color-on-error-container: #410002;
+
+    /* Background & Surface - Expressive: чистые, светлые поверхности */
+    --md-sys-color-background: var(--md-sys-color-background-light);
+    --md-sys-color-on-background: var(--md-sys-color-on-background-light);
+    --md-sys-color-surface: var(--md-sys-color-surface-light);
+    --md-sys-color-on-surface: var(--md-sys-color-on-surface-light);
+    --md-sys-color-surface-container: var(--md-sys-color-surface-container-light);
+    --md-sys-color-surface-container-high: var(--md-sys-color-surface-container-high-light);
+    --md-sys-color-surface-container-highest: var(--md-sys-color-surface-container-highest-light);
+    --md-sys-color-surface-container-low: var(--md-sys-color-surface-container-low-light);
+    --md-sys-color-surface-container-lowest: var(--md-sys-color-surface-container-lowest-light);
+    --md-sys-color-on-surface-variant: var(--md-sys-color-on-surface-variant-light);
+
+    /* Outline */
+    --md-sys-color-outline: var(--md-sys-color-outline-light);
+    --md-sys-color-outline-variant: var(--md-sys-color-outline-variant-light);
+
+    /* Inverse */
+    --md-sys-color-inverse-surface: var(--md-sys-color-inverse-surface-light);
+    --md-sys-color-inverse-on-surface: var(--md-sys-color-inverse-on-surface-light);
+    --md-sys-color-inverse-primary: var(--md-sys-color-inverse-primary-light);
+
+    /* Shadows - Expressive: мягкие, с тонированием */
+    --md-sys-elevation-level1: 
+        0 1px 3px rgba(0, 85, 165, 0.12),
+        0 1px 2px rgba(0, 85, 165, 0.14),
+        inset 0 0 0 1px rgba(0, 85, 165, 0.02);
+    --md-sys-elevation-level2: 
+        0 2px 6px rgba(0, 85, 165, 0.12),
+        0 2px 4px rgba(0, 85, 165, 0.14),
+        inset 0 0 0 1px rgba(0, 85, 165, 0.02);
+    --md-sys-elevation-level3: 
+        0 4px 12px rgba(0, 85, 165, 0.12),
+        0 4px 8px rgba(0, 85, 165, 0.14),
+        inset 0 0 0 1px rgba(0, 85, 165, 0.03);
+    --md-sys-elevation-level4: 
+        0 6px 18px rgba(0, 85, 165, 0.12),
+        0 6px 12px rgba(0, 85, 165, 0.14),
+        inset 0 0 0 1px rgba(0, 85, 165, 0.03);
+    --md-sys-elevation-level5: 
+        0 8px 24px rgba(0, 85, 165, 0.12),
+        0 8px 16px rgba(0, 85, 165, 0.14),
+        inset 0 0 0 1px rgba(0, 85, 165, 0.04);
+
+    /* Surface Tint Overlay */
+    --md-sys-surface-tint: rgba(0, 85, 165, 0.05);
 }
 
-.theme-light .header {
-    background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-primary) 100%);
-}
+/* ========================================
+   DARK THEME - Expressive
+   ======================================== */
 
-.theme-light .theme-toggle {
-    border-color: var(--border-color);
-    color: var(--text-primary);
-    background: var(--card-bg);
-}
-
-.theme-light .theme-toggle:hover {
-    background: var(--accent-light);
-    border-color: var(--accent-color);
-}
-
-/* Dark Theme Variables */
 .theme-dark {
-    --bg-primary: #1a1a1a;
-    --bg-secondary: #2d2d2d;
-    --card-bg: #2d2d2d;
-    --input-bg: #4a4a4a;
-    --result-bg: #3d3d3d;
-    --text-primary: #ffffff;
-    --text-secondary: #e0e0e0;
-    --border-color: #5a5a5a;
-    --accent-color: #4dabf7;
-    --accent-hover: #339af0;
-    --accent-light: rgba(77, 171, 247, 0.1);
-    --success-color: #51cf66;
-    --warning-color: #ffd43b;
-    --danger-color: #ff6b6b;
-    --secondary-color: #6c757d;
-    --secondary-hover: #5c636a;
-    --shadow: rgba(0, 0, 0, 0.3);
+    /* Primary colors - Expressive: яркие на темном фоне */
+    --md-sys-color-primary: var(--md-sys-color-primary-dark);
+    --md-sys-color-on-primary: #003258;
+    --md-sys-color-primary-container: var(--md-sys-color-primary-container-dark);
+    --md-sys-color-on-primary-container: var(--md-sys-color-on-primary-container-dark);
 
-    background-color: var(--bg-primary);
-    color: var(--text-primary);
+    /* Secondary colors - Expressive: энергичный акцент */
+    --md-sys-color-secondary: var(--md-sys-color-secondary-dark);
+    --md-sys-color-on-secondary: #690005;
+    --md-sys-color-secondary-container: var(--md-sys-color-secondary-container-dark);
+    --md-sys-color-on-secondary-container: var(--md-sys-color-on-secondary-container-dark);
+
+    /* Tertiary colors - Expressive: свежий зеленый */
+    --md-sys-color-tertiary: var(--md-sys-color-tertiary-dark);
+    --md-sys-color-on-tertiary: #003909;
+    --md-sys-color-tertiary-container: var(--md-sys-color-tertiary-container-dark);
+    --md-sys-color-on-tertiary-container: var(--md-sys-color-on-tertiary-container-dark);
+
+    /* Error colors */
+    --md-sys-color-error: var(--md-sys-color-error-dark);
+    --md-sys-color-on-error: #690005;
+    --md-sys-color-error-container: #93000A;
+    --md-sys-color-on-error-container: #FFDAD6;
+
+    /* Background & Surface - Expressive: глубокие, богатые темные */
+    --md-sys-color-background: var(--md-sys-color-background-dark);
+    --md-sys-color-on-background: var(--md-sys-color-on-background-dark);
+    --md-sys-color-surface: var(--md-sys-color-surface-dark);
+    --md-sys-color-on-surface: var(--md-sys-color-on-surface-dark);
+    --md-sys-color-surface-container: var(--md-sys-color-surface-container-dark);
+    --md-sys-color-surface-container-high: var(--md-sys-color-surface-container-high-dark);
+    --md-sys-color-surface-container-highest: var(--md-sys-color-surface-container-highest-dark);
+    --md-sys-color-surface-container-low: var(--md-sys-color-surface-container-low-dark);
+    --md-sys-color-surface-container-lowest: var(--md-sys-color-surface-container-lowest-dark);
+    --md-sys-color-on-surface-variant: var(--md-sys-color-on-surface-variant-dark);
+
+    /* Outline */
+    --md-sys-color-outline: var(--md-sys-color-outline-dark);
+    --md-sys-color-outline-variant: var(--md-sys-color-outline-variant-dark);
+
+    /* Inverse */
+    --md-sys-color-inverse-surface: var(--md-sys-color-inverse-surface-dark);
+    --md-sys-color-inverse-on-surface: var(--md-sys-color-inverse-on-surface-dark);
+    --md-sys-color-inverse-primary: var(--md-sys-color-inverse-primary-dark);
+
+    /* Shadows - Expressive: глубокие, атмосферные */
+    --md-sys-elevation-level1: var(--md-sys-elevation-level1-dark);
+    --md-sys-elevation-level2: var(--md-sys-elevation-level2-dark);
+    --md-sys-elevation-level3: var(--md-sys-elevation-level3-dark);
+    --md-sys-elevation-level4: var(--md-sys-elevation-level4-dark);
+    --md-sys-elevation-level5: var(--md-sys-elevation-level5-dark);
+
+    /* Surface Tint Overlay */
+    --md-sys-surface-tint: rgba(168, 199, 250, 0.08);
 }
 
-/* Dark Theme - Fuel Table Input Visibility */
-.theme-dark .fuel-table-input {
-    background-color: #4a4a4a;
-    color: #ffffff;
-    border-color: #5a5a5a;
+/* ========================================
+   AMOLED THEME (Pure Black) - Expressive
+   ======================================== */
+
+.theme-amoled {
+    /* Primary colors */
+    --md-sys-color-primary: var(--md-sys-color-primary-dark);
+    --md-sys-color-on-primary: #003258;
+    --md-sys-color-primary-container: var(--md-sys-color-primary-container-dark);
+    --md-sys-color-on-primary-container: var(--md-sys-color-on-primary-container-dark);
+
+    /* Secondary colors */
+    --md-sys-color-secondary: var(--md-sys-color-secondary-dark);
+    --md-sys-color-on-secondary: #690005;
+    --md-sys-color-secondary-container: var(--md-sys-color-secondary-container-dark);
+    --md-sys-color-on-secondary-container: var(--md-sys-color-on-secondary-container-dark);
+
+    /* Tertiary colors */
+    --md-sys-color-tertiary: var(--md-sys-color-tertiary-dark);
+    --md-sys-color-on-tertiary: #003909;
+    --md-sys-color-tertiary-container: var(--md-sys-color-tertiary-container-dark);
+    --md-sys-color-on-tertiary-container: var(--md-sys-color-on-tertiary-container-dark);
+
+    /* Error colors */
+    --md-sys-color-error: var(--md-sys-color-error-dark);
+    --md-sys-color-on-error: #690005;
+    --md-sys-color-error-container: #93000A;
+    --md-sys-color-on-error-container: #FFDAD6;
+
+    /* Background & Surface - PURE BLACK */
+    --md-sys-color-background: #000000;
+    --md-sys-color-on-background: #E2E2E6;
+    --md-sys-color-surface: #000000;
+    --md-sys-color-on-surface: #E2E2E6;
+    --md-sys-color-surface-container: #0A0A0A;
+    --md-sys-color-surface-container-high: #121212;
+    --md-sys-color-surface-container-highest: #1A1A1A;
+    --md-sys-color-surface-container-low: #080808;
+    --md-sys-color-surface-container-lowest: #000000;
+    --md-sys-color-on-surface-variant: #C4C7CF;
+
+    /* Outline */
+    --md-sys-color-outline: var(--md-sys-color-outline-dark);
+    --md-sys-color-outline-variant: var(--md-sys-color-outline-variant-dark);
+
+    /* Inverse */
+    --md-sys-color-inverse-surface: #E2E2E6;
+    --md-sys-color-inverse-on-surface: #1A1A1A;
+    --md-sys-color-inverse-primary: var(--md-sys-color-inverse-primary-dark);
+
+    /* Shadows - minimal for AMOLED */
+    --md-sys-elevation-level1: 0 1px 2px rgba(0, 0, 0, 0.5);
+    --md-sys-elevation-level2: 0 2px 4px rgba(0, 0, 0, 0.5);
+    --md-sys-elevation-level3: 0 4px 8px rgba(0, 0, 0, 0.5);
+    --md-sys-elevation-level4: 0 6px 12px rgba(0, 0, 0, 0.5);
+    --md-sys-elevation-level5: 0 8px 16px rgba(0, 0, 0, 0.5);
+
+    /* Surface Tint - minimal */
+    --md-sys-surface-tint: rgba(168, 199, 250, 0.03);
 }
 
-.theme-dark .fuel-table-input:focus {
-    background-color: #5a5a5a;
-    border-color: #4dabf7;
-}
+/* ========================================
+   LOCOMOTIVE CARD THEMES - Expressive
+   ======================================== */
 
-.theme-dark .fuel-table-input::placeholder {
-    color: #b0b0b0;
-}
-
-.theme-dark .fuel-coeff-input {
-    background-color: #4a4a4a;
-    color: #ffffff;
-}
-
-.theme-dark .fuel-input-wrapper label,
-.theme-dark .fuel-coeff-label {
-    color: #e0e0e0;
-}
-
-/* Dark Theme - Fuel Section V Cell Background Fix */
-.theme-dark .fuel-average-row .fuel-v-cell {
-    background: #007bff !important;
-    color: white;
-    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
-}
-
-.theme-dark .header {
-    background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-primary) 100%);
-}
-
-.theme-dark .theme-toggle {
-    border-color: var(--border-color);
-    color: var(--text-primary);
-    background: var(--card-bg);
-}
-
-.theme-dark .theme-toggle:hover {
-    background: var(--accent-light);
-    border-color: var(--accent-color);
-}
-
-/* Theme-specific locomotive cards */
-.theme-dark .locomotive-vl10.locomotive-card {
-    background: linear-gradient(135deg, #003366 0%, #00509e 100%);
-}
-
-.theme-dark .locomotive-vl10u.locomotive-card {
-    background: linear-gradient(135deg, #004080 0%, #0066cc 100%);
-}
-
-.theme-dark .locomotive-vl10k.locomotive-card {
-    background: linear-gradient(135deg, #003366 0%, #00509e 100%);
-}
-
-.theme-dark .locomotive-vl10uk.locomotive-card {
-    background: linear-gradient(135deg, #004080 0%, #0066cc 100%);
-}
-
-.theme-dark .locomotive-es6.locomotive-card {
-    background: linear-gradient(135deg, #0066cc 0%, #3399ff 100%);
-}
-
-/* Diesel locomotives - dark theme */
-.theme-dark .locomotive-2te10m.locomotive-card {
-    background: linear-gradient(135deg, #8B4513 0%, #CD853F 100%);
-}
-
-.theme-dark .locomotive-2te25km.locomotive-card {
-    background: linear-gradient(135deg, #A0522D 0%, #DEB887 100%);
-}
-
-.theme-dark .locomotive-tep70bs.locomotive-card {
-    background: linear-gradient(135deg, #CD853F 0%, #F4A460 100%);
-}
-
-.theme-dark .locomotive-3te10m.locomotive-card {
-    background: linear-gradient(135deg, #654321 0%, #8B4513 100%);
-}
-
-.theme-dark .locomotive-cold.locomotive-card {
-    background: linear-gradient(135deg, #5a6c7d 0%, #7d8fa3 100%);
-}
-
-/* Compact locomotive card styling in light theme */
-.theme-light .locomotive-card {
-    padding: 0.4rem; /* Reduced padding */
-    min-width: 90px; /* Reduced width */
-}
-
-.theme-light .locomotive-info h3 {
-    font-size: 0.85rem; /* Smaller font */
-    margin-bottom: 0.05rem; /* Reduced margin */
-}
-
-.theme-light .locomotive-info p {
-    font-size: 0.7rem; /* Smaller font */
-}
-
-/* Theme-specific locomotive cards in light theme */
+/* Light Theme - Expressive: градиенты с глубиной */
 .theme-light .locomotive-vl10.locomotive-card {
-    background: linear-gradient(135deg, #003366 0%, #00509e 100%);
+    background: linear-gradient(145deg, #003366 0%, #00509E 50%, #0066CC 100%);
     color: white;
+    box-shadow: 0 4px 12px rgba(0, 85, 165, 0.3);
 }
 
 .theme-light .locomotive-vl10u.locomotive-card {
-    background: linear-gradient(135deg, #004080 0%, #0066cc 100%);
+    background: linear-gradient(145deg, #004080 0%, #0066CC 50%, #0078E8 100%);
     color: white;
+    box-shadow: 0 4px 12px rgba(0, 85, 165, 0.3);
 }
 
 .theme-light .locomotive-vl10k.locomotive-card {
-    background: linear-gradient(135deg, #003366 0%, #00509e 100%);
+    background: linear-gradient(145deg, #003366 0%, #00509E 50%, #0066CC 100%);
     color: white;
+    box-shadow: 0 4px 12px rgba(0, 85, 165, 0.3);
 }
 
 .theme-light .locomotive-vl10uk.locomotive-card {
-    background: linear-gradient(135deg, #004080 0%, #0066cc 100%);
+    background: linear-gradient(145deg, #004080 0%, #0066CC 50%, #0078E8 100%);
     color: white;
+    box-shadow: 0 4px 12px rgba(0, 85, 165, 0.3);
 }
 
 .theme-light .locomotive-es6.locomotive-card {
-    background: linear-gradient(135deg, #0066cc 0%, #3399ff 100%);
+    background: linear-gradient(145deg, #CC0000 0%, #FF3333 50%, #FF5555 100%);
     color: white;
+    box-shadow: 0 4px 12px rgba(204, 0, 0, 0.3);
 }
 
-/* Diesel locomotives - light theme */
 .theme-light .locomotive-2te10m.locomotive-card {
-    background: linear-gradient(135deg, #8B4513 0%, #CD853F 100%);
+    background: linear-gradient(145deg, #006633 0%, #00994D 50%, #00B359 100%);
     color: white;
+    box-shadow: 0 4px 12px rgba(0, 102, 51, 0.3);
 }
 
 .theme-light .locomotive-2te25km.locomotive-card {
-    background: linear-gradient(135deg, #A0522D 0%, #DEB887 100%);
+    background: linear-gradient(145deg, #005555 0%, #008888 50%, #00AAAA 100%);
     color: white;
+    box-shadow: 0 4px 12px rgba(0, 85, 85, 0.3);
 }
 
 .theme-light .locomotive-tep70bs.locomotive-card {
-    background: linear-gradient(135deg, #CD853F 0%, #F4A460 100%);
+    background: linear-gradient(145deg, #006666 0%, #009999 50%, #00BBBB 100%);
     color: white;
+    box-shadow: 0 4px 12px rgba(0, 102, 102, 0.3);
 }
 
 .theme-light .locomotive-3te10m.locomotive-card {
-    background: linear-gradient(135deg, #654321 0%, #8B4513 100%);
+    background: linear-gradient(145deg, #005522 0%, #008833 50%, #00AA44 100%);
     color: white;
+    box-shadow: 0 4px 12px rgba(0, 85, 34, 0.3);
 }
 
 .theme-light .locomotive-cold.locomotive-card {
-    background: linear-gradient(135deg, #5a6c7d 0%, #7d8fa3 100%);
+    background: linear-gradient(145deg, #666666 0%, #888888 50%, #AAAAAA 100%);
     color: white;
+    box-shadow: 0 4px 12px rgba(102, 102, 102, 0.3);
 }
 
-/* Compact locomotive card styling */
-.locomotive-card {
-    padding: 0.4rem; /* Reduced padding */
-    min-width: 90px; /* Reduced width */
+/* Dark Theme - Expressive: более яркие, неоновые градиенты */
+.theme-dark .locomotive-vl10.locomotive-card {
+    background: linear-gradient(145deg, #004080 0%, #0060B0 50%, #0080E0 100%);
+    box-shadow: 0 4px 12px rgba(0, 100, 200, 0.4);
 }
 
-.locomotive-info h3 {
-    font-size: 0.85rem; /* Smaller font */
-    margin-bottom: 0.05rem; /* Reduced margin */
+.theme-dark .locomotive-vl10u.locomotive-card {
+    background: linear-gradient(145deg, #005090 0%, #0070D0 50%, #0090F0 100%);
+    box-shadow: 0 4px 12px rgba(0, 100, 200, 0.4);
 }
 
-.locomotive-info p {
-    font-size: 0.7rem; /* Smaller font */
+.theme-dark .locomotive-vl10k.locomotive-card {
+    background: linear-gradient(145deg, #004080 0%, #0060B0 50%, #0080E0 100%);
+    box-shadow: 0 4px 12px rgba(0, 100, 200, 0.4);
 }
 
-/* Compact locomotive card styling in all themes */
-.locomotive-card {
-    padding: 0.4rem; /* Reduced padding */
-    min-width: 90px; /* Reduced width */
+.theme-dark .locomotive-vl10uk.locomotive-card {
+    background: linear-gradient(145deg, #005090 0%, #0070D0 50%, #0090F0 100%);
+    box-shadow: 0 4px 12px rgba(0, 100, 200, 0.4);
 }
 
-.locomotive-info h3 {
-    font-size: 0.85rem; /* Smaller font */
-    margin-bottom: 0.05rem; /* Reduced margin */
+.theme-dark .locomotive-es6.locomotive-card {
+    background: linear-gradient(145deg, #D03030 0%, #FF5050 50%, #FF7070 100%);
+    box-shadow: 0 4px 12px rgba(200, 50, 50, 0.4);
 }
 
-.locomotive-info p {
-    font-size: 0.7rem; /* Smaller font */
+.theme-dark .locomotive-2te10m.locomotive-card {
+    background: linear-gradient(145deg, #007744 0%, #00AA66 50%, #00CC77 100%);
+    box-shadow: 0 4px 12px rgba(0, 150, 80, 0.4);
 }
 
-/* Highlight selected locomotive in dark theme */
-.theme-dark .locomotive-option input[type="radio"]:checked + .locomotive-card {
-    box-shadow: 0 0 0 2px var(--accent-light); /* Reduced border */
-    transform: scale(1.05);
-    z-index: 1;
-    position: relative;
+.theme-dark .locomotive-2te25km.locomotive-card {
+    background: linear-gradient(145deg, #006666 0%, #009999 50%, #00BBBB 100%);
+    box-shadow: 0 4px 12px rgba(0, 120, 120, 0.4);
 }
 
-/* Highlight selected locomotive in light theme */
-.theme-light .locomotive-option input[type="radio"]:checked + .locomotive-card {
-    box-shadow: 0 0 0 2px var(--accent-light); /* Reduced border */
-    transform: scale(1.05);
-    z-index: 1;
-    position: relative;
+.theme-dark .locomotive-tep70bs.locomotive-card {
+    background: linear-gradient(145deg, #007777 0%, #00AAAA 50%, #00CCCC 100%);
+    box-shadow: 0 4px 12px rgba(0, 140, 140, 0.4);
 }
 
-/* Highlight selected locomotive in all themes */
-.locomotive-option input[type="radio"]:checked + .locomotive-card {
-    box-shadow: 0 0 0 2px var(--accent-light); /* Reduced border */
-    transform: scale(1.05);
-    z-index: 1;
-    position: relative;
+.theme-dark .locomotive-3te10m.locomotive-card {
+    background: linear-gradient(145deg, #006633 0%, #009944 50%, #00BB55 100%);
+    box-shadow: 0 4px 12px rgba(0, 120, 60, 0.4);
 }
 
-/* AMOLED Theme Variables */
-.theme-amoled {
-    --bg-primary: #000000;
-    --bg-secondary: #000000;
-    --card-bg: #000000;
-    --input-bg: #1a1a1a;
-    --result-bg: #000000;
-    --text-primary: #ffffff;
-    --text-secondary: #d0d0d0;
-    --border-color: #444444;
-    --accent-color: #4dabf7;
-    --accent-hover: #339af0;
-    --accent-light: rgba(77, 171, 247, 0.1);
-    --success-color: #51cf66;
-    --warning-color: #ffd43b;
-    --danger-color: #ff6b6b;
-    --secondary-color: #6c757d;
-    --secondary-hover: #5c636a;
-    --shadow: rgba(0, 0, 0, 0.5);
-
-    background-color: var(--bg-primary);
-    color: var(--text-primary);
+.theme-dark .locomotive-cold.locomotive-card {
+    background: linear-gradient(145deg, #555555 0%, #777777 50%, #999999 100%);
+    box-shadow: 0 4px 12px rgba(100, 100, 100, 0.4);
 }
 
-/* AMOLED Theme - Fuel Table Input Visibility */
-.theme-amoled .fuel-table-input {
-    background-color: #1a1a1a;
-    color: #ffffff;
-    border-color: #444444;
-}
-
-.theme-amoled .fuel-table-input:focus {
-    background-color: #2a2a2a;
-    border-color: #4dabf7;
-}
-
-.theme-amoled .fuel-table-input::placeholder {
-    color: #a0a0a0;
-}
-
-.theme-amoled .fuel-coeff-input {
-    background-color: #1a1a1a;
-    color: #ffffff;
-}
-
-.theme-amoled .fuel-input-wrapper label,
-.theme-amoled .fuel-coeff-label {
-    color: #d0d0d0;
-}
-
-/* AMOLED Theme - Fuel Section V Cell Background Fix */
-.theme-amoled .fuel-average-row .fuel-v-cell {
-    background: #007bff !important;
-    color: white;
-    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
-}
-
-.theme-amoled .header {
-    background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-primary) 100%);
-}
-
-.theme-amoled .theme-toggle {
-    border-color: var(--border-color);
-    color: var(--text-primary);
-    background: var(--card-bg);
-}
-
-.theme-amoled .theme-toggle:hover {
-    background: var(--accent-light);
-    border-color: var(--accent-color);
-}
-
-/* Theme-specific locomotive cards */
+/* AMOLED Theme - Expressive: максимальный контраст */
 .theme-amoled .locomotive-vl10.locomotive-card {
-    background: linear-gradient(135deg, #003366 0%, #00509e 100%);
+    background: linear-gradient(145deg, #003366 0%, #005599 100%);
+    box-shadow: 0 2px 8px rgba(0, 80, 150, 0.5);
 }
 
 .theme-amoled .locomotive-vl10u.locomotive-card {
-    background: linear-gradient(135deg, #004080 0%, #0066cc 100%);
-}
-
-.theme-amoled .locomotive-vl10k.locomotive-card {
-    background: linear-gradient(135deg, #003366 0%, #00509e 100%);
-}
-
-.theme-amoled .locomotive-vl10uk.locomotive-card {
-    background: linear-gradient(135deg, #004080 0%, #0066cc 100%);
+    background: linear-gradient(145deg, #004080 0%, #0060B0 100%);
+    box-shadow: 0 2px 8px rgba(0, 80, 150, 0.5);
 }
 
 .theme-amoled .locomotive-es6.locomotive-card {
-    background: linear-gradient(135deg, #0066cc 0%, #3399ff 100%);
+    background: linear-gradient(145deg, #B02020 0%, #E04040 100%);
+    box-shadow: 0 2px 8px rgba(180, 40, 40, 0.5);
 }
 
-/* Diesel locomotives - AMOLED theme */
 .theme-amoled .locomotive-2te10m.locomotive-card {
-    background: linear-gradient(135deg, #8B4513 0%, #CD853F 100%);
-}
-
-.theme-amoled .locomotive-2te25km.locomotive-card {
-    background: linear-gradient(135deg, #A0522D 0%, #DEB887 100%);
-}
-
-.theme-amoled .locomotive-tep70bs.locomotive-card {
-    background: linear-gradient(135deg, #CD853F 0%, #F4A460 100%);
-}
-
-.theme-amoled .locomotive-3te10m.locomotive-card {
-    background: linear-gradient(135deg, #654321 0%, #8B4513 100%);
+    background: linear-gradient(145deg, #006633 0%, #009955 100%);
+    box-shadow: 0 2px 8px rgba(0, 120, 60, 0.5);
 }
 
 .theme-amoled .locomotive-cold.locomotive-card {
-    background: linear-gradient(135deg, #5a6c7d 0%, #7d8fa3 100%);
+    background: linear-gradient(145deg, #444444 0%, #666666 100%);
+    box-shadow: 0 2px 8px rgba(80, 80, 80, 0.5);
 }
 
-/* Compact locomotive card styling in AMOLED theme */
-.theme-amoled .locomotive-card {
-    padding: 0.4rem; /* Reduced padding */
-    min-width: 90px; /* Reduced width */
+/* ========================================
+   TRACTION BUTTON THEMES - Expressive
+   ======================================== */
+
+.theme-light .traction-btn.active[data-type="electric"] {
+    background: linear-gradient(145deg, #0061A4 0%, #0078C8 50%, #0090EC 100%);
+    box-shadow: 0 4px 12px rgba(0, 97, 164, 0.4);
 }
 
-.theme-amoled .locomotive-info h3 {
-    font-size: 0.85rem; /* Smaller font */
-    margin-bottom: 0.05rem; /* Reduced margin */
+.theme-light .traction-btn.active[data-type="diesel"] {
+    background: linear-gradient(145deg, #006E1C 0%, #009933 50%, #00C444 100%);
+    box-shadow: 0 4px 12px rgba(0, 110, 28, 0.4);
 }
 
-.theme-amoled .locomotive-info p {
-    font-size: 0.7rem; /* Smaller font */
+.theme-dark .traction-btn.active[data-type="electric"] {
+    background: linear-gradient(145deg, #A8C7FA 0%, #C0D8FF 50%, #D8E8FF 100%);
+    color: #003258;
+    box-shadow: 0 4px 12px rgba(168, 199, 250, 0.4);
 }
 
-/* Highlight selected locomotive in amoled theme */
-.theme-amoled .locomotive-option input[type="radio"]:checked + .locomotive-card {
-    box-shadow: 0 0 0 2px var(--accent-light); /* Reduced border */
-    transform: scale(1.05);
-    z-index: 1;
+.theme-dark .traction-btn.active[data-type="diesel"] {
+    background: linear-gradient(145deg, #80DA9D 0%, #A0E8B8 50%, #C0F8D8 100%);
+    color: #003909;
+    box-shadow: 0 4px 12px rgba(128, 218, 157, 0.4);
+}
+
+/* ========================================
+   STATE OVERLAYS - Expressive
+   ======================================== */
+
+/* Light theme state overlays */
+.theme-light .state-layer {
     position: relative;
 }
 
-/* Smooth transitions for theme switching */
-body,
-.calculator-card,
-.locomotive-card,
-.result-card,
-input,
-select,
-.theme-toggle {
-    transition: background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease;
+.theme-light .state-layer::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: currentColor;
+    opacity: 0;
+    transition: opacity var(--md-sys-motion-duration-short) var(--md-sys-motion-easing-standard);
+    pointer-events: none;
+    border-radius: inherit;
+}
+
+.theme-light .state-layer:hover::before {
+    opacity: var(--md-sys-state-hover-opacity);
+}
+
+.theme-light .state-layer:focus::before {
+    opacity: var(--md-sys-state-focus-opacity);
+}
+
+.theme-light .state-layer:active::before {
+    opacity: var(--md-sys-state-pressed-opacity);
+}
+
+/* Dark theme state overlays - Expressive: более выраженные */
+.theme-dark .state-layer:hover::before {
+    opacity: calc(var(--md-sys-state-hover-opacity) * 1.5);
+}
+
+.theme-dark .state-layer:focus::before {
+    opacity: calc(var(--md-sys-state-focus-opacity) * 1.5);
+}
+
+.theme-dark .state-layer:active::before {
+    opacity: calc(var(--md-sys-state-pressed-opacity) * 1.5);
+}
+
+/* ========================================
+   SCROLLBAR THEMES - Expressive
+   ======================================== */
+
+/* Light theme scrollbar */
+.theme-light ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+.theme-light ::-webkit-scrollbar-track {
+    background: var(--md-sys-color-surface-container);
+    border-radius: var(--md-sys-shape-corner-full);
+}
+
+.theme-light ::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, var(--md-sys-color-outline) 0%, var(--md-sys-color-on-surface-variant) 100%);
+    border-radius: var(--md-sys-shape-corner-full);
+    border: 2px solid var(--md-sys-color-surface-container);
+}
+
+.theme-light ::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, var(--md-sys-color-on-surface-variant) 0%, var(--md-sys-color-on-surface) 100%);
+}
+
+/* Dark theme scrollbar */
+.theme-dark ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+.theme-dark ::-webkit-scrollbar-track {
+    background: var(--md-sys-color-surface-container);
+    border-radius: var(--md-sys-shape-corner-full);
+}
+
+.theme-dark ::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, var(--md-sys-color-outline) 0%, var(--md-sys-color-on-surface-variant) 100%);
+    border-radius: var(--md-sys-shape-corner-full);
+    border: 2px solid var(--md-sys-color-surface-container);
+}
+
+.theme-dark ::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, var(--md-sys-color-on-surface-variant) 0%, var(--md-sys-color-on-surface) 100%);
+}
+
+/* ========================================
+   SELECTION COLORS - Expressive
+   ======================================== */
+
+.theme-light ::selection {
+    background: var(--md-sys-color-primary);
+    color: white;
+}
+
+.theme-dark ::selection {
+    background: var(--md-sys-color-primary-container);
+    color: var(--md-sys-color-on-primary-container);
+}
+
+.theme-amoled ::selection {
+    background: var(--md-sys-color-primary-container);
+    color: var(--md-sys-color-on-primary-container);
+}
+
+/* ========================================
+   GLOW EFFECTS - Expressive Exclusive
+   ======================================== */
+
+/* Glow effect for interactive elements */
+.theme-dark .glow-on-hover {
+    transition: box-shadow var(--md-sys-motion-duration-medium) var(--md-sys-motion-easing-standard);
+}
+
+.theme-dark .glow-on-hover:hover {
+    box-shadow: 
+        0 0 20px rgba(168, 199, 250, 0.3),
+        0 0 40px rgba(168, 199, 250, 0.1);
+}
+
+.theme-dark .traction-btn.active.glow-on-hover:hover {
+    box-shadow: 
+        0 0 25px rgba(168, 199, 250, 0.5),
+        0 0 50px rgba(168, 199, 250, 0.2);
+}
+
+/* ========================================
+   GRADIENT BACKGROUNDS - Expressive
+   ======================================== */
+
+/* Animated gradient background for header */
+.theme-light .header {
+    background: linear-gradient(
+        135deg,
+        var(--md-sys-color-surface-container-low) 0%,
+        var(--md-sys-color-surface-container) 50%,
+        var(--md-sys-color-surface-container-high) 100%
+    );
+}
+
+.theme-dark .header {
+    background: linear-gradient(
+        135deg,
+        var(--md-sys-color-surface-container-low) 0%,
+        var(--md-sys-color-surface-container) 50%,
+        var(--md-sys-color-surface-container-high) 100%
+    );
+}
+
+.theme-amoled .header {
+    background: linear-gradient(
+        135deg,
+        #0A0A0A 0%,
+        #121212 50%,
+        #1A1A1A 100%
+    );
 }

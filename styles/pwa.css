@@ -1,291 +1,605 @@
-/* PWA Specific Styles for RZD Calculator */
+/* ========================================
+   Material Design 3 Expressive
+   PWA Styles - Калькулятор РЖД
+   ======================================== */
 
-/* PWA Mode Adjustments */
-.pwa-mode {
-    /* Styles when running as PWA */
-}
+/* ========================================
+   PWA MODE ADJUSTMENTS
+   ======================================== */
 
 .pwa-mode .header {
-    padding-top: max(0.8rem, env(safe-area-inset-top)); /* Account for mobile notch */
+    padding-top: max(var(--md-sys-spacing-lg), env(safe-area-inset-top));
 }
 
-/* PWA Install Button Animation */
-@keyframes pulse {
-    0% {
-        box-shadow: 0 4px 16px rgba(0, 123, 255, 0.3);
+/* Safe area adjustments for notched devices */
+@media (display-mode: standalone) {
+    body {
+        overflow-x: hidden;
+    }
+
+    .container {
+        padding-left: max(var(--md-sys-spacing-lg), env(safe-area-inset-left));
+        padding-right: max(var(--md-sys-spacing-lg), env(safe-area-inset-right));
+        padding-bottom: max(var(--md-sys-spacing-lg), env(safe-area-inset-bottom));
+    }
+
+    .theme-toggle {
+        top: max(var(--md-sys-spacing-md), env(safe-area-inset-top) + var(--md-sys-spacing-xs));
+    }
+
+    .fab {
+        bottom: max(var(--md-sys-spacing-xl), env(safe-area-inset-bottom) + var(--md-sys-spacing-xl));
+    }
+
+    .pwa-install-button {
+        bottom: max(var(--md-sys-spacing-lg), env(safe-area-inset-bottom) + var(--md-sys-spacing-lg));
+    }
+}
+
+/* ========================================
+   PWA INSTALL BUTTON - Expressive
+   ======================================== */
+
+.pwa-install-button {
+    position: fixed;
+    bottom: var(--md-sys-spacing-xl);
+    right: var(--md-sys-spacing-xl);
+    z-index: 1000;
+    background: linear-gradient(145deg, var(--md-sys-color-primary) 0%, var(--md-sys-color-primary-container) 100%);
+    color: white;
+    border: none;
+    padding: var(--md-sys-spacing-md) var(--md-sys-spacing-lg);
+    border-radius: var(--md-sys-shape-corner-full);
+    font-family: var(--md-sys-typescale-label-large-font);
+    font-size: var(--md-sys-typescale-label-large-size);
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: var(--md-sys-elevation-level3);
+    transition: all var(--md-sys-motion-duration-short) var(--md-sys-motion-easing-emphasized);
+    display: flex;
+    align-items: center;
+    gap: var(--md-sys-spacing-xs);
+    animation: installPulse 2s ease-in-out infinite;
+}
+
+@keyframes installPulse {
+    0%, 100% {
+        box-shadow: var(--md-sys-elevation-level3);
         transform: scale(1);
     }
     50% {
-        box-shadow: 0 6px 20px rgba(0, 123, 255, 0.5);
-        transform: scale(1.02);
+        box-shadow: 0 8px 24px rgba(0, 85, 165, 0.5);
+        transform: scale(1.03);
     }
-    100% {
-        box-shadow: 0 4px 16px rgba(0, 123, 255, 0.3);
-        transform: scale(1);
-    }
-}
-
-/* PWA Install Button */
-.pwa-install-button {
-    position: fixed;
-    bottom: 15px; /* Reduced position */
-    right: 15px; /* Reduced position */
-    z-index: 1000;
-    animation: pulse 2s infinite;
-    transition: all 0.3s ease;
 }
 
 .pwa-install-button:hover {
     animation-play-state: paused;
-    transform: translateY(-2px) scale(1.02);
-    box-shadow: 0 8px 24px rgba(0, 123, 255, 0.4) !important;
+    box-shadow: var(--md-sys-elevation-level4);
+    transform: translateY(-2px) scale(1.05);
 }
 
-/* PWA Update Notification */
-.pwa-update-notification {
-    position: fixed;
-    top: 15px; /* Reduced position */
-    right: 15px; /* Reduced position */
-    background: var(--accent-color);
-    color: white;
-    padding: 0.75rem; /* Reduced padding */
-    border-radius: 6px; /* Smaller radius */
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
-    z-index: 10000;
-    max-width: 280px; /* Slightly smaller width */
-    animation: slideInRight 0.3s ease-out;
+.pwa-install-button:active {
+    transform: translateY(0) scale(0.98);
 }
 
-@keyframes slideInRight {
-    from {
-        transform: translateX(100%);
-        opacity: 0;
+.pwa-install-button-icon {
+    font-size: var(--md-sys-icon-size-medium);
+    animation: rotateIcon 3s ease-in-out infinite;
+}
+
+@keyframes rotateIcon {
+    0%, 100% {
+        transform: rotate(0deg);
     }
-    to {
-        transform: translateX(0);
-        opacity: 1;
+    25% {
+        transform: rotate(-10deg);
+    }
+    75% {
+        transform: rotate(10deg);
     }
 }
 
-/* PWA Status Indicator */
-.pwa-status {
-    position: fixed;
-    top: 8px; /* Reduced position */
-    left: 8px; /* Reduced position */
-    background: var(--success-color);
-    color: white;
-    padding: 0.2rem 0.6rem; /* Reduced padding */
-    border-radius: 10px; /* Smaller radius */
-    font-size: 0.7rem; /* Smaller font */
-    z-index: 1000;
-    opacity: 0.8;
-}
-
-/* Offline Status */
-.offline-status {
-    position: fixed;
-    top: 8px; /* Reduced position */
-    left: 50%;
-    transform: translateX(-50%);
-    background: var(--warning-color);
-    color: var(--text-primary);
-    padding: 0.4rem 0.8rem; /* Reduced padding */
-    border-radius: 18px; /* Smaller radius */
-    font-size: 0.85rem; /* Smaller font */
-    z-index: 10000;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-    animation: slideInDown 0.3s ease-out;
-}
-
-@keyframes slideInDown {
-    from {
-        transform: translate(-50%, -100%);
-        opacity: 0;
-    }
-    to {
-        transform: translate(-50%, 0);
-        opacity: 1;
-    }
-}
-
-/* PWA Splash Screen Styles */
-@media (display-mode: standalone) {
-    body {
-        /* Prevent overscroll bounce on iOS */
-        overflow-x: hidden;
-        /* Add PWA class automatically */
-    }
-    
-    .header {
-        /* Safe area for notched devices */
-        padding-top: max(0.8rem, env(safe-area-inset-top));
-    }
-
-    .container {
-        /* Safe area adjustments */
-        padding-left: env(safe-area-inset-left);
-        padding-right: env(safe-area-inset-right);
-        padding-bottom: env(safe-area-inset-bottom);
-    }
-
-    .theme-toggle {
-        top: max(0.8rem, env(safe-area-inset-top) + 0.4rem);
-    }
-}
-
-/* iOS PWA specific styles */
-@media (display-mode: standalone) and (max-device-width: 428px) {
-    .calculator-card {
-        margin: 0.4rem; /* Reduced margin */
-        padding: 0.8rem; /* Reduced padding */
-    }
-
-    .locomotive-grid {
-        grid-template-columns: 1fr;
-        gap: 0.4rem; /* Reduced gap */
-    }
-
-    .input-grid {
-        grid-template-columns: 1fr;
-        gap: 0.4rem; /* Reduced gap */
-    }
-}
-
-/* PWA Loading State */
-.pwa-loading {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: var(--bg-primary);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 10000;
-    flex-direction: column;
-}
-
-.pwa-loading .loader {
-    width: 50px; /* Smaller size */
-    height: 50px; /* Smaller size */
-    border: 3px solid var(--border-color); /* Thinner border */
-    border-top: 3px solid var(--accent-color); /* Thinner border */
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-    margin-bottom: 0.75rem; /* Reduced margin */
-}
-
-.pwa-loading .loading-text {
-    color: var(--text-secondary);
-    font-size: 1rem; /* Smaller font */
-}
-
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-
-/* PWA Cache Status */
-.cache-status {
-    position: fixed;
-    bottom: 8px; /* Reduced position */
-    left: 8px; /* Reduced position */
-    background: rgba(0, 0, 0, 0.7);
-    color: white;
-    padding: 0.2rem 0.6rem; /* Reduced padding */
-    border-radius: 10px; /* Smaller radius */
-    font-size: 0.65rem; /* Smaller font */
-    z-index: 1000;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
-
-.cache-status.show {
-    opacity: 1;
-}
-
-/* PWA Network Status */
-.network-status {
-    position: fixed;
-    top: 40px; /* Reduced position */
-    left: 50%;
-    transform: translateX(-50%);
-    padding: 0.4rem 0.8rem; /* Reduced padding */
-    border-radius: 18px; /* Slightly smaller radius */
-    font-size: 0.85rem; /* Smaller font */
-    z-index: 10000;
-    transition: all 0.3s ease;
-}
-
-.network-status.online {
-    background: var(--success-color);
-    color: white;
-}
-
-.network-status.offline {
-    background: var(--danger-color);
-    color: white;
-}
-
-/* PWA Fullscreen Button */
-.pwa-fullscreen {
-    position: fixed;
-    top: 50px; /* Reduced position */
-    right: 15px; /* Reduced position */
-    background: var(--bg-secondary);
-    border: 2px solid var(--border-color);
-    border-radius: 50%;
-    width: 36px; /* Smaller size */
-    height: 36px; /* Smaller size */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    font-size: 1rem; /* Smaller font */
-    transition: all 0.3s ease;
-    z-index: 1000;
-}
-
-.pwa-fullscreen:hover {
-    background: var(--accent-light);
-    border-color: var(--accent-color);
-}
-
-/* Hide certain elements in PWA mode */
+/* Hide install button when installed */
 @media (display-mode: standalone) {
     .pwa-install-button {
         display: none !important;
     }
 }
 
-/* PWA Orientation Lock */
-@media (orientation: landscape) and (max-height: 500px) {
-    .header-title {
-        font-size: 1.4rem; /* Smaller font */
-    }
+/* ========================================
+   PWA UPDATE NOTIFICATION - Expressive
+   ======================================== */
 
-    .calculator-card {
-        padding: 0.8rem; /* Reduced padding */
-    }
+.pwa-update-notification {
+    position: fixed;
+    top: var(--md-sys-spacing-lg);
+    right: var(--md-sys-spacing-lg);
+    background: var(--md-sys-color-inverse-surface);
+    color: var(--md-sys-color-inverse-on-surface);
+    padding: var(--md-sys-spacing-md) var(--md-sys-spacing-lg);
+    border-radius: var(--md-sys-shape-corner-large);
+    box-shadow: var(--md-sys-elevation-level3);
+    z-index: 10000;
+    max-width: 320px;
+    animation: slideInRight var(--md-sys-motion-duration-medium) var(--md-sys-motion-easing-bounce);
+    display: flex;
+    flex-direction: column;
+    gap: var(--md-sys-spacing-xs);
+}
 
-    .form-section {
-        margin-bottom: 0.8rem; /* Reduced margin */
+.pwa-update-notification::before {
+    content: '';
+    position: absolute;
+    top: var(--md-sys-spacing-md);
+    left: var(--md-sys-spacing-md);
+    width: 8px;
+    height: 8px;
+    background: var(--md-sys-color-primary);
+    border-radius: var(--md-sys-shape-corner-full);
+    animation: blink 2s infinite;
+}
+
+@keyframes blink {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.4;
     }
 }
 
-/* PWA Keyboard Adjustments */
-@media (max-height: 600px) {
+.pwa-update-title {
+    font-family: var(--md-sys-typescale-title-medium-font);
+    font-weight: 600;
+    padding-left: var(--md-sys-spacing-lg);
+}
+
+.pwa-update-actions {
+    display: flex;
+    gap: var(--md-sys-spacing-sm);
+    justify-content: flex-end;
+}
+
+.pwa-update-btn {
+    padding: var(--md-sys-spacing-xs) var(--md-sys-spacing-md);
+    border-radius: var(--md-sys-shape-corner-full);
+    font-family: var(--md-sys-typescale-label-large-font);
+    font-size: var(--md-sys-typescale-label-large-size);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--md-sys-motion-duration-short) var(--md-sys-motion-easing-standard);
+    border: none;
+}
+
+.pwa-update-btn-primary {
+    background: var(--md-sys-color-primary);
+    color: white;
+}
+
+.pwa-update-btn-primary:hover {
+    box-shadow: var(--md-sys-elevation-level1);
+    transform: translateY(-1px);
+}
+
+.pwa-update-btn-secondary {
+    background: transparent;
+    color: var(--md-sys-color-primary);
+    border: 1px solid var(--md-sys-color-outline);
+}
+
+.pwa-update-btn-secondary:hover {
+    background: var(--md-sys-color-surface-container-high);
+}
+
+/* ========================================
+   OFFLINE STATUS - Expressive
+   ======================================== */
+
+.offline-status {
+    position: fixed;
+    top: var(--md-sys-spacing-lg);
+    left: 50%;
+    transform: translateX(-50%) translateY(-100px);
+    background: var(--md-sys-color-error);
+    color: white;
+    padding: var(--md-sys-spacing-sm) var(--md-sys-spacing-lg);
+    border-radius: var(--md-sys-shape-corner-full);
+    font-family: var(--md-sys-typescale-label-medium-font);
+    font-size: var(--md-sys-typescale-label-medium-size);
+    font-weight: 600;
+    z-index: 10000;
+    box-shadow: var(--md-sys-elevation-level2);
+    display: flex;
+    align-items: center;
+    gap: var(--md-sys-spacing-xs);
+    transition: transform var(--md-sys-motion-duration-medium) var(--md-sys-motion-easing-bounce);
+}
+
+.offline-status.show {
+    transform: translateX(-50%) translateY(0);
+}
+
+.offline-status::before {
+    content: '⚠';
+    font-size: var(--md-sys-icon-size-medium);
+    animation: shake 0.5s ease-in-out infinite;
+}
+
+@keyframes shake {
+    0%, 100% {
+        transform: rotate(0deg);
+    }
+    25% {
+        transform: rotate(-15deg);
+    }
+    75% {
+        transform: rotate(15deg);
+    }
+}
+
+/* ========================================
+   NETWORK STATUS - Expressive
+   ======================================== */
+
+.network-status {
+    position: fixed;
+    top: var(--md-sys-spacing-xl);
+    left: 50%;
+    transform: translateX(-50%) translateY(-100px);
+    padding: var(--md-sys-spacing-sm) var(--md-sys-spacing-lg);
+    border-radius: var(--md-sys-shape-corner-full);
+    font-family: var(--md-sys-typescale-label-medium-font);
+    font-size: var(--md-sys-typescale-label-medium-size);
+    font-weight: 600;
+    box-shadow: var(--md-sys-elevation-level2);
+    transition: all var(--md-sys-motion-duration-medium) var(--md-sys-motion-easing-bounce);
+    z-index: 1200;
+    display: flex;
+    align-items: center;
+    gap: var(--md-sys-spacing-xs);
+}
+
+.network-status::before {
+    content: '';
+    width: 8px;
+    height: 8px;
+    border-radius: var(--md-sys-shape-corner-full);
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.5;
+        transform: scale(1.2);
+    }
+}
+
+.network-status.online {
+    background: var(--md-sys-color-tertiary);
+    color: white;
+    transform: translateX(-50%) translateY(0);
+}
+
+.network-status.online::before {
+    background: white;
+}
+
+.network-status.offline {
+    background: var(--md-sys-color-error);
+    color: white;
+    transform: translateX(-50%) translateY(0);
+}
+
+.network-status.offline::before {
+    background: white;
+}
+
+/* ========================================
+   CACHE STATUS - Expressive
+   ======================================== */
+
+.cache-status {
+    position: fixed;
+    bottom: var(--md-sys-spacing-xl);
+    left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    padding: var(--md-sys-spacing-sm) var(--md-sys-spacing-lg);
+    background: var(--md-sys-color-inverse-surface);
+    color: var(--md-sys-color-inverse-on-surface);
+    border-radius: var(--md-sys-shape-corner-full);
+    font-family: var(--md-sys-typescale-label-medium-font);
+    font-size: var(--md-sys-typescale-label-medium-size);
+    opacity: 0;
+    visibility: hidden;
+    transition: all var(--md-sys-motion-duration-medium) var(--md-sys-motion-easing-bounce);
+    z-index: 1100;
+    box-shadow: var(--md-sys-elevation-level2);
+}
+
+.cache-status.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) translateY(0);
+}
+
+/* ========================================
+   PWA LOADING STATE - Expressive
+   ======================================== */
+
+.pwa-loading {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--md-sys-color-background);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    flex-direction: column;
+    gap: var(--md-sys-spacing-lg);
+}
+
+.pwa-loading-spinner {
+    width: 64px;
+    height: 64px;
+    border: 4px solid var(--md-sys-color-surface-container-highest);
+    border-top-color: var(--md-sys-color-primary);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    position: relative;
+}
+
+.pwa-loading-spinner::before {
+    content: '';
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    right: 8px;
+    bottom: 8px;
+    border: 3px solid transparent;
+    border-top-color: var(--md-sys-color-secondary);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite reverse;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.pwa-loading-text {
+    font-family: var(--md-sys-typescale-body-medium-font);
+    color: var(--md-sys-color-on-surface-variant);
+    display: flex;
+    align-items: center;
+    gap: var(--md-sys-spacing-xs);
+    font-weight: 500;
+}
+
+.pwa-loading-text::before {
+    content: '⏳';
+    animation: bounce 1s ease-in-out infinite;
+}
+
+@keyframes bounce {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-8px);
+    }
+}
+
+/* ========================================
+   LANDSCAPE MODE - Expressive
+   ======================================== */
+
+@media (orientation: landscape) and (max-height: 500px) {
+    .header-title {
+        font-size: var(--md-sys-typescale-headline-medium-size);
+    }
+
     .calculator-card {
-        margin-bottom: 0.8rem; /* Reduced margin */
+        padding: var(--md-sys-spacing-md);
     }
 
     .form-section {
-        margin-bottom: 0.8rem; /* Reduced margin */
+        margin-bottom: var(--md-sys-spacing-sm);
     }
 
     .section-title {
-        font-size: 1.1rem; /* Smaller font */
-        margin-bottom: 0.4rem; /* Reduced margin */
+        font-size: var(--md-sys-typescale-title-large-size);
+        margin-bottom: var(--md-sys-spacing-xs);
+    }
+
+    .pwa-install-button {
+        bottom: var(--md-sys-spacing-md);
+        right: var(--md-sys-spacing-md);
+        padding: var(--md-sys-spacing-sm) var(--md-sys-spacing-md);
+    }
+}
+
+/* ========================================
+   KEYBOARD ADJUSTMENTS - Expressive
+   ======================================== */
+
+@media (max-height: 600px) {
+    .calculator-card {
+        margin-bottom: var(--md-sys-spacing-sm);
+    }
+
+    .form-section {
+        margin-bottom: var(--md-sys-spacing-sm);
+    }
+
+    .section-title {
+        font-size: var(--md-sys-typescale-title-large-size);
+        margin-bottom: var(--md-sys-spacing-xs);
+    }
+
+    .header {
+        padding: var(--md-sys-spacing-lg) var(--md-sys-spacing-md);
+    }
+
+    .header-title {
+        font-size: var(--md-sys-typescale-headline-small-size);
+    }
+}
+
+/* ========================================
+   iOS PWA SPECIFIC - Expressive
+   ======================================== */
+
+@media (display-mode: standalone) and (max-device-width: 428px) {
+    .calculator-card {
+        margin: var(--md-sys-spacing-xs);
+        padding: var(--md-sys-spacing-md);
+    }
+
+    .locomotive-container {
+        gap: var(--md-sys-spacing-xs);
+    }
+
+    .input-grid {
+        gap: var(--md-sys-spacing-xs);
+    }
+
+    .traction-type-selector {
+        flex-direction: column;
+    }
+
+    .btn {
+        width: 100%;
+    }
+}
+
+/* ========================================
+   SPLASH SCREEN - Expressive
+   ======================================== */
+
+.pwa-splash {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        135deg,
+        var(--md-sys-color-background) 0%,
+        var(--md-sys-color-surface-container-low) 100%
+    );
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    transition: opacity var(--md-sys-motion-duration-long) var(--md-sys-motion-easing-standard);
+}
+
+.pwa-splash-icon {
+    font-size: var(--md-sys-icon-size-display);
+    color: var(--md-sys-color-primary);
+    margin-bottom: var(--md-sys-spacing-lg);
+    animation: iconFloat 2s ease-in-out infinite;
+}
+
+@keyframes iconFloat {
+    0%, 100% {
+        transform: translateY(0) scale(1);
+    }
+    50% {
+        transform: translateY(-16px) scale(1.05);
+    }
+}
+
+.pwa-splash-title {
+    font-family: var(--md-sys-typescale-headline-medium-font);
+    font-size: var(--md-sys-typescale-headline-medium-size);
+    color: var(--md-sys-color-on-surface);
+    font-weight: 600;
+    margin-bottom: var(--md-sys-spacing-sm);
+}
+
+.pwa-splash-subtitle {
+    font-family: var(--md-sys-typescale-body-medium-font);
+    color: var(--md-sys-color-on-surface-variant);
+}
+
+/* Hide splash when loaded */
+.pwa-splash.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* ========================================
+   FULLSCREEN BUTTON - Expressive
+   ======================================== */
+
+.pwa-fullscreen {
+    position: fixed;
+    top: var(--md-sys-spacing-xl);
+    right: var(--md-sys-spacing-xl);
+    background: var(--md-sys-color-surface-container-high);
+    border: 2px solid var(--md-sys-color-outline-variant);
+    border-radius: var(--md-sys-shape-corner-full);
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: var(--md-sys-icon-size-medium);
+    transition: all var(--md-sys-motion-duration-short) var(--md-sys-motion-easing-standard);
+    z-index: 1000;
+    color: var(--md-sys-color-on-surface-variant);
+}
+
+.pwa-fullscreen:hover {
+    background: var(--md-sys-color-surface-container-highest);
+    border-color: var(--md-sys-color-primary);
+    color: var(--md-sys-color-primary);
+    transform: scale(1.05);
+}
+
+.pwa-fullscreen:active {
+    transform: scale(0.95);
+}
+
+/* ========================================
+   ACCESSIBILITY - Expressive
+   ======================================== */
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+    .pwa-install-button,
+    .pwa-loading-spinner,
+    .pwa-loading-spinner::before,
+    .offline-status::before,
+    .network-status::before {
+        animation: none;
+    }
+
+    .pwa-splash {
+        transition: none;
+    }
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+    .pwa-install-button {
+        border: 2px solid white;
+    }
+
+    .offline-status,
+    .network-status {
+        border: 2px solid white;
     }
 }

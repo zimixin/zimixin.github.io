@@ -1,8 +1,8 @@
 // Service Worker for RZD Energy Calculator PWA
 // Handles caching and offline functionality
 
-const CACHE_NAME = 'rzd-calculator-v1.0.0';
-const OFFLINE_URL = './offline.html';
+const CACHE_NAME = 'rzd-calculator-v1.1.0';
+const OFFLINE_URL = './offline-enhanced.html';
 
 // Files to cache for offline functionality
 const STATIC_CACHE_URLS = [
@@ -11,10 +11,12 @@ const STATIC_CACHE_URLS = [
   './styles/main.css',
   './styles/themes.css',
   './styles/components.css',
+  './styles/pwa.css',
   './scripts/calculator.js',
   './scripts/data.js',
   './scripts/themes.js',
-  './offline.html',
+  './scripts/pwa.js',
+  './offline-enhanced.html',
   './icons/icon.svg',
   './manifest.json'
 ];
@@ -57,6 +59,15 @@ self.addEventListener('install', (event) => {
             await cache.add(url);
           } catch (err) {
             console.warn(`[ServiceWorker] Failed to cache: ${url}`, err);
+          }
+        }
+        
+        // Attempt to cache data files individually
+        for (const url of DATA_CACHE_URLS) {
+          try {
+            await cache.add(url);
+          } catch (err) {
+            console.warn(`[ServiceWorker] Failed to cache data file: ${url}`, err);
           }
         }
       }
