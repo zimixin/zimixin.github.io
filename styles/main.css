@@ -545,12 +545,11 @@ body {
 .result-card {
     background: var(--md-sys-color-surface);
     border-radius: var(--md-sys-shape-corner-large);
-    padding: var(--md-sys-spacing-lg);
+    padding: var(--md-sys-spacing-lg) var(--md-sys-spacing-lg) calc(var(--md-sys-spacing-lg) + var(--md-sys-spacing-xxs)) var(--md-sys-spacing-lg);
     text-align: center;
     border: 1px solid var(--md-sys-color-outline-variant);
     transition: all var(--md-sys-motion-duration-short) var(--md-sys-motion-easing-standard);
     position: relative;
-    overflow: hidden;
 }
 
 .result-card::before {
@@ -586,17 +585,20 @@ body {
     margin-bottom: var(--md-sys-spacing-sm);
     text-transform: uppercase;
     letter-spacing: 0.05em;
+    line-height: 1.4;
 }
 
 .result-value {
     font-family: var(--md-sys-typescale-display-small-font);
     font-size: var(--md-sys-typescale-display-small-size);
+    line-height: 1.3;
     background: linear-gradient(135deg, var(--md-sys-color-primary) 0%, var(--md-sys-color-secondary) 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
     font-weight: 700;
     animation: numberPulse 2s ease-in-out infinite;
+    padding: var(--md-sys-spacing-xxs) 0;
 }
 
 @keyframes numberPulse {
