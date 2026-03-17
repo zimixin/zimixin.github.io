@@ -4,35 +4,35 @@
    ======================================== */
 
 /* ========================================
-   LIGHT THEME (Default)
+   LIGHT THEME (Default) - Expressive
    ======================================== */
 
 .theme-light {
-    /* Primary colors */
+    /* Primary colors - Expressive: насыщенные, живые */
     --md-sys-color-primary: var(--md-sys-color-primary-light);
     --md-sys-color-on-primary: #FFFFFF;
-    --md-sys-color-primary-container: #D1E4FF;
-    --md-sys-color-on-primary-container: #001D36;
-    
-    /* Secondary colors */
+    --md-sys-color-primary-container: var(--md-sys-color-primary-container-light);
+    --md-sys-color-on-primary-container: var(--md-sys-color-on-primary-container-light);
+
+    /* Secondary colors - Expressive: теплый коралловый акцент */
     --md-sys-color-secondary: var(--md-sys-color-secondary-light);
     --md-sys-color-on-secondary: #FFFFFF;
-    --md-sys-color-secondary-container: #FFDAD6;
-    --md-sys-color-on-secondary-container: #410002;
-    
-    /* Tertiary colors */
+    --md-sys-color-secondary-container: var(--md-sys-color-secondary-container-light);
+    --md-sys-color-on-secondary-container: var(--md-sys-color-on-secondary-container-light);
+
+    /* Tertiary colors - Expressive: природный зеленый */
     --md-sys-color-tertiary: var(--md-sys-color-tertiary-light);
     --md-sys-color-on-tertiary: #FFFFFF;
-    --md-sys-color-tertiary-container: #B9FBD4;
-    --md-sys-color-on-tertiary-container: #002106;
-    
+    --md-sys-color-tertiary-container: var(--md-sys-color-tertiary-container-light);
+    --md-sys-color-on-tertiary-container: var(--md-sys-color-on-tertiary-container-light);
+
     /* Error colors */
     --md-sys-color-error: var(--md-sys-color-error-light);
     --md-sys-color-on-error: #FFFFFF;
     --md-sys-color-error-container: #FFDAD6;
     --md-sys-color-on-error-container: #410002;
-    
-    /* Background & Surface */
+
+    /* Background & Surface - Expressive: чистые, светлые поверхности */
     --md-sys-color-background: var(--md-sys-color-background-light);
     --md-sys-color-on-background: var(--md-sys-color-on-background-light);
     --md-sys-color-surface: var(--md-sys-color-surface-light);
@@ -41,55 +41,74 @@
     --md-sys-color-surface-container-high: var(--md-sys-color-surface-container-high-light);
     --md-sys-color-surface-container-highest: var(--md-sys-color-surface-container-highest-light);
     --md-sys-color-surface-container-low: var(--md-sys-color-surface-container-low-light);
+    --md-sys-color-surface-container-lowest: var(--md-sys-color-surface-container-lowest-light);
     --md-sys-color-on-surface-variant: var(--md-sys-color-on-surface-variant-light);
-    
+
     /* Outline */
     --md-sys-color-outline: var(--md-sys-color-outline-light);
     --md-sys-color-outline-variant: var(--md-sys-color-outline-variant-light);
-    
+
     /* Inverse */
     --md-sys-color-inverse-surface: var(--md-sys-color-inverse-surface-light);
     --md-sys-color-inverse-on-surface: var(--md-sys-color-inverse-on-surface-light);
     --md-sys-color-inverse-primary: var(--md-sys-color-inverse-primary-light);
-    
-    /* Shadows */
-    --md-sys-elevation-level1: 0 1px 3px rgba(0, 97, 164, 0.12), 0 1px 2px rgba(0, 97, 164, 0.24);
-    --md-sys-elevation-level2: 0 2px 6px rgba(0, 97, 164, 0.12), 0 2px 4px rgba(0, 97, 164, 0.24);
-    --md-sys-elevation-level3: 0 4px 12px rgba(0, 97, 164, 0.12), 0 4px 8px rgba(0, 97, 164, 0.24);
-    --md-sys-elevation-level4: 0 6px 18px rgba(0, 97, 164, 0.12), 0 6px 12px rgba(0, 97, 164, 0.24);
-    --md-sys-elevation-level5: 0 8px 24px rgba(0, 97, 164, 0.12), 0 8px 16px rgba(0, 97, 164, 0.24);
+
+    /* Shadows - Expressive: мягкие, с тонированием */
+    --md-sys-elevation-level1: 
+        0 1px 3px rgba(0, 85, 165, 0.12),
+        0 1px 2px rgba(0, 85, 165, 0.14),
+        inset 0 0 0 1px rgba(0, 85, 165, 0.02);
+    --md-sys-elevation-level2: 
+        0 2px 6px rgba(0, 85, 165, 0.12),
+        0 2px 4px rgba(0, 85, 165, 0.14),
+        inset 0 0 0 1px rgba(0, 85, 165, 0.02);
+    --md-sys-elevation-level3: 
+        0 4px 12px rgba(0, 85, 165, 0.12),
+        0 4px 8px rgba(0, 85, 165, 0.14),
+        inset 0 0 0 1px rgba(0, 85, 165, 0.03);
+    --md-sys-elevation-level4: 
+        0 6px 18px rgba(0, 85, 165, 0.12),
+        0 6px 12px rgba(0, 85, 165, 0.14),
+        inset 0 0 0 1px rgba(0, 85, 165, 0.03);
+    --md-sys-elevation-level5: 
+        0 8px 24px rgba(0, 85, 165, 0.12),
+        0 8px 16px rgba(0, 85, 165, 0.14),
+        inset 0 0 0 1px rgba(0, 85, 165, 0.04);
+
+    /* Surface Tint Overlay */
+    --md-sys-surface-tint: rgba(0, 85, 165, 0.05);
 }
 
 /* ========================================
-   DARK THEME
+   DARK THEME - Expressive
    ======================================== */
 
 .theme-dark {
-    /* Primary colors */
+    /* Primary colors - Expressive: яркие на темном фоне */
     --md-sys-color-primary: var(--md-sys-color-primary-dark);
     --md-sys-color-on-primary: #003258;
-    --md-sys-color-primary-container: #00497D;
-    --md-sys-color-on-primary-container: #B8CCE6;
-    
-    /* Secondary colors */
+    --md-sys-color-primary-container: var(--md-sys-color-primary-container-dark);
+    --md-sys-color-on-primary-container: var(--md-sys-color-on-primary-container-dark);
+
+    /* Secondary colors - Expressive: энергичный акцент */
     --md-sys-color-secondary: var(--md-sys-color-secondary-dark);
     --md-sys-color-on-secondary: #690005;
-    --md-sys-color-secondary-container: #93000A;
-    --md-sys-color-on-secondary-container: #FFDAD6;
-    
-    /* Tertiary colors */
+    --md-sys-color-secondary-container: var(--md-sys-color-secondary-container-dark);
+    --md-sys-color-on-secondary-container: var(--md-sys-color-on-secondary-container-dark);
+
+    /* Tertiary colors - Expressive: свежий зеленый */
     --md-sys-color-tertiary: var(--md-sys-color-tertiary-dark);
     --md-sys-color-on-tertiary: #003909;
-    --md-sys-color-tertiary-container: #005211;
-    --md-sys-color-on-tertiary-container: #B5FAB6;
-    
+    --md-sys-color-tertiary-container: var(--md-sys-color-tertiary-container-dark);
+    --md-sys-color-on-tertiary-container: var(--md-sys-color-on-tertiary-container-dark);
+
     /* Error colors */
     --md-sys-color-error: var(--md-sys-color-error-dark);
     --md-sys-color-on-error: #690005;
     --md-sys-color-error-container: #93000A;
     --md-sys-color-on-error-container: #FFDAD6;
-    
-    /* Background & Surface */
+
+    /* Background & Surface - Expressive: глубокие, богатые темные */
     --md-sys-color-background: var(--md-sys-color-background-dark);
     --md-sys-color-on-background: var(--md-sys-color-on-background-dark);
     --md-sys-color-surface: var(--md-sys-color-surface-dark);
@@ -98,54 +117,58 @@
     --md-sys-color-surface-container-high: var(--md-sys-color-surface-container-high-dark);
     --md-sys-color-surface-container-highest: var(--md-sys-color-surface-container-highest-dark);
     --md-sys-color-surface-container-low: var(--md-sys-color-surface-container-low-dark);
+    --md-sys-color-surface-container-lowest: var(--md-sys-color-surface-container-lowest-dark);
     --md-sys-color-on-surface-variant: var(--md-sys-color-on-surface-variant-dark);
-    
+
     /* Outline */
     --md-sys-color-outline: var(--md-sys-color-outline-dark);
     --md-sys-color-outline-variant: var(--md-sys-color-outline-variant-dark);
-    
+
     /* Inverse */
     --md-sys-color-inverse-surface: var(--md-sys-color-inverse-surface-dark);
     --md-sys-color-inverse-on-surface: var(--md-sys-color-inverse-on-surface-dark);
     --md-sys-color-inverse-primary: var(--md-sys-color-inverse-primary-dark);
-    
-    /* Shadows */
+
+    /* Shadows - Expressive: глубокие, атмосферные */
     --md-sys-elevation-level1: var(--md-sys-elevation-level1-dark);
     --md-sys-elevation-level2: var(--md-sys-elevation-level2-dark);
     --md-sys-elevation-level3: var(--md-sys-elevation-level3-dark);
     --md-sys-elevation-level4: var(--md-sys-elevation-level4-dark);
     --md-sys-elevation-level5: var(--md-sys-elevation-level5-dark);
+
+    /* Surface Tint Overlay */
+    --md-sys-surface-tint: rgba(168, 199, 250, 0.08);
 }
 
 /* ========================================
-   AMOLED THEME (Pure Black)
+   AMOLED THEME (Pure Black) - Expressive
    ======================================== */
 
 .theme-amoled {
-    /* Primary colors - same as dark */
+    /* Primary colors */
     --md-sys-color-primary: var(--md-sys-color-primary-dark);
     --md-sys-color-on-primary: #003258;
-    --md-sys-color-primary-container: #00497D;
-    --md-sys-color-on-primary-container: #B8CCE6;
-    
+    --md-sys-color-primary-container: var(--md-sys-color-primary-container-dark);
+    --md-sys-color-on-primary-container: var(--md-sys-color-on-primary-container-dark);
+
     /* Secondary colors */
     --md-sys-color-secondary: var(--md-sys-color-secondary-dark);
     --md-sys-color-on-secondary: #690005;
-    --md-sys-color-secondary-container: #93000A;
-    --md-sys-color-on-secondary-container: #FFDAD6;
-    
+    --md-sys-color-secondary-container: var(--md-sys-color-secondary-container-dark);
+    --md-sys-color-on-secondary-container: var(--md-sys-color-on-secondary-container-dark);
+
     /* Tertiary colors */
     --md-sys-color-tertiary: var(--md-sys-color-tertiary-dark);
     --md-sys-color-on-tertiary: #003909;
-    --md-sys-color-tertiary-container: #005211;
-    --md-sys-color-on-tertiary-container: #B5FAB6;
-    
+    --md-sys-color-tertiary-container: var(--md-sys-color-tertiary-container-dark);
+    --md-sys-color-on-tertiary-container: var(--md-sys-color-on-tertiary-container-dark);
+
     /* Error colors */
     --md-sys-color-error: var(--md-sys-color-error-dark);
     --md-sys-color-on-error: #690005;
     --md-sys-color-error-container: #93000A;
     --md-sys-color-on-error-container: #FFDAD6;
-    
+
     /* Background & Surface - PURE BLACK */
     --md-sys-color-background: #000000;
     --md-sys-color-on-background: #E2E2E6;
@@ -155,166 +178,199 @@
     --md-sys-color-surface-container-high: #121212;
     --md-sys-color-surface-container-highest: #1A1A1A;
     --md-sys-color-surface-container-low: #080808;
+    --md-sys-color-surface-container-lowest: #000000;
     --md-sys-color-on-surface-variant: #C4C7CF;
-    
+
     /* Outline */
     --md-sys-color-outline: var(--md-sys-color-outline-dark);
     --md-sys-color-outline-variant: var(--md-sys-color-outline-variant-dark);
-    
+
     /* Inverse */
     --md-sys-color-inverse-surface: #E2E2E6;
     --md-sys-color-inverse-on-surface: #1A1A1A;
     --md-sys-color-inverse-primary: var(--md-sys-color-inverse-primary-dark);
-    
+
     /* Shadows - minimal for AMOLED */
     --md-sys-elevation-level1: 0 1px 2px rgba(0, 0, 0, 0.5);
     --md-sys-elevation-level2: 0 2px 4px rgba(0, 0, 0, 0.5);
     --md-sys-elevation-level3: 0 4px 8px rgba(0, 0, 0, 0.5);
     --md-sys-elevation-level4: 0 6px 12px rgba(0, 0, 0, 0.5);
     --md-sys-elevation-level5: 0 8px 16px rgba(0, 0, 0, 0.5);
+
+    /* Surface Tint - minimal */
+    --md-sys-surface-tint: rgba(168, 199, 250, 0.03);
 }
 
 /* ========================================
-   LOCOMOTIVE CARD THEMES
+   LOCOMOTIVE CARD THEMES - Expressive
    ======================================== */
 
-/* Light Theme Locomotive Colors */
+/* Light Theme - Expressive: градиенты с глубиной */
 .theme-light .locomotive-vl10.locomotive-card {
-    background: linear-gradient(135deg, #003366 0%, #00509E 100%);
+    background: linear-gradient(145deg, #003366 0%, #00509E 50%, #0066CC 100%);
     color: white;
+    box-shadow: 0 4px 12px rgba(0, 85, 165, 0.3);
 }
 
 .theme-light .locomotive-vl10u.locomotive-card {
-    background: linear-gradient(135deg, #004080 0%, #0066CC 100%);
+    background: linear-gradient(145deg, #004080 0%, #0066CC 50%, #0078E8 100%);
     color: white;
+    box-shadow: 0 4px 12px rgba(0, 85, 165, 0.3);
 }
 
 .theme-light .locomotive-vl10k.locomotive-card {
-    background: linear-gradient(135deg, #003366 0%, #00509E 100%);
+    background: linear-gradient(145deg, #003366 0%, #00509E 50%, #0066CC 100%);
     color: white;
+    box-shadow: 0 4px 12px rgba(0, 85, 165, 0.3);
 }
 
 .theme-light .locomotive-vl10uk.locomotive-card {
-    background: linear-gradient(135deg, #004080 0%, #0066CC 100%);
+    background: linear-gradient(145deg, #004080 0%, #0066CC 50%, #0078E8 100%);
     color: white;
+    box-shadow: 0 4px 12px rgba(0, 85, 165, 0.3);
 }
 
 .theme-light .locomotive-es6.locomotive-card {
-    background: linear-gradient(135deg, #CC0000 0%, #FF3333 100%);
+    background: linear-gradient(145deg, #CC0000 0%, #FF3333 50%, #FF5555 100%);
     color: white;
+    box-shadow: 0 4px 12px rgba(204, 0, 0, 0.3);
 }
 
 .theme-light .locomotive-2te10m.locomotive-card {
-    background: linear-gradient(135deg, #006633 0%, #00994D 100%);
+    background: linear-gradient(145deg, #006633 0%, #00994D 50%, #00B359 100%);
     color: white;
+    box-shadow: 0 4px 12px rgba(0, 102, 51, 0.3);
 }
 
 .theme-light .locomotive-2te25km.locomotive-card {
-    background: linear-gradient(135deg, #005555 0%, #008888 100%);
+    background: linear-gradient(145deg, #005555 0%, #008888 50%, #00AAAA 100%);
     color: white;
+    box-shadow: 0 4px 12px rgba(0, 85, 85, 0.3);
 }
 
 .theme-light .locomotive-tep70bs.locomotive-card {
-    background: linear-gradient(135deg, #006666 0%, #009999 100%);
+    background: linear-gradient(145deg, #006666 0%, #009999 50%, #00BBBB 100%);
     color: white;
+    box-shadow: 0 4px 12px rgba(0, 102, 102, 0.3);
 }
 
 .theme-light .locomotive-3te10m.locomotive-card {
-    background: linear-gradient(135deg, #005522 0%, #008833 100%);
+    background: linear-gradient(145deg, #005522 0%, #008833 50%, #00AA44 100%);
     color: white;
+    box-shadow: 0 4px 12px rgba(0, 85, 34, 0.3);
 }
 
 .theme-light .locomotive-cold.locomotive-card {
-    background: linear-gradient(135deg, #666666 0%, #888888 100%);
+    background: linear-gradient(145deg, #666666 0%, #888888 50%, #AAAAAA 100%);
     color: white;
+    box-shadow: 0 4px 12px rgba(102, 102, 102, 0.3);
 }
 
-/* Dark Theme Locomotive Colors */
+/* Dark Theme - Expressive: более яркие, неоновые градиенты */
 .theme-dark .locomotive-vl10.locomotive-card {
-    background: linear-gradient(135deg, #004080 0%, #0060B0 100%);
+    background: linear-gradient(145deg, #004080 0%, #0060B0 50%, #0080E0 100%);
+    box-shadow: 0 4px 12px rgba(0, 100, 200, 0.4);
 }
 
 .theme-dark .locomotive-vl10u.locomotive-card {
-    background: linear-gradient(135deg, #005090 0%, #0070D0 100%);
+    background: linear-gradient(145deg, #005090 0%, #0070D0 50%, #0090F0 100%);
+    box-shadow: 0 4px 12px rgba(0, 100, 200, 0.4);
 }
 
 .theme-dark .locomotive-vl10k.locomotive-card {
-    background: linear-gradient(135deg, #004080 0%, #0060B0 100%);
+    background: linear-gradient(145deg, #004080 0%, #0060B0 50%, #0080E0 100%);
+    box-shadow: 0 4px 12px rgba(0, 100, 200, 0.4);
 }
 
 .theme-dark .locomotive-vl10uk.locomotive-card {
-    background: linear-gradient(135deg, #005090 0%, #0070D0 100%);
+    background: linear-gradient(145deg, #005090 0%, #0070D0 50%, #0090F0 100%);
+    box-shadow: 0 4px 12px rgba(0, 100, 200, 0.4);
 }
 
 .theme-dark .locomotive-es6.locomotive-card {
-    background: linear-gradient(135deg, #D03030 0%, #FF5050 100%);
+    background: linear-gradient(145deg, #D03030 0%, #FF5050 50%, #FF7070 100%);
+    box-shadow: 0 4px 12px rgba(200, 50, 50, 0.4);
 }
 
 .theme-dark .locomotive-2te10m.locomotive-card {
-    background: linear-gradient(135deg, #007744 0%, #00AA66 100%);
+    background: linear-gradient(145deg, #007744 0%, #00AA66 50%, #00CC77 100%);
+    box-shadow: 0 4px 12px rgba(0, 150, 80, 0.4);
 }
 
 .theme-dark .locomotive-2te25km.locomotive-card {
-    background: linear-gradient(135deg, #006666 0%, #009999 100%);
+    background: linear-gradient(145deg, #006666 0%, #009999 50%, #00BBBB 100%);
+    box-shadow: 0 4px 12px rgba(0, 120, 120, 0.4);
 }
 
 .theme-dark .locomotive-tep70bs.locomotive-card {
-    background: linear-gradient(135deg, #007777 0%, #00AAAA 100%);
+    background: linear-gradient(145deg, #007777 0%, #00AAAA 50%, #00CCCC 100%);
+    box-shadow: 0 4px 12px rgba(0, 140, 140, 0.4);
 }
 
 .theme-dark .locomotive-3te10m.locomotive-card {
-    background: linear-gradient(135deg, #006633 0%, #009944 100%);
+    background: linear-gradient(145deg, #006633 0%, #009944 50%, #00BB55 100%);
+    box-shadow: 0 4px 12px rgba(0, 120, 60, 0.4);
 }
 
 .theme-dark .locomotive-cold.locomotive-card {
-    background: linear-gradient(135deg, #555555 0%, #777777 100%);
+    background: linear-gradient(145deg, #555555 0%, #777777 50%, #999999 100%);
+    box-shadow: 0 4px 12px rgba(100, 100, 100, 0.4);
 }
 
-/* AMOLED Theme Locomotive Colors */
+/* AMOLED Theme - Expressive: максимальный контраст */
 .theme-amoled .locomotive-vl10.locomotive-card {
-    background: linear-gradient(135deg, #003366 0%, #005599 100%);
+    background: linear-gradient(145deg, #003366 0%, #005599 100%);
+    box-shadow: 0 2px 8px rgba(0, 80, 150, 0.5);
 }
 
 .theme-amoled .locomotive-vl10u.locomotive-card {
-    background: linear-gradient(135deg, #004080 0%, #0060B0 100%);
+    background: linear-gradient(145deg, #004080 0%, #0060B0 100%);
+    box-shadow: 0 2px 8px rgba(0, 80, 150, 0.5);
 }
 
 .theme-amoled .locomotive-es6.locomotive-card {
-    background: linear-gradient(135deg, #B02020 0%, #E04040 100%);
+    background: linear-gradient(145deg, #B02020 0%, #E04040 100%);
+    box-shadow: 0 2px 8px rgba(180, 40, 40, 0.5);
 }
 
 .theme-amoled .locomotive-2te10m.locomotive-card {
-    background: linear-gradient(135deg, #006633 0%, #009955 100%);
+    background: linear-gradient(145deg, #006633 0%, #009955 100%);
+    box-shadow: 0 2px 8px rgba(0, 120, 60, 0.5);
 }
 
 .theme-amoled .locomotive-cold.locomotive-card {
-    background: linear-gradient(135deg, #444444 0%, #666666 100%);
+    background: linear-gradient(145deg, #444444 0%, #666666 100%);
+    box-shadow: 0 2px 8px rgba(80, 80, 80, 0.5);
 }
 
 /* ========================================
-   TRACTION BUTTON THEMES
+   TRACTION BUTTON THEMES - Expressive
    ======================================== */
 
 .theme-light .traction-btn.active[data-type="electric"] {
-    background: linear-gradient(135deg, #0061A4 0%, #0078C8 100%);
+    background: linear-gradient(145deg, #0061A4 0%, #0078C8 50%, #0090EC 100%);
+    box-shadow: 0 4px 12px rgba(0, 97, 164, 0.4);
 }
 
 .theme-light .traction-btn.active[data-type="diesel"] {
-    background: linear-gradient(135deg, #006E1C 0%, #009933 100%);
+    background: linear-gradient(145deg, #006E1C 0%, #009933 50%, #00C444 100%);
+    box-shadow: 0 4px 12px rgba(0, 110, 28, 0.4);
 }
 
 .theme-dark .traction-btn.active[data-type="electric"] {
-    background: linear-gradient(135deg, #B8CCE6 0%, #D0E0F0 100%);
+    background: linear-gradient(145deg, #A8C7FA 0%, #C0D8FF 50%, #D8E8FF 100%);
     color: #003258;
+    box-shadow: 0 4px 12px rgba(168, 199, 250, 0.4);
 }
 
 .theme-dark .traction-btn.active[data-type="diesel"] {
-    background: linear-gradient(135deg, #B5FAB6 0%, #D0FAD0 100%);
+    background: linear-gradient(145deg, #80DA9D 0%, #A0E8B8 50%, #C0F8D8 100%);
     color: #003909;
+    box-shadow: 0 4px 12px rgba(128, 218, 157, 0.4);
 }
 
 /* ========================================
-   STATE OVERLAYS
+   STATE OVERLAYS - Expressive
    ======================================== */
 
 /* Light theme state overlays */
@@ -345,27 +401,27 @@
     opacity: var(--md-sys-state-pressed-opacity);
 }
 
-/* Dark theme state overlays */
+/* Dark theme state overlays - Expressive: более выраженные */
 .theme-dark .state-layer:hover::before {
-    opacity: calc(var(--md-sys-state-hover-opacity) * 2);
+    opacity: calc(var(--md-sys-state-hover-opacity) * 1.5);
 }
 
 .theme-dark .state-layer:focus::before {
-    opacity: calc(var(--md-sys-state-focus-opacity) * 2);
+    opacity: calc(var(--md-sys-state-focus-opacity) * 1.5);
 }
 
 .theme-dark .state-layer:active::before {
-    opacity: calc(var(--md-sys-state-pressed-opacity) * 2);
+    opacity: calc(var(--md-sys-state-pressed-opacity) * 1.5);
 }
 
 /* ========================================
-   SCROLLBAR THEMES
+   SCROLLBAR THEMES - Expressive
    ======================================== */
 
 /* Light theme scrollbar */
 .theme-light ::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
+    width: 10px;
+    height: 10px;
 }
 
 .theme-light ::-webkit-scrollbar-track {
@@ -374,18 +430,19 @@
 }
 
 .theme-light ::-webkit-scrollbar-thumb {
-    background: var(--md-sys-color-outline);
+    background: linear-gradient(180deg, var(--md-sys-color-outline) 0%, var(--md-sys-color-on-surface-variant) 100%);
     border-radius: var(--md-sys-shape-corner-full);
+    border: 2px solid var(--md-sys-color-surface-container);
 }
 
 .theme-light ::-webkit-scrollbar-thumb:hover {
-    background: var(--md-sys-color-on-surface-variant);
+    background: linear-gradient(180deg, var(--md-sys-color-on-surface-variant) 0%, var(--md-sys-color-on-surface) 100%);
 }
 
 /* Dark theme scrollbar */
 .theme-dark ::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
+    width: 10px;
+    height: 10px;
 }
 
 .theme-dark ::-webkit-scrollbar-track {
@@ -394,16 +451,17 @@
 }
 
 .theme-dark ::-webkit-scrollbar-thumb {
-    background: var(--md-sys-color-outline);
+    background: linear-gradient(180deg, var(--md-sys-color-outline) 0%, var(--md-sys-color-on-surface-variant) 100%);
     border-radius: var(--md-sys-shape-corner-full);
+    border: 2px solid var(--md-sys-color-surface-container);
 }
 
 .theme-dark ::-webkit-scrollbar-thumb:hover {
-    background: var(--md-sys-color-on-surface-variant);
+    background: linear-gradient(180deg, var(--md-sys-color-on-surface-variant) 0%, var(--md-sys-color-on-surface) 100%);
 }
 
 /* ========================================
-   SELECTION COLORS
+   SELECTION COLORS - Expressive
    ======================================== */
 
 .theme-light ::selection {
@@ -419,4 +477,57 @@
 .theme-amoled ::selection {
     background: var(--md-sys-color-primary-container);
     color: var(--md-sys-color-on-primary-container);
+}
+
+/* ========================================
+   GLOW EFFECTS - Expressive Exclusive
+   ======================================== */
+
+/* Glow effect for interactive elements */
+.theme-dark .glow-on-hover {
+    transition: box-shadow var(--md-sys-motion-duration-medium) var(--md-sys-motion-easing-standard);
+}
+
+.theme-dark .glow-on-hover:hover {
+    box-shadow: 
+        0 0 20px rgba(168, 199, 250, 0.3),
+        0 0 40px rgba(168, 199, 250, 0.1);
+}
+
+.theme-dark .traction-btn.active.glow-on-hover:hover {
+    box-shadow: 
+        0 0 25px rgba(168, 199, 250, 0.5),
+        0 0 50px rgba(168, 199, 250, 0.2);
+}
+
+/* ========================================
+   GRADIENT BACKGROUNDS - Expressive
+   ======================================== */
+
+/* Animated gradient background for header */
+.theme-light .header {
+    background: linear-gradient(
+        135deg,
+        var(--md-sys-color-surface-container-low) 0%,
+        var(--md-sys-color-surface-container) 50%,
+        var(--md-sys-color-surface-container-high) 100%
+    );
+}
+
+.theme-dark .header {
+    background: linear-gradient(
+        135deg,
+        var(--md-sys-color-surface-container-low) 0%,
+        var(--md-sys-color-surface-container) 50%,
+        var(--md-sys-color-surface-container-high) 100%
+    );
+}
+
+.theme-amoled .header {
+    background: linear-gradient(
+        135deg,
+        #0A0A0A 0%,
+        #121212 50%,
+        #1A1A1A 100%
+    );
 }
