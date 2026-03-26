@@ -33,6 +33,53 @@ const LOCOMOTIVE_DATA = {
 
 const WAGON_LENGTH = 14; // meters per wagon
 
+// Standard coefficients for locomotives (fallback when no route data)
+// Based on axle load from 6 to 14+ t/axis
+const STANDARD_COEFFICIENTS = {
+    vl10u: {
+        6: 89.5, 7: 83.41, 8: 78.85, 9: 75.29, 10: 72.45,
+        11: 70.13, 12: 68.19, 13: 66.55, 14: 65.15
+    },
+    '2es6': {
+        6: 82.0, 7: 76.43, 8: 72.26, 9: 69.01, 10: 66.41,
+        11: 64.29, 12: 62.52, 13: 61.02, 14: 59.73
+    },
+    vl10: {
+        6: 89.5, 7: 83.41, 8: 78.85, 9: 75.29, 10: 72.45,
+        11: 70.13, 12: 68.19, 13: 66.55, 14: 65.15
+    }
+};
+
+// Function to get standard coefficient by axle load
+function getStandardCoefficient(locomotiveType, axleLoad) {
+    const coefficients = STANDARD_COEFFICIENTS[locomotiveType];
+    if (!coefficients) return null;
+
+    const roundedAxleLoad = Math.round(axleLoad);
+
+    // Try exact match first
+    if (coefficients[roundedAxleLoad] !== undefined) {
+        return coefficients[roundedAxleLoad];
+    }
+
+    // Find closest match
+    const availableLoads = Object.keys(coefficients).map(Number).sort((a, b) => a - b);
+    if (availableLoads.length === 0) return null;
+
+    let closestLoad = availableLoads[0];
+    let minDiff = Math.abs(roundedAxleLoad - closestLoad);
+
+    for (const load of availableLoads) {
+        const diff = Math.abs(roundedAxleLoad - load);
+        if (diff < minDiff) {
+            minDiff = diff;
+            closestLoad = load;
+        }
+    }
+
+    return coefficients[closestLoad];
+}
+
 // Function to discover and load all .md files from data directory
 async function loadRoutesFromFiles() {
     try {
@@ -387,11 +434,11 @@ function getRouteData(routeCode) {
 }
 
 function getEnergyCoefficient(locomotiveType, axleLoad, routeData = null) {
-    // Only use route-specific coefficients, no fallback to standard coefficients
+    // First, try to use route-specific coefficients
     if (routeData && routeData.coefficients) {
         // Map locomotive types to their corresponding coefficient arrays
         let coefficientArray = null;
-        
+
         // Check for exact locomotive type match
         if (routeData.coefficients[locomotiveType]) {
             coefficientArray = routeData.coefficients[locomotiveType];
@@ -404,7 +451,7 @@ function getEnergyCoefficient(locomotiveType, axleLoad, routeData = null) {
         else if (locomotiveType === 'vl10u' && routeData.coefficients['vl10']) {
             coefficientArray = routeData.coefficients['vl10'];
         }
-        
+
         if (coefficientArray) {
             const roundedAxleLoad = Math.round(axleLoad);
             const customCoefficients = coefficientArray;
@@ -433,8 +480,8 @@ function getEnergyCoefficient(locomotiveType, axleLoad, routeData = null) {
         }
     }
 
-    // No coefficients available from route file
-    return null;
+    // Fallback to standard coefficients when no route data available
+    return getStandardCoefficient(locomotiveType, axleLoad);
 }
 
 // Make ROUTE_DATA available globally

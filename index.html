@@ -133,11 +133,11 @@
                 <div class="results-section" id="resultsSection" style="display: none;">
                     <h2 class="section-title">Результаты расчета</h2>
                     <div class="results-grid">
-                        <div class="result-card">
+                        <div class="result-card" id="consumptionCard">
                             <h3>Норма расхода за поездку</h3>
                             <div class="result-value" id="consumptionResult">0 кВт⋅ч</div>
                         </div>
-                        <div class="result-card">
+                        <div class="result-card" id="axleLoadCard">
                             <h3>Нагрузка на ось</h3>
                             <div class="result-value" id="axleLoadResult">0 т/ось</div>
                         </div>
@@ -295,11 +295,11 @@
                             <div class="input-grid">
                                 <div class="input-group">
                                     <label for="trainWeight">Вес (тонн)</label>
-                                    <input type="number" class="compact-input" id="trainWeight" name="trainWeight" min="100" max="10000" step="1" required>
+                                    <input type="number" class="compact-input" id="trainWeight" name="trainWeight" min="100" max="10000" step="1">
                                 </div>
                                 <div class="input-group">
                                     <label for="trainAxles">Оси</label>
-                                    <input type="number" class="compact-input" id="trainAxles" name="trainAxles" min="10" max="500" step="1" required>
+                                    <input type="number" class="compact-input" id="trainAxles" name="trainAxles" min="10" max="500" step="1">
                                 </div>
                                 <div class="input-group">
                                     <label for="actualWagons">Фактические вагоны</label>

@@ -239,23 +239,134 @@ class EnergyCalculator {
     }
 
     performRealTimeCalculation() {
-        // Check if required fields are filled (route is optional for basic calculation)
-        const trainWeight = document.getElementById('trainWeight');
-        const trainAxles = document.getElementById('trainAxles');
+        const formData = this.getFormData();
+        const partialResult = {};
 
-        // Calculate if we have weight and axles (minimum required data)
-        if (trainWeight && trainWeight.value &&
-            trainAxles && trainAxles.value) {
+        // Проверяем есть ли хоть какие-то данные для расчета
+        const hasAnyData = formData.conditionalWagons > 0 || 
+                          formData.actualWagons > 0 || 
+                          formData.trainWeight > 0 || 
+                          formData.axleCount > 0;
 
-            const formData = this.getFormData();
-            const result = this.calculateEnergyConsumption(formData);
+        // Если нет данных - скрываем результаты
+        if (!hasAnyData) {
+            this.hideResults();
+            return;
+        }
 
-            if (result.success) {
-                this.displayResults(result.data);
+        // 1. Рассчитываем длину состава если есть данные о вагонах или локомотивах
+        if (formData.conditionalWagons > 0 || formData.actualWagons > 0) {
+            const lengthResult = this.calculateTrainLength(formData);
+            partialResult.trainLength = lengthResult.trainLength;
+        }
+
+        // 2. Рассчитываем норму расхода если есть вес и оси
+        if (formData.trainWeight > 0 && formData.axleCount > 0 && formData.locomotives.some(loc => loc.type !== 'cold')) {
+            const energyResult = this.calculateEnergyConsumption(formData);
+            if (energyResult.success) {
+                partialResult.energyConsumption = energyResult.data.energyConsumption;
+                partialResult.axleLoad = energyResult.data.axleLoad;
+                partialResult.coefficient = energyResult.data.coefficient;
+                partialResult.locomotive = energyResult.data.locomotive;
+                partialResult.route = energyResult.data.route;
+                partialResult.formData = energyResult.data.formData;
             } else {
-                // Show error message if calculation failed
-                console.log('Calculation failed:', result.error);
+                partialResult.error = energyResult.error;
             }
+        }
+
+        // 3. Отображаем результаты (полные или частичные)
+        if (Object.keys(partialResult).length > 0) {
+            this.displayPartialResults(partialResult);
+        }
+    }
+
+    hideResults() {
+        if (this.resultsSection) {
+            this.resultsSection.style.display = 'none';
+        }
+    }
+
+    calculateTrainLength(formData) {
+        let trainLength = 0;
+
+        // Считаем длину всех активных локомотивов
+        let activeLocomotiveLength = 0;
+        for (const loc of formData.locomotives) {
+            if (loc.type !== 'cold') {
+                activeLocomotiveLength += loc.length;
+            }
+        }
+
+        // Считаем длину всех холодных локомотивов
+        let coldLocomotiveLength = 0;
+        for (const loc of formData.locomotives) {
+            if (loc.type === 'cold') {
+                coldLocomotiveLength += loc.length;
+            }
+        }
+
+        // Считаем длину вагонов (условные)
+        const conditionalWagonLength = formData.conditionalWagons * WAGON_LENGTH;
+
+        // Если есть фактические вагоны, используем их вместо условных
+        let wagonLength = conditionalWagonLength;
+        if (formData.actualWagons > 0) {
+            // Для фактических вагонов используем среднюю длину 14м
+            wagonLength = formData.actualWagons * WAGON_LENGTH;
+        }
+
+        trainLength = activeLocomotiveLength + coldLocomotiveLength + wagonLength;
+
+        return {
+            trainLength: trainLength > 0 ? trainLength : null
+        };
+    }
+
+    displayPartialResults(data) {
+        // Store current result
+        this.currentResult = data;
+
+        // Show results section
+        this.resultsSection.style.display = 'block';
+        this.resultsSection.classList.add('fade-in');
+
+        // Update energy consumption if available
+        const consumptionCard = document.getElementById('consumptionCard');
+        if (data.energyConsumption !== undefined && data.energyConsumption !== null) {
+            document.getElementById('consumptionResult').textContent =
+                `${data.energyConsumption.toFixed(2)} кВт⋅ч`;
+            if (consumptionCard) consumptionCard.style.display = 'block';
+        } else {
+            if (consumptionCard) consumptionCard.style.display = 'none';
+        }
+
+        // Update axle load if available
+        const axleLoadCard = document.getElementById('axleLoadCard');
+        if (data.axleLoad !== undefined && data.axleLoad !== null) {
+            document.getElementById('axleLoadResult').textContent =
+                `${data.axleLoad.toFixed(2)} т/ось`;
+            if (axleLoadCard) axleLoadCard.style.display = 'block';
+        } else {
+            if (axleLoadCard) axleLoadCard.style.display = 'none';
+        }
+
+        // Show train length if calculated
+        const trainLengthCard = document.getElementById('trainLengthCard');
+        if (data.trainLength !== undefined && data.trainLength !== null) {
+            document.getElementById('trainLengthResult').textContent =
+                `${Math.round(data.trainLength)} м`;
+            if (trainLengthCard) trainLengthCard.style.display = 'block';
+        } else {
+            if (trainLengthCard) trainLengthCard.style.display = 'none';
+        }
+
+        // Scroll to results if this is a complete calculation
+        if (data.energyConsumption !== undefined && data.trainLength !== undefined) {
+            this.resultsSection.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
         }
     }
 
@@ -622,18 +733,11 @@ class EnergyCalculator {
                     error: 'Нет активных локомотивов для тяги'
                 };
             }
-            
+
             const locomotiveData = activeLocomotives[0]; // Using first active locomotive for calculation
-            
+
             // Get route data (standard routes only)
             let routeData = getRouteData(data.route) || (window.ROUTE_DATA && window.ROUTE_DATA[data.route]);
-
-            if (!routeData) {
-                return {
-                    success: false,
-                    error: 'Неверные данные маршрута'
-                };
-            }
 
             // Calculate axle load (tons per axle)
             if (data.axleCount === 0) {
@@ -642,10 +746,10 @@ class EnergyCalculator {
                     error: 'Количество осей не может быть 0'
                 };
             }
-            
+
             const axleLoad = data.trainWeight / data.axleCount;
 
-            // Get energy coefficient based on axle load
+            // Get energy coefficient based on axle load (works with or without route data)
             const coefficient = getEnergyCoefficient(locomotiveData.type, axleLoad, routeData);
 
             if (!coefficient) {
@@ -655,9 +759,12 @@ class EnergyCalculator {
                 };
             }
 
+            // Use route distance if available, otherwise use 1 km as base
+            const distance = routeData ? routeData.distance : 1;
+
             // Calculate energy consumption using the formula:
             // (Weight * Coefficient * Distance) / 10000 / 100
-            const energyConsumption = (data.trainWeight * coefficient * routeData.distance) / 10000 / 100;
+            const energyConsumption = (data.trainWeight * coefficient * distance) / 10000 / 100;
 
             // Calculate train length using conditional wagons from train parameters
             // Include all locomotives (active and cold) in the length calculation
