@@ -1,6 +1,6 @@
 {
   "name": "rzd-energy-calculator",
-  "version": "2.0.0",
+  "version": "0.3.0",
   "description": "Калькулятор норм расхода электроэнергии и топлива в грузовом движении на тягу поездов",
   "main": "scripts/calculator.js",
   "scripts": {
@@ -49,5 +49,13 @@
       "text",
       "html"
     ]
-  }
+  },
+  "dependencies": {
+    "@material/web": "^2.4.1",
+    "playwright": "^1.58.2"
+  },
+  "directories": {
+    "test": "tests"
+  },
+  "type": "commonjs"
 }
