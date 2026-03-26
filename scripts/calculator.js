@@ -243,9 +243,9 @@ class EnergyCalculator {
         const partialResult = {};
 
         // Проверяем есть ли хоть какие-то данные для расчета
-        const hasAnyData = formData.conditionalWagons > 0 || 
-                          formData.actualWagons > 0 || 
-                          formData.trainWeight > 0 || 
+        const hasAnyData = formData.conditionalWagons > 0 ||
+                          formData.actualWagons > 0 ||
+                          formData.trainWeight > 0 ||
                           formData.axleCount > 0;
 
         // Если нет данных - скрываем результаты
@@ -254,8 +254,8 @@ class EnergyCalculator {
             return;
         }
 
-        // 1. Рассчитываем длину состава если есть данные о вагонах или локомотивах
-        if (formData.conditionalWagons > 0 || formData.actualWagons > 0) {
+        // 1. Рассчитываем длину состава если есть условные вагоны ИЛИ локомотивы
+        if (formData.conditionalWagons > 0 || formData.locomotives.length > 0) {
             const lengthResult = this.calculateTrainLength(formData);
             partialResult.trainLength = lengthResult.trainLength;
         }
@@ -306,17 +306,10 @@ class EnergyCalculator {
             }
         }
 
-        // Считаем длину вагонов (условные)
+        // Считаем длину только от условных вагонов (фактические не используются)
         const conditionalWagonLength = formData.conditionalWagons * WAGON_LENGTH;
 
-        // Если есть фактические вагоны, используем их вместо условных
-        let wagonLength = conditionalWagonLength;
-        if (formData.actualWagons > 0) {
-            // Для фактических вагонов используем среднюю длину 14м
-            wagonLength = formData.actualWagons * WAGON_LENGTH;
-        }
-
-        trainLength = activeLocomotiveLength + coldLocomotiveLength + wagonLength;
+        trainLength = activeLocomotiveLength + coldLocomotiveLength + conditionalWagonLength;
 
         return {
             trainLength: trainLength > 0 ? trainLength : null
@@ -638,12 +631,23 @@ class EnergyCalculator {
             alert('Нельзя удалить первый локомотив. Поезд должен иметь хотя бы один локомотив.');
             return;
         }
-        
-        const locomotiveCard = document.getElementById(`locomotiveCard${index}`);
-        if (locomotiveCard) {
-            locomotiveCard.remove();
-            this.locomotiveCount--;
+
+        const locomotiveWrapper = document.getElementById(`locomotiveCard${index}`);
+        if (locomotiveWrapper) {
+            locomotiveWrapper.remove();
             
+            // Пересчитываем locomotiveCount - находим максимальный оставшийся индекс
+            const remainingCards = document.querySelectorAll('.locomotive-card-wrapper');
+            let maxIndex = 1;
+            remainingCards.forEach(card => {
+                const match = card.id.match(/locomotiveCard(\d+)/);
+                if (match) {
+                    const idx = parseInt(match[1]);
+                    if (idx > maxIndex) maxIndex = idx;
+                }
+            });
+            this.locomotiveCount = Math.max(1, maxIndex);
+
             // Trigger recalculation after removing locomotive
             this.performRealTimeCalculation();
             this.highlightSelectedCoefficient();
@@ -1434,6 +1438,7 @@ function selectLocomotiveType(index, type, name, length) {
     const locomotiveCard = document.querySelector(`#locomotiveCard${index} .locomotive-card`);
     if (locomotiveCard) {
         locomotiveCard.setAttribute('data-type', type);
+        locomotiveCard.setAttribute('data-length', length); // Обновляем атрибут длины
         locomotiveCard.querySelector('h3').textContent = name;
         locomotiveCard.querySelector('p').textContent = `Длина: ${length}м`;
 
@@ -1566,6 +1571,7 @@ function selectLocomotiveTypeDiesel(index, type, name, length) {
     const locomotiveCard = document.querySelector(`#locomotiveCard${index}Diesel .locomotive-card`);
     if (locomotiveCard) {
         locomotiveCard.setAttribute('data-type', type);
+        locomotiveCard.setAttribute('data-length', length); // Обновляем атрибут длины
         locomotiveCard.querySelector('h3').textContent = name;
         locomotiveCard.querySelector('p').textContent = `Длина: ${length}м`;
 
@@ -1628,16 +1634,28 @@ function toggleFuelSectionV(show) {
 }
 
 function removeLocomotiveDiesel(index) {
-    const locomotiveCard = document.getElementById(`locomotiveCard${index}Diesel`);
-    if (locomotiveCard) {
+    const locomotiveWrapper = document.getElementById(`locomotiveCard${index}Diesel`);
+    if (locomotiveWrapper) {
         // Prevent removal of the first locomotive
         if (index === 1) {
             alert('Нельзя удалить первый локомотив. Поезд должен иметь хотя бы один локомотив.');
             return;
         }
-        locomotiveCard.remove();
+        locomotiveWrapper.remove();
+        
+        // Пересчитываем locomotiveCount - находим максимальный оставшийся индекс
         if (window.calculator) {
-            window.calculator.locomotiveCount--;
+            const remainingCards = document.querySelectorAll('.locomotive-card-wrapper');
+            let maxIndex = 1;
+            remainingCards.forEach(card => {
+                const match = card.id.match(/locomotiveCard(\d+)/);
+                if (match) {
+                    const idx = parseInt(match[1]);
+                    if (idx > maxIndex) maxIndex = idx;
+                }
+            });
+            window.calculator.locomotiveCount = Math.max(1, maxIndex);
+            
             setTimeout(() => {
                 window.calculator.performRealTimeCalculation();
                 window.calculator.highlightSelectedCoefficient();
