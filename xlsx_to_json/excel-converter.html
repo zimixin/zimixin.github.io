@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Excel в JSON Конвертер</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .description {
+            color: #666;
+            margin-bottom: 20px;
+        }
+        .upload-area {
+            border: 2px dashed #ccc;
+            border-radius: 8px;
+            padding: 40px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin: 20px 0;
+        }
+        .upload-area:hover,
+        .upload-area.dragover {
+            border-color: #007bff;
+            background: #f0f7ff;
+        }
+        .upload-area input {
+            display: none;
+        }
+        .btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+        }
+        .btn:hover {
+            background: #0056b3;
+        }
+        .btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .status {
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 6px;
+            display: none;
+        }
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            display: block;
+        }
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            display: block;
+        }
+        .preview {
+            margin: 20px 0;
+            max-height: 400px;
+            overflow: auto;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            display: none;
+        }
+        .preview pre {
+            margin: 0;
+            padding: 15px;
+            background: #f8f9fa;
+            font-size: 12px;
+        }
+        .options {
+            margin: 20px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 6px;
+        }
+        .options label {
+            display: block;
+            margin: 10px 0;
+            cursor: pointer;
+        }
+        .file-info {
+            color: #666;
+            font-size: 14px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📊 Excel в JSON Конвертер</h1>
+        <p class="description">Конвертируйте таблицы из Excel формата в JSON для калькулятора РЖД</p>
+
+        <div class="upload-area" id="uploadArea">
+            <input type="file" id="fileInput" accept=".xlsx,.xls">
+            <p>📁 Перетащите файл сюда или кликните для выбора</p>
+            <p class="file-info" id="fileInfo"></p>
+        </div>
+
+        <div class="options" id="options" style="display: none;">
+            <h3>⚙️ Настройки</h3>
+            <label>
+                <input type="checkbox" id="firstRowAsHeader" checked>
+                Использовать первую строку как заголовки
+            </label>
+            <label>
+                <input type="checkbox" id="skipEmpty" checked>
+                Пропускать пустые строки
+            </label>
+            <label>
+                <input type="text" id="outputName" placeholder="Имя выходного файла (без .json)" 
+                       style="width: 100%; padding: 8px; margin-top: 10px; border: 1px solid #ddd; border-radius: 4px;">
+            </label>
+        </div>
+
+        <div style="text-align: center; margin: 20px 0;">
+            <button class="btn" id="convertBtn" disabled>Конвертировать</button>
+            <button class="btn" id="downloadBtn" style="display: none; background: #28a745;">Скачать JSON</button>
+        </div>
+
+        <div class="status" id="status"></div>
+
+        <div class="preview" id="preview">
+            <h4>Предпросмотр:</h4>
+            <pre id="previewContent"></pre>
+        </div>
+    </div>
+
+    <!-- Библиотека SheetJS для чтения Excel -->
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
+    
+    <script>
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const fileInfo = document.getElementById('fileInfo');
+        const options = document.getElementById('options');
+        const convertBtn = document.getElementById('convertBtn');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const status = document.getElementById('status');
+        const preview = document.getElementById('preview');
+        const previewContent = document.getElementById('previewContent');
+        const outputName = document.getElementById('outputName');
+
+        let currentFile = null;
+        let jsonData = null;
+
+        // Обработка клика
+        uploadArea.addEventListener('click', () => fileInput.click());
+
+        // Обработка Drag & Drop
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                handleFile(files[0]);
+            }
+        });
+
+        // Обработка выбора файла
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handleFile(e.target.files[0]);
+            }
+        });
+
+        function handleFile(file) {
+            currentFile = file;
+            fileInfo.textContent = `✓ Файл выбран: ${file.name} (${formatFileSize(file.size)})`;
+            options.style.display = 'block';
+            convertBtn.disabled = false;
+            
+            // Автозаполнение имени выходного файла
+            const baseName = file.name.replace(/\.(xlsx|xls)$/i, '');
+            outputName.value = baseName;
+            
+            hideStatus();
+            preview.style.display = 'none';
+            downloadBtn.style.display = 'none';
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes < 1024) return bytes + ' Б';
+            if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' КБ';
+            return (bytes / (1024 * 1024)).toFixed(1) + ' МБ';
+        }
+
+        function showStatus(message, type) {
+            status.textContent = message;
+            status.className = 'status ' + type;
+        }
+
+        function hideStatus() {
+            status.className = 'status';
+        }
+
+        convertBtn.addEventListener('click', () => {
+            if (!currentFile) return;
+
+            const reader = new FileReader();
+            
+            reader.onload = (e) => {
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, { type: 'array' });
+
+                    const result = [];
+                    const firstRowAsHeader = document.getElementById('firstRowAsHeader').checked;
+                    const skipEmpty = document.getElementById('skipEmpty').checked;
+
+                    workbook.SheetNames.forEach(sheetName => {
+                        const worksheet = workbook.Sheets[sheetName];
+                        
+                        // Конвертация в JSON
+                        const json = XLSX.utils.sheet_to_json(worksheet, {
+                            header: firstRowAsHeader ? 1 : undefined,
+                            defval: '',
+                            raw: true
+                        });
+
+                        // Если первая строка как заголовки
+                        if (firstRowAsHeader && json.length > 0) {
+                            const headers = json[0];
+                            const rows = json.slice(1);
+                            
+                            const formattedData = rows.map(row => {
+                                const obj = {};
+                                headers.forEach((header, idx) => {
+                                    if (header && row[idx] !== undefined && row[idx] !== '') {
+                                        obj[header] = row[idx];
+                                    }
+                                });
+                                return obj;
+                            }).filter(row => {
+                                if (skipEmpty) {
+                                    return Object.keys(row).length > 0;
+                                }
+                                return true;
+                            });
+
+                            result.push({
+                                sheetName: sheetName,
+                                data: formattedData
+                            });
+                        } else {
+                            result.push({
+                                sheetName: sheetName,
+                                data: json
+                            });
+                        }
+                    });
+
+                    jsonData = result;
+
+                    // Показываем результат
+                    const totalRecords = result.reduce((sum, sheet) => sum + sheet.data.length, 0);
+                    showStatus(`✓ Конвертация завершена! Листов: ${result.length}, Записей: ${totalRecords}`, 'success');
+                    
+                    // Предпросмотр
+                    previewContent.textContent = JSON.stringify(result, null, 2).substring(0, 2000) + '...';
+                    preview.style.display = 'block';
+                    
+                    // Кнопка скачивания
+                    downloadBtn.style.display = 'inline-block';
+                    
+                } catch (error) {
+                    showStatus('❌ Ошибка при чтении файла: ' + error.message, 'error');
+                }
+            };
+
+            reader.onerror = () => {
+                showStatus('❌ Ошибка при чтении файла', 'error');
+            };
+
+            reader.readAsArrayBuffer(currentFile);
+        });
+
+        downloadBtn.addEventListener('click', () => {
+            if (!jsonData) return;
+
+            const fileName = (outputName.value || 'output') + '.json';
+            const jsonStr = JSON.stringify(jsonData, null, 2);
+            const blob = new Blob([jsonStr], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = fileName;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        });
+    </script>
+</body>
+</html>

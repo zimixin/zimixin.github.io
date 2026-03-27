@@ -1,0 +1,956 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Вертикальный профиль - КБШ Н-122</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Courier New', monospace;
+            background: #0a0a0a;
+            color: #00ff00;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+        
+        header {
+            border-bottom: 2px solid #00ff00;
+            padding-bottom: 20px;
+            margin-bottom: 20px;
+        }
+        
+        h1 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+        
+        .controls {
+            margin-bottom: 20px;
+            display: grid;
+            grid-template-columns: 1fr 1fr auto;
+            gap: 12px;
+            align-items: center;
+            position: relative;
+        }
+        
+        .controls-wrapper {
+            position: relative;
+        }
+        
+        .controls input {
+            width: 100%;
+            padding: 12px;
+            background: #111;
+            border: 1px solid #00ff00;
+            color: #00ff00;
+            font-family: inherit;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        
+        .controls input:focus {
+            outline: none;
+            box-shadow: 0 0 10px #00ff00;
+        }
+        
+        .controls input::placeholder {
+            color: #444;
+        }
+        
+        .autocomplete-list {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: #0a0a0a;
+            border: 1px solid #00ff00;
+            border-top: none;
+            max-height: 300px;
+            overflow-y: auto;
+            z-index: 1000;
+            display: none;
+        }
+        
+        .autocomplete-list.visible {
+            display: block;
+        }
+        
+        .autocomplete-item {
+            padding: 10px 12px;
+            cursor: pointer;
+            border-bottom: 1px solid rgba(0, 255, 0, 0.2);
+            transition: background 0.2s;
+        }
+        
+        .autocomplete-item:hover {
+            background: rgba(0, 255, 0, 0.2);
+        }
+        
+        .autocomplete-item.active {
+            background: #00ff00;
+            color: #000;
+        }
+        
+        .autocomplete-item .name {
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+        
+        .autocomplete-item .section {
+            font-size: 11px;
+            color: #666;
+        }
+        
+        .autocomplete-item.active .section {
+            color: #333;
+        }
+        
+        .controls button {
+            padding: 12px 24px;
+            background: #00ff00;
+            color: #000;
+            border: none;
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+        
+        .controls button:hover {
+            background: #00cc00;
+        }
+        
+        .controls button:disabled {
+            background: #333;
+            color: #666;
+            cursor: not-allowed;
+        }
+        
+        .profile-container {
+            display: grid;
+            grid-template-columns: 250px 1fr 300px;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .info-panel {
+            border: 1px solid #00ff00;
+            padding: 15px;
+            background: rgba(0, 255, 0, 0.05);
+        }
+        
+        .info-panel h3 {
+            border-bottom: 1px solid #00ff00;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+        
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(0, 255, 0, 0.3);
+            font-size: 12px;
+        }
+        
+        .info-row:last-child {
+            border-bottom: none;
+        }
+        
+        .chart-area {
+            border: 1px solid #00ff00;
+            padding: 20px;
+            background: rgba(0, 255, 0, 0.02);
+            overflow-x: auto;
+        }
+        
+        .segments-panel {
+            border: 1px solid #00ff00;
+            padding: 15px;
+            background: rgba(0, 255, 0, 0.05);
+            max-height: 600px;
+            overflow-y: auto;
+        }
+        
+        .segment-block {
+            border: 1px solid #00ff00;
+            margin-bottom: 10px;
+            background: rgba(0, 255, 0, 0.08);
+        }
+        
+        .segment-header {
+            padding: 8px 12px;
+            background: #00ff00;
+            color: #000;
+            font-weight: bold;
+            font-size: 12px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .segment-header:hover {
+            background: #00cc00;
+        }
+        
+        .segment-body {
+            padding: 12px;
+            display: none;
+        }
+        
+        .segment-block.expanded .segment-body {
+            display: block;
+        }
+        
+        .segment-body .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 4px 0;
+            font-size: 11px;
+        }
+        
+        .speed-indicator {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 6px;
+        }
+        
+        .speed-indicator.passenger { background: #00d9ff; }
+        .speed-indicator.express { background: #00ff88; }
+        .speed-indicator.standard { background: #ffaa00; }
+        .speed-indicator.empty { background: #ff66cc; }
+        
+        .speed-bar {
+            height: 20px;
+            background: linear-gradient(90deg, #00d9ff, #00ff88, #ffaa00, #ff66cc);
+            margin: 5px 0;
+            border-radius: 3px;
+        }
+        
+        .legend {
+            display: flex;
+            gap: 15px;
+            margin: 15px 0;
+            flex-wrap: wrap;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+        }
+        
+        .legend-color {
+            width: 20px;
+            height: 4px;
+            border-radius: 2px;
+        }
+        
+        svg {
+            display: block;
+            min-width: 1200px;
+        }
+        
+        .speed-line { fill: none; stroke-width: 3; stroke-linecap: square; }
+        .speed-line-passenger { stroke: #00d9ff; }
+        .speed-line-freight-express { stroke: #00ff88; }
+        .speed-line-freight-standard { stroke: #ffaa00; }
+        .speed-line-freight-empty { stroke: #ff66cc; }
+        
+        .segment-bg { fill-opacity: 0.15; }
+        .segment-bg-1 { fill: #00d9ff; }
+        .segment-bg-2 { fill: #00ff88; }
+        .segment-bg-3 { fill: #ffaa00; }
+        .segment-bg-4 { fill: #ff66cc; }
+        
+        .grid-line { stroke: #00ff00; stroke-width: 0.5; stroke-dasharray: 2,2; opacity: 0.3; }
+        .axis-line { stroke: #00ff00; stroke-width: 2; }
+        .km-label, .speed-label { fill: #00ff00; font-size: 10px; font-family: monospace; }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #00ff00;
+        }
+        
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #111; }
+        ::-webkit-scrollbar-thumb { background: #00ff00; }
+        
+        .blink {
+            animation: blink 1s infinite;
+        }
+        
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+        
+        /* Tooltip */
+        .tooltip {
+            position: fixed;
+            background: #000;
+            border: 2px solid #00ff00;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 12px;
+            z-index: 1000;
+            pointer-events: none;
+            display: none;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.5);
+            max-width: 350px;
+        }
+        
+        .tooltip.visible {
+            display: block;
+        }
+        
+        .tooltip-title {
+            font-weight: bold;
+            color: #00ff00;
+            margin-bottom: 10px;
+            border-bottom: 1px solid #00ff00;
+            padding-bottom: 8px;
+        }
+        
+        .tooltip-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 4px 0;
+            gap: 20px;
+        }
+        
+        .tooltip-label {
+            color: #666;
+        }
+        
+        .tooltip-value {
+            color: #00ff00;
+            font-weight: bold;
+        }
+        
+        .tooltip-speeds {
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid rgba(0, 255, 0, 0.3);
+        }
+        
+        .tooltip-speed {
+            display: inline-block;
+            margin-right: 10px;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: bold;
+        }
+        
+        .tooltip-speed.passenger { background: rgba(0, 217, 255, 0.3); color: #00d9ff; }
+        .tooltip-speed.express { background: rgba(0, 255, 136, 0.3); color: #00ff88; }
+        .tooltip-speed.standard { background: rgba(255, 170, 0, 0.3); color: #ffaa00; }
+        .tooltip-speed.empty { background: rgba(255, 102, 204, 0.3); color: #ff66cc; }
+        
+        .segment-rect {
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+        
+        .segment-rect:hover {
+            opacity: 0.7;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>⚡ ВЕРТИКАЛЬНЫЙ ПРОФИЛЬ СКОРОСТЕЙ</h1>
+            <p style="color: #666;">Система отображения данных КБШ Н-122</p>
+        </header>
+        
+        <div class="controls">
+            <div class="controls-wrapper">
+                <label style="display: block; margin-bottom: 6px; color: #666;">📍 ОТКУДА:</label>
+                <input type="text" id="fromInput" placeholder="Введите название станции..." autocomplete="off">
+                <div id="fromList" class="autocomplete-list"></div>
+            </div>
+            <div class="controls-wrapper">
+                <label style="display: block; margin-bottom: 6px; color: #666;">📍 КУДА:</label>
+                <input type="text" id="toInput" placeholder="Введите название станции..." autocomplete="off">
+                <div id="toList" class="autocomplete-list"></div>
+            </div>
+            <button id="showBtn" disabled>🚂 ПОКАЗАТЬ</button>
+        </div>
+        
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-color" style="background: #00d9ff;"></div>
+                <span>ПАССАЖИРСКИЕ</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #00ff88;"></div>
+                <span>ГРУЗОВЫЕ УСКОРЕННЫЕ</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #ffaa00;"></div>
+                <span>ГРУЗОВЫЕ ОБЫЧНЫЕ</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #ff66cc;"></div>
+                <span>ПОРОЖНИЕ</span>
+            </div>
+        </div>
+        
+        <div class="profile-container">
+            <div class="info-panel">
+                <h3>📊 ПАРАМЕТРЫ УЧАСТКА</h3>
+                <div id="infoContent">
+                    <div class="info-row">
+                        <span>СТАТУС:</span>
+                        <span class="blink">ОЖИДАНИЕ</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="chart-area">
+                <svg id="chart" height="500"></svg>
+            </div>
+            
+            <div class="segments-panel">
+                <h3>📍 СЕГМЕНТЫ</h3>
+                <div id="segmentsList"></div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="loading" class="loading">
+        <p>⌛ ЗАГРУЗКА ДАННЫХ...</p>
+    </div>
+    
+    <div id="tooltip" class="tooltip"></div>
+
+    <script>
+        let hierarchyData = null;
+        let currentSegments = [];
+        let allObjects = []; // Все объекты (станции + перегоны) для выбора
+        let selectedFrom = null;
+        let selectedTo = null;
+        
+        const CHART_HEIGHT = 500;
+        const PADDING = { top: 30, right: 20, bottom: 50, left: 40 };
+        const MAX_SPEED = 120;
+        
+        async function loadData() {
+            try {
+                const response = await fetch('data/участки-иерархия-v2.json');
+                hierarchyData = await response.json();
+                prepareObjects();
+                setupAutocomplete();
+                document.getElementById('loading').style.display = 'none';
+            } catch (error) {
+                document.getElementById('loading').innerHTML = `<p>⚠ ОШИБКА: ${error.message}</p>`;
+            }
+        }
+        
+        function prepareObjects() {
+            // Собираем все объекты из всех участков
+            allObjects = [];
+            hierarchyData.участки.forEach((section, sectionIndex) => {
+                section.объекты.forEach((obj, objIndex) => {
+                    if (obj.тип === 'станция' || obj.тип === 'перегон') {
+                        allObjects.push({
+                            name: obj.название,
+                            sectionIndex: sectionIndex,
+                            objectIndex: objIndex,
+                            type: obj.тип,
+                            sectionName: section.название
+                        });
+                    }
+                });
+            });
+            
+            // Сортируем по названию
+            allObjects.sort((a, b) => a.name.localeCompare(b.name));
+        }
+        
+        function setupAutocomplete() {
+            const fromInput = document.getElementById('fromInput');
+            const toInput = document.getElementById('toInput');
+            const fromList = document.getElementById('fromList');
+            const toList = document.getElementById('toList');
+            const showBtn = document.getElementById('showBtn');
+            
+            // Функция фильтрации
+            function filterObjects(query, excludeIndex = -1) {
+                if (!query) return [];
+                const lowerQuery = query.toLowerCase();
+                return allObjects.filter((obj, idx) => {
+                    if (idx === excludeIndex) return false;
+                    return obj.name.toLowerCase().includes(lowerQuery) ||
+                           obj.sectionName.toLowerCase().includes(lowerQuery);
+                });
+            }
+            
+            // Функция отображения списка
+            function showList(listElement, objects, inputElement, isFrom) {
+                listElement.innerHTML = '';
+                
+                if (objects.length === 0) {
+                    listElement.classList.remove('visible');
+                    return;
+                }
+                
+                objects.forEach((obj, idx) => {
+                    const item = document.createElement('div');
+                    item.className = 'autocomplete-item';
+                    item.innerHTML = `
+                        <div class="name">${highlightMatch(obj.name, inputElement.value)}</div>
+                        <div class="section">${obj.sectionName}</div>
+                    `;
+                    
+                    item.addEventListener('click', () => {
+                        inputElement.value = obj.name;
+                        listElement.classList.remove('visible');
+                        
+                        if (isFrom) {
+                            selectedFrom = obj;
+                            // Очищаем "Куда" если выбрано раньше "Откуда"
+                            if (selectedTo && allObjects.indexOf(selectedTo) <= allObjects.indexOf(obj)) {
+                                selectedTo = null;
+                                toInput.value = '';
+                                showBtn.disabled = true;
+                            }
+                        } else {
+                            selectedTo = obj;
+                        }
+                        
+                        // Проверяем что оба выбраны
+                        if (selectedFrom && selectedTo) {
+                            const fromIdx = allObjects.indexOf(selectedFrom);
+                            const toIdx = allObjects.indexOf(selectedTo);
+                            showBtn.disabled = fromIdx >= toIdx;
+                        }
+                    });
+                    
+                    listElement.appendChild(item);
+                });
+                
+                listElement.classList.add('visible');
+            }
+            
+            // Обработчики для "Откуда"
+            fromInput.addEventListener('input', () => {
+                const filtered = filterObjects(fromInput.value, selectedTo ? allObjects.indexOf(selectedTo) : -1);
+                showList(fromList, filtered, fromInput, true);
+            });
+            
+            fromInput.addEventListener('focus', () => {
+                if (fromInput.value) {
+                    const filtered = filterObjects(fromInput.value, selectedTo ? allObjects.indexOf(selectedTo) : -1);
+                    showList(fromList, filtered, fromInput, true);
+                }
+            });
+            
+            // Обработчики для "Куда"
+            toInput.addEventListener('input', () => {
+                const fromIdx = selectedFrom ? allObjects.indexOf(selectedFrom) : -1;
+                const filtered = filterObjects(toInput.value, fromIdx).filter(obj => {
+                    return fromIdx < 0 || allObjects.indexOf(obj) > fromIdx;
+                });
+                showList(toList, filtered, toInput, false);
+            });
+            
+            toInput.addEventListener('focus', () => {
+                if (toInput.value) {
+                    const fromIdx = selectedFrom ? allObjects.indexOf(selectedFrom) : -1;
+                    const filtered = filterObjects(toInput.value, fromIdx).filter(obj => {
+                        return fromIdx < 0 || allObjects.indexOf(obj) > fromIdx;
+                    });
+                    showList(toList, filtered, toInput, false);
+                }
+            });
+            
+            // Закрытие списков при клике вне
+            document.addEventListener('click', (e) => {
+                if (!e.target.closest('.controls-wrapper')) {
+                    fromList.classList.remove('visible');
+                    toList.classList.remove('visible');
+                }
+            });
+            
+            // Кнопка "Показать"
+            showBtn.addEventListener('click', showRoute);
+        }
+        
+        function highlightMatch(text, query) {
+            if (!query) return text;
+            const lowerText = text.toLowerCase();
+            const lowerQuery = query.toLowerCase();
+            const index = lowerText.indexOf(lowerQuery);
+            if (index === -1) return text;
+            
+            return text.substring(0, index) +
+                   '<span style="background: #00ff00; color: #000;">' +
+                   text.substring(index, index + query.length) +
+                   '</span>' +
+                   text.substring(index + query.length);
+        }
+        
+        function showRoute() {
+            if (!selectedFrom || !selectedTo) return;
+            
+            // Собираем сегменты между выбранными объектами
+            currentSegments = getSegmentsBetween(selectedFrom, selectedTo);
+            
+            // Обновляем информацию
+            document.getElementById('infoContent').innerHTML = `
+                <div class="info-row"><span>МАРШРУТ:</span><span>${selectedFrom.name} → ${selectedTo.name}</span></div>
+                <div class="info-row"><span>УЧАСТОК:</span><span>${selectedFrom.sectionName}</span></div>
+                <div class="info-row"><span>СЕГМЕНТОВ:</span><span>${currentSegments.length}</span></div>
+                <div class="info-row"><span>ДЛИНА:</span><span>${calculateLength(currentSegments)} км</span></div>
+                <div class="info-row"><span>СТАТУС:</span><span class="blink">АКТИВЕН</span></div>
+            `;
+            
+            drawChart();
+            drawSegments();
+        }
+        
+        function getSegmentsBetween(fromObj, toObj) {
+            const segments = [];
+            
+            // Если объекты в одном участке
+            if (fromObj.sectionIndex === toObj.sectionIndex) {
+                const section = hierarchyData.участки[fromObj.sectionIndex];
+                let collecting = false;
+                
+                section.объекты.forEach((obj) => {
+                    // Начинаем сбор с fromObj
+                    if (obj.название === fromObj.name) {
+                        collecting = true;
+                    }
+                    
+                    if (collecting) {
+                        // Добавляем пути
+                        if (obj.пути) {
+                            obj.пути.forEach((path) => {
+                                if (path.наименование && path.протяженность_км) {
+                                    let startKm = parseStartKm(path.наименование);
+                                    if (startKm === null) startKm = 0;
+                                    
+                                    segments.push({
+                                        id: segments.length + 1,
+                                        name: path.наименование,
+                                        objectName: obj.название,
+                                        pathNumber: path.путь,
+                                        range: {
+                                            start_km: startKm,
+                                            end_km: startKm + path.протяженность_км,
+                                            length_km: path.протяженность_км
+                                        },
+                                        speeds_kmh: normalizeSpeeds(path.скорости),
+                                        restriction_reason: path.примечание || ''
+                                    });
+                                }
+                                // Дополнительные сегменты
+                                if (path.дополнительно) {
+                                    path.дополнительно.forEach((seg) => {
+                                        if (seg.наименование && seg.протяженность_км) {
+                                            let startKm = parseStartKm(seg.наименование);
+                                            if (startKm === null) startKm = 0;
+                                            
+                                            segments.push({
+                                                id: segments.length + 1,
+                                                name: seg.наименование,
+                                                objectName: obj.название,
+                                                range: {
+                                                    start_km: startKm,
+                                                    end_km: startKm + seg.протяженность_км,
+                                                    length_km: seg.протяженность_км
+                                                },
+                                                speeds_kmh: normalizeSpeeds(seg.скорости),
+                                                restriction_reason: seg.примечание || ''
+                                            });
+                                        }
+                                    });
+                                }
+                            });
+                        }
+                        // Съезды
+                        if (obj.съезды) {
+                            obj.съезды.forEach((sezd) => {
+                                if (sezd.наименование) {
+                                    let startKm = parseStartKm(sezd.наименование);
+                                    if (startKm === null) startKm = 0;
+                                    
+                                    segments.push({
+                                        id: segments.length + 1,
+                                        name: sezd.наименование,
+                                        objectName: obj.название,
+                                        range: {
+                                            start_km: startKm,
+                                            end_km: startKm + (sezd.протяженность_км || 0.1),
+                                            length_km: sezd.протяженность_км || 0.1
+                                        },
+                                        speeds_kmh: normalizeSpeeds(sezd.скорости),
+                                        restriction_reason: sezd.примечание || ''
+                                    });
+                                }
+                            });
+                        }
+                    }
+                    
+                    // Заканчиваем на toObj
+                    if (obj.название === toObj.name) {
+                        collecting = false;
+                    }
+                });
+            }
+            
+            return segments;
+        }
+        
+        function calculateLength(segments) {
+            return segments.reduce((sum, s) => sum + s.range.length_km, 0).toFixed(2);
+        }
+        
+        function normalizeSpeeds(speeds) {
+            return {
+                passenger: speeds.пассажирские || speeds.пассажирские_приемоотправочные || 0,
+                freight_express: speeds.грузовые_ускоренные || 0,
+                freight_standard: speeds.грузовые || speeds.грузовые_приемоотправочные || 0,
+                freight_empty_18_100: speeds.грузовые_порожние || 0
+            };
+        }
+        
+        // Парсинг начального километра из наименования вида "1098 км 3 пк 60 м - 1101 км 6 пк 0 м"
+        function parseStartKm(name) {
+            // Ищем первое число в строке (км)
+            const match = name.match(/(\d+)\s*км\s+(\d+)\s*пк\s+(\d+)\s*м/);
+            if (match) {
+                const km = parseInt(match[1]);
+                const piket = parseInt(match[2]);
+                const meters = parseInt(match[3]);
+                return km + (piket * 100 + meters) / 1000;
+            }
+            // Альтернативный формат: просто число в начале
+            const simpleMatch = name.match(/^(\d+(?:\.\d+)?)/);
+            if (simpleMatch) {
+                return parseFloat(simpleMatch[1]);
+            }
+            return null;
+        }
+
+        function drawChart() {
+            const svg = document.getElementById('chart');
+            svg.innerHTML = '';
+            
+            if (currentSegments.length === 0) return;
+            
+            // Находим минимальный и максимальный км для масштаба
+            const minKm = Math.floor(Math.min(...currentSegments.map(s => s.range.start_km)));
+            const maxKm = Math.ceil(Math.max(...currentSegments.map(s => s.range.end_km)));
+            const kmRange = maxKm - minKm || 1;
+            
+            const chartWidth = Math.max(1200, kmRange * 100);
+            
+            svg.setAttribute('width', chartWidth);
+            
+            function scaleX(km) {
+                return PADDING.left + ((km - minKm) / kmRange) * (chartWidth - PADDING.left - PADDING.right);
+            }
+            
+            function scaleY(speed) {
+                return CHART_HEIGHT - PADDING.bottom - (speed / MAX_SPEED) * (CHART_HEIGHT - PADDING.top - PADDING.bottom);
+            }
+            
+            // Сетка
+            for (let speed = 0; speed <= MAX_SPEED; speed += 20) {
+                const y = scaleY(speed);
+                const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                line.setAttribute('x1', PADDING.left);
+                line.setAttribute('y1', y);
+                line.setAttribute('x2', chartWidth - PADDING.right);
+                line.setAttribute('y2', y);
+                line.setAttribute('class', 'grid-line');
+                svg.appendChild(line);
+                
+                const label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                label.setAttribute('x', PADDING.left - 8);
+                label.setAttribute('y', y + 4);
+                label.setAttribute('class', 'speed-label');
+                label.setAttribute('text-anchor', 'end');
+                label.textContent = speed;
+                svg.appendChild(label);
+            }
+            
+            // Ось
+            const axisLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            axisLine.setAttribute('x1', PADDING.left);
+            axisLine.setAttribute('y1', CHART_HEIGHT - PADDING.bottom);
+            axisLine.setAttribute('x2', chartWidth - PADDING.right);
+            axisLine.setAttribute('y2', CHART_HEIGHT - PADDING.bottom);
+            axisLine.setAttribute('class', 'axis-line');
+            svg.appendChild(axisLine);
+            
+            // Километры - показываем реальные км
+            for (let km = minKm; km <= maxKm; km++) {
+                const x = scaleX(km);
+                const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                line.setAttribute('x1', x);
+                line.setAttribute('y1', CHART_HEIGHT - PADDING.bottom - 5);
+                line.setAttribute('x2', x);
+                line.setAttribute('y2', CHART_HEIGHT - PADDING.bottom + 5);
+                line.setAttribute('class', 'grid-line');
+                svg.appendChild(line);
+                
+                const label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                label.setAttribute('x', x);
+                label.setAttribute('y', CHART_HEIGHT - PADDING.bottom + 20);
+                label.setAttribute('class', 'km-label');
+                label.setAttribute('text-anchor', 'middle');
+                label.textContent = km;
+                svg.appendChild(label);
+            }
+            
+            // Фон сегментов - интерактивный
+            currentSegments.forEach((seg, i) => {
+                const x1 = scaleX(seg.range.start_km);
+                const x2 = scaleX(seg.range.end_km);
+                const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+                rect.setAttribute('x', x1);
+                rect.setAttribute('y', PADDING.top);
+                rect.setAttribute('width', Math.max(x2 - x1, 2));
+                rect.setAttribute('height', CHART_HEIGHT - PADDING.top - PADDING.bottom);
+                rect.setAttribute('class', `segment-bg segment-bg-${(i % 4) + 1} segment-rect`);
+                rect.setAttribute('data-index', i);
+                
+                // Tooltip события
+                rect.addEventListener('mousemove', (e) => showTooltip(e, seg));
+                rect.addEventListener('mouseleave', hideTooltip);
+                
+                svg.insertBefore(rect, svg.firstChild);
+            });
+            
+            // Линии скоростей
+            const speedTypes = [
+                { key: 'passenger', class: 'speed-line-passenger' },
+                { key: 'freight_express', class: 'speed-line-freight-express' },
+                { key: 'freight_standard', class: 'speed-line-freight-standard' },
+                { key: 'freight_empty_18_100', class: 'speed-line-freight-empty' }
+            ];
+            
+            speedTypes.forEach(type => {
+                currentSegments.forEach(seg => {
+                    const speed = seg.speeds_kmh[type.key];
+                    if (speed > 0) {
+                        const x1 = scaleX(seg.range.start_km);
+                        const x2 = scaleX(seg.range.end_km);
+                        const y = scaleY(speed);
+                        
+                        const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                        line.setAttribute('x1', x1);
+                        line.setAttribute('y1', y);
+                        line.setAttribute('x2', x2);
+                        line.setAttribute('y2', y);
+                        line.setAttribute('class', `speed-line ${type.class}`);
+                        svg.appendChild(line);
+                    }
+                });
+            });
+        }
+        
+        function showTooltip(e, segment) {
+            const tooltip = document.getElementById('tooltip');
+            
+            const speedsHtml = [];
+            if (segment.speeds_kmh.passenger > 0) speedsHtml.push(`<span class="tooltip-speed passenger">ПАСС: ${segment.speeds_kmh.passenger} км/ч</span>`);
+            if (segment.speeds_kmh.freight_express > 0) speedsHtml.push(`<span class="tooltip-speed express">УСК: ${segment.speeds_kmh.freight_express} км/ч</span>`);
+            if (segment.speeds_kmh.freight_standard > 0) speedsHtml.push(`<span class="tooltip-speed standard">ГРУЗ: ${segment.speeds_kmh.freight_standard} км/ч</span>`);
+            if (segment.speeds_kmh.freight_empty_18_100 > 0) speedsHtml.push(`<span class="tooltip-speed empty">ПОР: ${segment.speeds_kmh.freight_empty_18_100} км/ч</span>`);
+            
+            tooltip.innerHTML = `
+                <div class="tooltip-title">${segment.objectName}</div>
+                <div class="tooltip-row">
+                    <span class="tooltip-label">НАЧАЛО:</span>
+                    <span class="tooltip-value">${segment.range.start_km.toFixed(3)} км</span>
+                </div>
+                <div class="tooltip-row">
+                    <span class="tooltip-label">КОНЕЦ:</span>
+                    <span class="tooltip-value">${segment.range.end_km.toFixed(3)} км</span>
+                </div>
+                <div class="tooltip-row">
+                    <span class="tooltip-label">ДЛИНА:</span>
+                    <span class="tooltip-value">${segment.range.length_km.toFixed(3)} км</span>
+                </div>
+                <div class="tooltip-row">
+                    <span class="tooltip-label">ПК:</span>
+                    <span class="tooltip-value">${kmToPiket(segment.range.start_km)} - ${kmToPiket(segment.range.end_km)}</span>
+                </div>
+                <div class="tooltip-speeds">
+                    ${speedsHtml.join(' ')}
+                </div>
+                ${segment.restriction_reason ? `<div style="margin-top: 10px; color: #666; font-size: 11px;">⚠ ${segment.restriction_reason}</div>` : ''}
+            `;
+            
+            tooltip.classList.add('visible');
+            tooltip.style.left = (e.clientX + 15) + 'px';
+            tooltip.style.top = (e.clientY + 15) + 'px';
+        }
+        
+        function hideTooltip() {
+            document.getElementById('tooltip').classList.remove('visible');
+        }
+        
+        function kmToPiket(km) {
+            const piket = Math.floor(km * 10);
+            const meters = Math.round((km * 1000) % 100);
+            return `ПК ${piket}+${meters.toString().padStart(2, '0')}`;
+        }
+        
+        function drawSegments() {
+            const list = document.getElementById('segmentsList');
+            list.innerHTML = '';
+            
+            currentSegments.forEach((seg, idx) => {
+                const block = document.createElement('div');
+                block.className = 'segment-block';
+                
+                const speedsHtml = [];
+                if (seg.speeds_kmh.passenger > 0) speedsHtml.push(`<span class="speed-indicator passenger"></span>${seg.speeds_kmh.passenger}`);
+                if (seg.speeds_kmh.freight_express > 0) speedsHtml.push(`<span class="speed-indicator express"></span>${seg.speeds_kmh.freight_express}`);
+                if (seg.speeds_kmh.freight_standard > 0) speedsHtml.push(`<span class="speed-indicator standard"></span>${seg.speeds_kmh.freight_standard}`);
+                if (seg.speeds_kmh.freight_empty_18_100 > 0) speedsHtml.push(`<span class="speed-indicator empty"></span>${seg.speeds_kmh.freight_empty_18_100}`);
+                
+                block.innerHTML = `
+                    <div class="segment-header" onclick="this.parentElement.classList.toggle('expanded')">
+                        <span>#${idx + 1} ${seg.objectName}</span>
+                        <span>▼</span>
+                    </div>
+                    <div class="segment-body">
+                        <div class="detail-row"><span>НАИМЕНОВАНИЕ:</span><span>${seg.name}</span></div>
+                        <div class="detail-row"><span>ДИСТАНЦИЯ:</span><span>${seg.range.start_km.toFixed(2)} - ${seg.range.end_km.toFixed(2)} км</span></div>
+                        <div class="detail-row"><span>ДЛИНА:</span><span>${seg.range.length_km.toFixed(3)} км</span></div>
+                        <div class="detail-row"><span>СКОРОСТИ:</span><span>${speedsHtml.join(' ')}</span></div>
+                        ${seg.restriction_reason ? `<div class="detail-row"><span>ПРИЧИНА:</span><span>${seg.restriction_reason}</span></div>` : ''}
+                    </div>
+                `;
+                list.appendChild(block);
+            });
+        }
+        
+        // Инициализация
+        loadData();
+    </script>
+</body>
+</html>
