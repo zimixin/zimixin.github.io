@@ -470,6 +470,37 @@
             color: var(--text-secondary);
         }
 
+        .search-container {
+            margin-bottom: 16px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 14px;
+            background: var(--bg);
+            color: var(--text);
+        }
+
+        .search-input:focus {
+            outline: 2px solid var(--primary);
+            border-color: transparent;
+        }
+
+        .search-results-count {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-top: 6px;
+        }
+
+        .highlight {
+            background: rgba(255, 193, 7, 0.3);
+            padding: 1px 2px;
+            border-radius: 2px;
+        }
+
         @media (max-width: 768px) {
             body {
                 padding: 12px;
@@ -511,6 +542,10 @@
                     </select>
                     <button class="btn-secondary" id="expandAllBtn">↔ Развернуть все</button>
                 </div>
+            </div>
+            <div class="search-container">
+                <input type="text" id="stationSearch" class="search-input" placeholder="🔍 Поиск по станции, перегону или названию...">
+                <div id="searchResultsCount" class="search-results-count hidden"></div>
             </div>
             <div id="speedMap" class="speed-map">
                 <div class="loading">Загрузка данных...</div>
@@ -671,8 +706,9 @@
                 SPEED_DATA = await response.json();
                 renderSpeedMap();
                 populateSectionSelect();
+                setupSearch();
             } catch (error) {
-                document.getElementById('speedMap').innerHTML = 
+                document.getElementById('speedMap').innerHTML =
                     `<div class="loading">⚠️ Ошибка загрузки: ${error.message}</div>`;
             }
         }
@@ -839,6 +875,171 @@
                 content.previousElementSibling.classList.remove('collapsed');
             });
         };
+
+        // === ПОИСК ===
+        function setupSearch() {
+            const searchInput = document.getElementById('stationSearch');
+            
+            searchInput.addEventListener('input', (e) => {
+                const query = e.target.value.trim();
+                
+                if (query.length < 2) {
+                    document.getElementById('searchResultsCount').classList.add('hidden');
+                    renderSpeedMap();
+                    return;
+                }
+                
+                searchStations(query);
+            });
+        }
+        
+        function searchStations(query) {
+            const container = document.getElementById('speedMap');
+            let html = '';
+            let totalObjects = 0;
+            let totalMatches = 0;
+            
+            const queryLower = query.toLowerCase();
+            
+            SPEED_DATA.участки.forEach((section, sIdx) => {
+                let sectionHtml = '';
+                let sectionHasMatches = false;
+                
+                // Проверяем название участка
+                const sectionNameMatch = section.название.toLowerCase().includes(queryLower);
+                
+                section.объекты.forEach(obj => {
+                    const objNameLower = obj.название.toLowerCase();
+                    const objNameMatch = objNameLower.includes(queryLower);
+                    let objHasMatches = false;
+                    let objHtml = '';
+                    
+                    // Поиск в путях
+                    if (obj.пути) {
+                        obj.пути.forEach(path => {
+                            const pathNameLower = path.наименование.toLowerCase();
+                            const pathNameMatch = pathNameLower.includes(queryLower);
+                            const noteMatch = path.примечание && path.примечание.toLowerCase().includes(queryLower);
+                            
+                            if (pathNameMatch || noteMatch) {
+                                objHasMatches = true;
+                                objHtml += `<div class="path-item">`;
+                                objHtml += `<div class="path-name">🛤️ Путь ${path.путь || ''} - ${highlightText(path.наименование, query)}</div>`;
+                                
+                                if (path.скорости) {
+                                    objHtml += '<div class="speed-grid">';
+                                    const speeds = path.скорости;
+                                    
+                                    if (speeds.пассажирские) {
+                                        objHtml += `<div class="speed-item">
+                                            <div class="label">Пассажирские</div>
+                                            <div class="value ${getSpeedClass(speeds.пассажирские)}">${speeds.пассажирские} км/ч</div>
+                                        </div>`;
+                                    }
+                                    if (speeds.грузовые_ускоренные) {
+                                        objHtml += `<div class="speed-item">
+                                            <div class="label">Грузовые уск.</div>
+                                            <div class="value ${getSpeedClass(speeds.грузовые_ускоренные)}">${speeds.грузовые_ускоренные} км/ч</div>
+                                        </div>`;
+                                    }
+                                    if (speeds.грузовые) {
+                                        objHtml += `<div class="speed-item">
+                                            <div class="label">Грузовые</div>
+                                            <div class="value ${getSpeedClass(speeds.грузовые)}">${speeds.грузовые} км/ч</div>
+                                        </div>`;
+                                    }
+                                    if (speeds.грузовые_порожние) {
+                                        objHtml += `<div class="speed-item">
+                                            <div class="label">Грузовые пор.</div>
+                                            <div class="value ${getSpeedClass(speeds.грузовые_порожние)}">${speeds.грузовые_порожние} км/ч</div>
+                                        </div>`;
+                                    }
+                                    objHtml += '</div>';
+                                }
+                                
+                                if (noteMatch) {
+                                    objHtml += `<div class="path-note">📝 ${highlightText(path.примечание, query)}</div>`;
+                                }
+                                
+                                objHtml += `</div>`;
+                            }
+                        });
+                    }
+                    
+                    // Поиск в съездах
+                    if (obj.съезды) {
+                        obj.съезды.forEach(sezd => {
+                            if (sezd.наименование.toLowerCase().includes(queryLower)) {
+                                objHasMatches = true;
+                                objHtml += `<div class="path-item" style="background: var(--bg);">`;
+                                objHtml += `<div class="path-name">🔀 ${highlightText(sezd.наименование, query)}</div>`;
+                                objHtml += `</div>`;
+                            }
+                        });
+                    }
+                    
+                    // Если объект или пути совпадают
+                    if (objNameMatch || objHasMatches) {
+                        sectionHasMatches = true;
+                        totalObjects++;
+                        
+                        sectionHtml += `
+                            <div style="margin-bottom: 12px;">
+                                <div style="font-weight: 500; color: var(--text-secondary); font-size: 13px; margin-bottom: 6px;">
+                                    ${obj.тип === 'станция' ? '🚉' : '⮊'} ${highlightText(obj.название, query)}
+                                </div>
+                                ${objHtml}
+                        `;
+                        
+                        sectionHtml += `</div>`;
+                    }
+                });
+                
+                // Если участок совпадает
+                if (sectionHasMatches || sectionNameMatch) {
+                    totalMatches++;
+                    html += `
+                        <div class="station-block" data-section="${sIdx}">
+                            <div class="station-header" onclick="toggleSection(${sIdx})">
+                                <span>📍 ${highlightText(section.название, query)}</span>
+                                <span class="toggle-icon">▼</span>
+                            </div>
+                            <div class="station-content" id="sectionContent${sIdx}">
+                                ${sectionHtml}
+                            </div>
+                        </div>
+                    `;
+                }
+            });
+            
+            container.innerHTML = html || '<div class="loading">Ничего не найдено</div>';
+            
+            // Показываем количество результатов
+            const countDiv = document.getElementById('searchResultsCount');
+            if (totalMatches > 0) {
+                countDiv.textContent = `Найдено участков: ${totalMatches} | Объектов: ${totalObjects}`;
+                countDiv.classList.remove('hidden');
+            } else {
+                countDiv.textContent = 'Ничего не найдено';
+                countDiv.classList.remove('hidden');
+            }
+            
+            // Разворачиваем все найденные участки
+            document.querySelectorAll('.station-content').forEach(content => {
+                content.classList.remove('hidden');
+                content.previousElementSibling.classList.remove('collapsed');
+            });
+        }
+        
+        function highlightText(text, query) {
+            if (!query) return text;
+            const regex = new RegExp(`(${escapeRegex(query)})`, 'gi');
+            return text.replace(regex, '<span class="highlight">$1</span>');
+        }
+        
+        function escapeRegex(string) {
+            return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        }
 
         // === ЗАГРУЗКА МАРШРУТОВ ===
         async function loadRoutes() {
