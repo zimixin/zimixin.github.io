@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Калькулятор РЖД</title>
-    <meta name="description" content="Калькулятор норм расхода электроэнергии РЖД">
+    <title>Калькулятор РЖД - КБШ</title>
+    <meta name="description" content="Калькулятор норм расхода электроэнергии РЖД с картой скоростей">
     <meta name="theme-color" content="#0061A4">
     <style>
         * {
@@ -43,12 +43,13 @@
             color: var(--text);
             line-height: 1.5;
             padding: 16px;
-            max-width: 600px;
+            max-width: 1200px;
             margin: 0 auto;
         }
 
         header {
             margin-bottom: 24px;
+            text-align: center;
         }
 
         h1 {
@@ -60,6 +61,141 @@
         .subtitle {
             color: var(--text-secondary);
             font-size: 14px;
+        }
+
+        /* Карта скоростей */
+        .speed-map-container {
+            background: var(--surface);
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 24px;
+        }
+
+        .speed-map-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .speed-map-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .speed-map-controls {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .speed-map {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 16px;
+            min-height: 400px;
+            max-height: 600px;
+            overflow-y: auto;
+        }
+
+        .station-block {
+            margin-bottom: 20px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        .station-header {
+            background: var(--primary);
+            color: white;
+            padding: 10px 14px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .station-header:hover {
+            opacity: 0.9;
+        }
+
+        .station-header .toggle-icon {
+            font-size: 12px;
+            transition: transform 0.3s;
+        }
+
+        .station-header.collapsed .toggle-icon {
+            transform: rotate(-90deg);
+        }
+
+        .station-content {
+            padding: 12px;
+        }
+
+        .station-content.hidden {
+            display: none;
+        }
+
+        .path-item {
+            background: var(--surface);
+            border-radius: 4px;
+            padding: 10px;
+            margin-bottom: 8px;
+        }
+
+        .path-name {
+            font-weight: 500;
+            font-size: 13px;
+            margin-bottom: 6px;
+            color: var(--primary);
+        }
+
+        .speed-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 6px;
+        }
+
+        .speed-item {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: 6px 8px;
+            font-size: 12px;
+        }
+
+        .speed-item .label {
+            color: var(--text-secondary);
+            font-size: 10px;
+            margin-bottom: 2px;
+        }
+
+        .speed-item .value {
+            font-weight: 600;
+            font-size: 13px;
+        }
+
+        .speed-item .value.high { color: var(--success); }
+        .speed-item .value.medium { color: #ff9800; }
+        .speed-item .value.low { color: var(--error); }
+
+        .path-note {
+            font-size: 11px;
+            color: var(--text-secondary);
+            margin-top: 6px;
+            font-style: italic;
+        }
+
+        /* Калькулятор */
+        .calculator-section {
+            border-top: 2px solid var(--border);
+            padding-top: 24px;
+            margin-top: 24px;
         }
 
         .section {
@@ -328,13 +464,20 @@
             margin-bottom: 4px;
         }
 
-        @media (max-width: 480px) {
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-secondary);
+        }
+
+        @media (max-width: 768px) {
             body {
                 padding: 12px;
+                max-width: 100%;
             }
 
-            h1 {
-                font-size: 20px;
+            .speed-map-controls {
+                flex-direction: column;
             }
 
             .input-row {
@@ -353,118 +496,139 @@
 </head>
 <body>
     <header>
-        <h1>🚂 Калькулятор РЖД</h1>
-        <p class="subtitle">Расход электроэнергии на тягу поездов</p>
+        <h1>🚂 Калькулятор РЖД - КБШ</h1>
+        <p class="subtitle">Карта скоростей и расход электроэнергии на тягу поездов</p>
     </header>
 
     <main>
-        <!-- Маршрут -->
-        <section class="section">
-            <h2 class="section-title">Маршрут</h2>
-            <label for="route">Выберите маршрут</label>
-            <select id="route">
-                <option value="">Загрузка маршрутов...</option>
-            </select>
-            <div id="routeInfo" class="route-info hidden"></div>
-        </section>
-
-        <!-- Локомотивы -->
-        <section class="section">
-            <h2 class="section-title">Локомотивы</h2>
-            <div class="btn-group">
-                <button class="traction-btn active" data-type="electric">⚡ Электровозы</button>
-                <button class="traction-btn" data-type="diesel">⛽ Тепловозы</button>
-            </div>
-            <div class="btn-group">
-                <button class="btn-secondary" id="addLocoBtn">+ Локомотив</button>
-                <button class="btn-secondary" id="addColdBtn">+ Холодный</button>
-            </div>
-            <div id="locomotiveContainer"></div>
-        </section>
-
-        <!-- Параметры поезда -->
-        <section class="section">
-            <h2 class="section-title">Параметры поезда</h2>
-            <div class="input-row">
-                <div>
-                    <label for="trainWeight">Вес (тонн)</label>
-                    <input type="number" id="trainWeight" min="100" max="10000" step="1">
-                </div>
-                <div>
-                    <label for="axleCount">Оси</label>
-                    <input type="number" id="axleCount" min="10" max="500" step="1">
+        <!-- Карта скоростей -->
+        <section class="speed-map-container">
+            <div class="speed-map-header">
+                <h2 class="speed-map-title">📊 Карта скоростей</h2>
+                <div class="speed-map-controls">
+                    <select id="sectionSelect" style="min-width: 200px;">
+                        <option value="">Загрузка участков...</option>
+                    </select>
+                    <button class="btn-secondary" id="expandAllBtn">↔ Развернуть все</button>
                 </div>
             </div>
-            <div class="input-row">
-                <div>
-                    <label for="actualWagons">Факт. вагоны</label>
-                    <input type="number" id="actualWagons" min="0" max="1000" step="1">
+            <div id="speedMap" class="speed-map">
+                <div class="loading">Загрузка данных...</div>
+            </div>
+        </section>
+
+        <!-- Калькулятор -->
+        <section class="calculator-section">
+            <h2 class="section-title">🧮 Калькулятор расхода</h2>
+            
+            <!-- Маршрут -->
+            <section class="section">
+                <h2 class="section-title">Маршрут</h2>
+                <label for="route">Выберите маршрут</label>
+                <select id="route">
+                    <option value="">Загрузка маршрутов...</option>
+                </select>
+                <div id="routeInfo" class="route-info hidden"></div>
+            </section>
+
+            <!-- Локомотивы -->
+            <section class="section">
+                <h2 class="section-title">Локомотивы</h2>
+                <div class="btn-group">
+                    <button class="traction-btn active" data-type="electric">⚡ Электровозы</button>
+                    <button class="traction-btn" data-type="diesel">⛽ Тепловозы</button>
                 </div>
-                <div>
-                    <label for="conditionalWagons">Условн. вагоны</label>
-                    <input type="number" id="conditionalWagons" min="0" max="1000" step="1">
+                <div class="btn-group">
+                    <button class="btn-secondary" id="addLocoBtn">+ Локомотив</button>
+                    <button class="btn-secondary" id="addColdBtn">+ Холодный</button>
                 </div>
-            </div>
-        </section>
+                <div id="locomotiveContainer"></div>
+            </section>
 
-        <!-- Расчет топлива (для тепловозов) -->
-        <section class="section hidden" id="fuelSection">
-            <h2 class="section-title">Расчет топлива</h2>
-            <table class="fuel-table">
-                <thead>
-                    <tr>
-                        <th>Коэфф.</th>
-                        <th colspan="2">Секция А</th>
-                        <th colspan="2">Секция Б</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>
-                            <input type="number" id="fuelCoeff" value="0.842" step="0.001" min="0" max="2">
-                        </td>
-                        <td><input type="number" id="fuelA1" placeholder="Бак 1" min="0"></td>
-                        <td><input type="number" id="fuelA2" placeholder="Бак 2" min="0"></td>
-                        <td><input type="number" id="fuelB1" placeholder="Бак 1" min="0"></td>
-                        <td><input type="number" id="fuelB2" placeholder="Бак 2" min="0"></td>
-                    </tr>
-                    <tr>
-                        <td></td>
-                        <td colspan="2" id="fuelAResult">0 л / 0 кг</td>
-                        <td colspan="2" id="fuelBResult">0 л / 0 кг</td>
-                    </tr>
-                </tbody>
-            </table>
-        </section>
+            <!-- Параметры поезда -->
+            <section class="section">
+                <h2 class="section-title">Параметры поезда</h2>
+                <div class="input-row">
+                    <div>
+                        <label for="trainWeight">Вес (тонн)</label>
+                        <input type="number" id="trainWeight" min="100" max="10000" step="1">
+                    </div>
+                    <div>
+                        <label for="axleCount">Оси</label>
+                        <input type="number" id="axleCount" min="10" max="500" step="1">
+                    </div>
+                </div>
+                <div class="input-row">
+                    <div>
+                        <label for="actualWagons">Факт. вагоны</label>
+                        <input type="number" id="actualWagons" min="0" max="1000" step="1">
+                    </div>
+                    <div>
+                        <label for="conditionalWagons">Условн. вагоны</label>
+                        <input type="number" id="conditionalWagons" min="0" max="1000" step="1">
+                    </div>
+                </div>
+            </section>
 
-        <!-- Результаты -->
-        <section class="results hidden" id="resultsSection">
-            <div class="result-item">
-                <span class="result-label">Норма расхода</span>
-                <span class="result-value main" id="consumptionResult">0 кВт⋅ч</span>
-            </div>
-            <div class="result-item">
-                <span class="result-label">Нагрузка на ось</span>
-                <span class="result-value" id="axleLoadResult">0 т/ось</span>
-            </div>
-            <div class="result-item">
-                <span class="result-label">Длина состава</span>
-                <span class="result-value" id="trainLengthResult">0 м</span>
-            </div>
-            <div class="actions">
-                <button class="btn-secondary" id="exportBtn">📥 Экспорт</button>
-                <button class="btn-secondary" id="saveHistoryBtn">💾 В историю</button>
-                <button class="btn-secondary" id="showHistoryBtn">📋 История</button>
-            </div>
-        </section>
+            <!-- Расчет топлива (для тепловозов) -->
+            <section class="section hidden" id="fuelSection">
+                <h2 class="section-title">Расчет топлива</h2>
+                <table class="fuel-table">
+                    <thead>
+                        <tr>
+                            <th>Коэфф.</th>
+                            <th colspan="2">Секция А</th>
+                            <th colspan="2">Секция Б</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <input type="number" id="fuelCoeff" value="0.842" step="0.001" min="0" max="2">
+                            </td>
+                            <td><input type="number" id="fuelA1" placeholder="Бак 1" min="0"></td>
+                            <td><input type="number" id="fuelA2" placeholder="Бак 2" min="0"></td>
+                            <td><input type="number" id="fuelB1" placeholder="Бак 1" min="0"></td>
+                            <td><input type="number" id="fuelB2" placeholder="Бак 2" min="0"></td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td colspan="2" id="fuelAResult">0 л / 0 кг</td>
+                            <td colspan="2" id="fuelBResult">0 л / 0 кг</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
 
-        <!-- История -->
-        <section class="section hidden" id="historySection">
-            <h2 class="section-title">История расчетов</h2>
-            <div id="historyList"></div>
-            <div class="actions">
-                <button class="btn-secondary" id="clearHistoryBtn">🗑️ Очистить</button>
-            </div>
+            <!-- Результаты -->
+            <section class="results hidden" id="resultsSection">
+                <div class="result-item">
+                    <span class="result-label">Норма расхода</span>
+                    <span class="result-value main" id="consumptionResult">0 кВт⋅ч</span>
+                </div>
+                <div class="result-item">
+                    <span class="result-label">Нагрузка на ось</span>
+                    <span class="result-value" id="axleLoadResult">0 т/ось</span>
+                </div>
+                <div class="result-item">
+                    <span class="result-label">Длина состава</span>
+                    <span class="result-value" id="trainLengthResult">0 м</span>
+                </div>
+                <div class="actions">
+                    <button class="btn-secondary" id="exportBtn">📥 Экспорт</button>
+                    <button class="btn-secondary" id="saveHistoryBtn">💾 В историю</button>
+                    <button class="btn-secondary" id="showHistoryBtn">📋 История</button>
+                </div>
+            </section>
+
+            <!-- История -->
+            <section class="section hidden" id="historySection">
+                <h2 class="section-title">История расчетов</h2>
+                <div id="historyList"></div>
+                <div class="actions">
+                    <button class="btn-secondary" id="clearHistoryBtn">🗑️ Очистить</button>
+                </div>
+            </section>
         </section>
     </main>
 
@@ -492,11 +656,189 @@
             vl10uk: { 6: 89.5, 7: 83.41, 8: 78.85, 9: 75.29, 10: 72.45, 11: 70.13, 12: 68.19, 13: 66.55, 14: 65.15 }
         };
 
+        let SPEED_DATA = null;
         let ROUTE_DATA = {};
         let locomotiveCounter = 0;
         let locomotives = {};
         let currentTraction = 'electric';
         let currentResult = null;
+
+        // === ЗАГРУЗКА ДАННЫХ ===
+        async function loadSpeedData() {
+            try {
+                const response = await fetch('./data/speed-kbsh.json');
+                if (!response.ok) throw new Error('Не загружен JSON');
+                SPEED_DATA = await response.json();
+                renderSpeedMap();
+                populateSectionSelect();
+            } catch (error) {
+                document.getElementById('speedMap').innerHTML = 
+                    `<div class="loading">⚠️ Ошибка загрузки: ${error.message}</div>`;
+            }
+        }
+
+        // === КАРТА СКОРОСТЕЙ ===
+        function renderSpeedMap(sectionIndex = null) {
+            const container = document.getElementById('speedMap');
+            if (!SPEED_DATA) return;
+
+            let html = '';
+            const sections = sectionIndex !== null 
+                ? [SPEED_DATA.участки[sectionIndex]] 
+                : SPEED_DATA.участки;
+
+            sections.forEach((section, sIdx) => {
+                const actualIdx = sectionIndex !== null ? sectionIndex : sIdx;
+                html += `
+                    <div class="station-block" data-section="${actualIdx}">
+                        <div class="station-header" onclick="toggleSection(${actualIdx})">
+                            <span>📍 ${section.название}</span>
+                            <span class="toggle-icon">▼</span>
+                        </div>
+                        <div class="station-content" id="sectionContent${actualIdx}">
+                `;
+
+                section.объекты.forEach(obj => {
+                    html += `
+                        <div style="margin-bottom: 12px;">
+                            <div style="font-weight: 500; color: var(--text-secondary); font-size: 13px; margin-bottom: 6px;">
+                                ${obj.тип === 'станция' ? '🚉' : '⮊'} ${obj.название}
+                            </div>
+                    `;
+
+                    if (obj.пути) {
+                        obj.пути.forEach(path => {
+                            html += `<div class="path-item">`;
+                            html += `<div class="path-name">🛤️ Путь ${path.путь || ''} - ${path.наименование}</div>`;
+                            
+                            if (path.скорости) {
+                                html += '<div class="speed-grid">';
+                                const speeds = path.скорости;
+                                
+                                if (speeds.пассажирские) {
+                                    html += `<div class="speed-item">
+                                        <div class="label">Пассажирские</div>
+                                        <div class="value ${getSpeedClass(speeds.пассажирские)}">${speeds.пассажирские} км/ч</div>
+                                    </div>`;
+                                }
+                                if (speeds.грузовые_ускоренные) {
+                                    html += `<div class="speed-item">
+                                        <div class="label">Грузовые уск.</div>
+                                        <div class="value ${getSpeedClass(speeds.грузовые_ускоренные)}">${speeds.грузовые_ускоренные} км/ч</div>
+                                    </div>`;
+                                }
+                                if (speeds.грузовые) {
+                                    html += `<div class="speed-item">
+                                        <div class="label">Грузовые</div>
+                                        <div class="value ${getSpeedClass(speeds.грузовые)}">${speeds.грузовые} км/ч</div>
+                                    </div>`;
+                                }
+                                if (speeds.грузовые_порожние) {
+                                    html += `<div class="speed-item">
+                                        <div class="label">Грузовые пор.</div>
+                                        <div class="value ${getSpeedClass(speeds.грузовые_порожние)}">${speeds.грузовые_порожние} км/ч</div>
+                                    </div>`;
+                                }
+                                html += '</div>';
+                            }
+
+                            if (path.примечание) {
+                                html += `<div class="path-note">📝 ${path.примечание}</div>`;
+                            }
+
+                            // Дополнительные сегменты
+                            if (path.дополнительно) {
+                                path.дополнительно.forEach(seg => {
+                                    html += `<div style="margin-top: 8px; padding: 8px; background: var(--bg); border-radius: 4px; font-size: 12px;">`;
+                                    html += `<div style="font-weight: 500; color: var(--primary);">${seg.наименование}</div>`;
+                                    if (seg.скорости) {
+                                        html += '<div class="speed-grid" style="margin-top: 4px;">';
+                                        if (seg.скорости.пассажирские) {
+                                            html += `<div class="speed-item"><div class="value">${seg.скорости.пассажирские} км/ч</div></div>`;
+                                        }
+                                        html += '</div>';
+                                    }
+                                    html += `</div>`;
+                                });
+                            }
+
+                            html += `</div>`;
+                        });
+                    }
+
+                    if (obj.съезды) {
+                        obj.съезды.forEach(sezd => {
+                            html += `<div class="path-item" style="background: var(--bg);">`;
+                            html += `<div class="path-name">🔀 ${sezd.наименование}</div>`;
+                            if (sezd.скорости) {
+                                html += '<div class="speed-grid">';
+                                if (sezd.скорости.пассажирские_приемоотправочные) {
+                                    html += `<div class="speed-item">
+                                        <div class="label">Приём/отпр.</div>
+                                        <div class="value">${sezd.скорости.пассажирские_приемоотправочные} км/ч</div>
+                                    </div>`;
+                                }
+                                html += '</div>';
+                            }
+                            html += `</div>`;
+                        });
+                    }
+
+                    html += `</div>`;
+                });
+
+                html += `</div></div>`;
+            });
+
+            container.innerHTML = html;
+        }
+
+        function getSpeedClass(speed) {
+            if (speed >= 80) return 'high';
+            if (speed >= 50) return 'medium';
+            return 'low';
+        }
+
+        function toggleSection(index) {
+            const content = document.getElementById(`sectionContent${index}`);
+            const header = content.previousElementSibling;
+            
+            if (content.classList.contains('hidden')) {
+                content.classList.remove('hidden');
+                header.classList.remove('collapsed');
+            } else {
+                content.classList.add('hidden');
+                header.classList.add('collapsed');
+            }
+        }
+
+        function populateSectionSelect() {
+            const select = document.getElementById('sectionSelect');
+            select.innerHTML = '<option value="">Все участки</option>';
+            
+            SPEED_DATA.участки.forEach((section, index) => {
+                const option = document.createElement('option');
+                option.value = index;
+                option.textContent = section.название;
+                select.appendChild(option);
+            });
+
+            select.addEventListener('change', () => {
+                const value = select.value;
+                if (value !== '') {
+                    renderSpeedMap(parseInt(value));
+                } else {
+                    renderSpeedMap(null);
+                }
+            });
+        }
+
+        document.getElementById('expandAllBtn').onclick = () => {
+            document.querySelectorAll('.station-content').forEach(content => {
+                content.classList.remove('hidden');
+                content.previousElementSibling.classList.remove('collapsed');
+            });
+        };
 
         // === ЗАГРУЗКА МАРШРУТОВ ===
         async function loadRoutes() {
@@ -652,7 +994,6 @@
                 options.appendChild(opt);
             }
 
-            // Опция для холодного локомотива
             const coldOpt = document.createElement('div');
             coldOpt.className = 'locomotive-option';
             coldOpt.textContent = 'Х (холодный)';
@@ -706,7 +1047,7 @@
                     return standard[closest];
                 }
             }
-            return 70; // fallback
+            return 70;
         }
 
         function calculate() {
@@ -721,14 +1062,12 @@
                 return;
             }
 
-            // Длина состава
             let trainLength = 0;
             for (const loco of Object.values(locomotives)) {
                 trainLength += loco.length;
             }
             trainLength += conditionalWagons * WAGON_LENGTH;
 
-            // Нагрузка на ось и коэффициент
             let axleLoad = 0;
             let coefficient = 0;
             let energyConsumption = null;
@@ -736,7 +1075,6 @@
             if (weight && axles) {
                 axleLoad = weight / axles;
 
-                // Находим активный локомотив для коэффициента
                 const activeLoco = Object.values(locomotives).find(l => !l.isCold);
                 if (activeLoco && activeLoco.type !== 'cold') {
                     coefficient = getCoefficient(activeLoco.type, axleLoad, route);
@@ -745,7 +1083,6 @@
                 }
             }
 
-            // Отображение
             currentResult = { trainLength, axleLoad, energyConsumption, coefficient, route };
             displayResults();
         }
@@ -887,9 +1224,9 @@
         });
 
         // === ИНИЦИАЛИЗАЦИЯ ===
+        loadSpeedData();
         loadRoutes();
 
-        // Service Worker для офлайн работы
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('./sw.js').catch(() => {});
         }
