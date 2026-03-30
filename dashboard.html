@@ -906,7 +906,8 @@
                 let sectionHasMatches = false;
                 
                 // Проверяем название участка
-                const sectionNameMatch = section.название.toLowerCase().includes(queryLower);
+                const sectionNameLower = section.название.toLowerCase();
+                const sectionNameMatch = sectionNameLower.includes(queryLower);
                 
                 section.объекты.forEach(obj => {
                     const objNameLower = obj.название.toLowerCase();
@@ -969,7 +970,8 @@
                     // Поиск в съездах
                     if (obj.съезды) {
                         obj.съезды.forEach(sezd => {
-                            if (sezd.наименование.toLowerCase().includes(queryLower)) {
+                            const sezdNameLower = sezd.наименование.toLowerCase();
+                            if (sezdNameLower.includes(queryLower)) {
                                 objHasMatches = true;
                                 objHtml += `<div class="path-item" style="background: var(--bg);">`;
                                 objHtml += `<div class="path-name">🔀 ${highlightText(sezd.наименование, query)}</div>`;
