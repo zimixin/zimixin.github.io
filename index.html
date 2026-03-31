@@ -12,8 +12,10 @@
             color: #c5c6c7;
             height: 100vh;
             overflow: hidden;
+            display: flex;
+            flex-direction: column;
         }
-        .container { display: flex; flex-direction: column; height: 100vh; }
+        .container { display: flex; flex-direction: column; flex: 1; }
         header {
             background: linear-gradient(180deg, #1a1a2e 0%, #0f0f1a 100%);
             border-bottom: 2px solid #16213e;
@@ -83,7 +85,7 @@
             accent-color: #66fcf1;
         }
         .path-selector label:hover, .speed-type-selector label:hover { color: #66fcf1; }
-        main { flex: 1; position: relative; background: #000; }
+        main { flex: 1; position: relative; background: #000; min-height: 0; }
         #canvas-container { width: 100%; height: 100%; cursor: grab; }
         #canvas-container:active { cursor: grabbing; }
         canvas { display: block; }
@@ -147,15 +149,6 @@
         .tooltip-label { color: #888; margin-right: 12px; }
         .tooltip-value { color: #66fcf1; font-weight: bold; }
         .tooltip-title { color: #fff; font-weight: bold; margin-bottom: 8px; font-size: 12px; }
-        .status-bar {
-            background: #1a1a2e;
-            border-top: 1px solid #0f3460;
-            padding: 8px 20px;
-            display: flex;
-            justify-content: space-between;
-            font-size: 12px;
-        }
-        .status-left, .status-right { display: flex; gap: 20px; }
         .loading-overlay {
             position: absolute;
             top: 0; left: 0; right: 0; bottom: 0;
@@ -176,6 +169,206 @@
         @keyframes spin { to { transform: rotate(360deg); } }
         .loading-text { margin-top: 16px; color: #66fcf1; font-size: 14px; }
         .error-message { color: #ff5555; margin-top: 16px; font-size: 14px; }
+
+        /* Калькулятор */
+        .calculator-panel {
+            background: linear-gradient(180deg, #0f0f1a 0%, #1a1a2e 100%);
+            border-top: 2px solid #16213e;
+            padding: 15px 20px;
+            min-height: 200px;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+        }
+        .resizer {
+            height: 8px;
+            background: #16213e;
+            border-top: 1px solid #0f3460;
+            border-bottom: 1px solid #0f3460;
+            cursor: ns-resize;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+        .resizer:hover {
+            background: #0f3460;
+        }
+        .resizer::after {
+            content: '⋮';
+            color: #66fcf1;
+            font-size: 14px;
+            opacity: 0.6;
+        }
+        .resizer:hover::after {
+            opacity: 1;
+        }
+        .calc-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        .calc-section {
+            background: rgba(22, 33, 62, 0.5);
+            border: 1px solid #0f3460;
+            border-radius: 6px;
+            padding: 12px;
+        }
+        .calc-section h3 {
+            color: #66fcf1;
+            font-size: 13px;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .calc-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 8px;
+            flex-wrap: wrap;
+        }
+        .calc-input {
+            flex: 1;
+            min-width: 80px;
+        }
+        .calc-input label {
+            display: block;
+            font-size: 10px;
+            color: #888;
+            margin-bottom: 4px;
+        }
+        .calc-input input, .calc-input select {
+            width: 100%;
+            background: #16213e;
+            border: 1px solid #0f3460;
+            color: #66fcf1;
+            padding: 6px 8px;
+            border-radius: 4px;
+            font-family: inherit;
+            font-size: 11px;
+        }
+        .calc-input input:focus, .calc-input select:focus {
+            outline: none;
+            border-color: #66fcf1;
+        }
+        .traction-btns {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+        .traction-btn {
+            flex: 1;
+            padding: 6px 12px;
+            font-size: 11px;
+            opacity: 0.6;
+        }
+        .traction-btn.active {
+            opacity: 1;
+            border-color: #66fcf1;
+            background: #0f3460;
+        }
+        .loco-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            max-height: 120px;
+            overflow-y: auto;
+        }
+        .loco-item {
+            background: rgba(15, 52, 96, 0.3);
+            border: 1px solid #0f3460;
+            border-radius: 4px;
+            padding: 8px;
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            font-size: 11px;
+        }
+        .loco-item select {
+            flex: 1;
+            background: #16213e;
+            border: 1px solid #0f3460;
+            color: #66fcf1;
+            padding: 4px;
+            border-radius: 3px;
+            font-size: 11px;
+        }
+        .loco-item button {
+            padding: 4px 8px;
+            font-size: 10px;
+        }
+        .calc-results {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .result-box {
+            background: rgba(22, 33, 62, 0.8);
+            border: 1px solid #0f3460;
+            border-radius: 4px;
+            padding: 10px;
+            text-align: center;
+        }
+        .result-box .label {
+            font-size: 10px;
+            color: #888;
+            margin-bottom: 4px;
+        }
+        .result-box .value {
+            font-size: 16px;
+            color: #66fcf1;
+            font-weight: bold;
+        }
+        .result-box .value.main {
+            font-size: 20px;
+            text-shadow: 0 0 10px rgba(102, 252, 241, 0.3);
+        }
+        .calc-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+            flex-wrap: wrap;
+        }
+        .calc-actions button {
+            padding: 6px 12px;
+            font-size: 11px;
+        }
+        .hidden { display: none !important; }
+        .fuel-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 11px;
+            margin-top: 8px;
+        }
+        .fuel-table th, .fuel-table td {
+            border: 1px solid #0f3460;
+            padding: 6px;
+            text-align: center;
+        }
+        .fuel-table th {
+            background: rgba(15, 52, 96, 0.5);
+            color: #66fcf1;
+        }
+        .fuel-table input {
+            width: 100%;
+            background: #16213e;
+            border: 1px solid #0f3460;
+            color: #66fcf1;
+            padding: 4px;
+            border-radius: 3px;
+            font-size: 11px;
+        }
+        .route-info {
+            font-size: 11px;
+            color: #888;
+            margin-top: 8px;
+            padding: 6px;
+            background: rgba(15, 52, 96, 0.3);
+            border-radius: 4px;
+        }
     </style>
 </head>
 <body>
@@ -189,8 +382,7 @@
                 <div class="data-selector">
                     <select id="section-select"><option value="">Выберите участок</option></select>
                 </div>
-                <div class="path-selector" id="path-selector">
-                </div>
+                <div class="path-selector" id="path-selector"></div>
                 <div class="speed-type-selector" id="speed-type-selector">
                     <label><input type="checkbox" name="speed-type" value="пассажирские" checked> Пасс</label>
                     <label><input type="checkbox" name="speed-type" value="грузовые_ускоренные" checked> Груз. уск</label>
@@ -224,17 +416,415 @@
                 </div>
             </div>
         </main>
-        <div class="status-bar">
-            <div class="status-left"><div class="status-item"><span>ПОЕЗД № 9707</span></div></div>
-            <div class="status-right">
-                <div class="status-item"><span>1197 м</span></div>
-                <div class="status-item"><span>8085 т</span></div>
-                <div class="status-item"><span>250 о</span></div>
-                <div class="status-item"><span>56 ф</span></div>
-                <div class="status-item"><span>79 у</span></div>
+
+        <!-- Разделитель -->
+        <div class="resizer" id="resizer"></div>
+
+        <!-- Калькулятор -->
+        <div class="calculator-panel" id="calculatorPanel">
+            <div class="calc-grid">
+                <!-- Маршрут -->
+                <div class="calc-section">
+                    <h3>📍 Маршрут</h3>
+                    <select id="route">
+                        <option value="">Загрузка...</option>
+                    </select>
+                    <div id="routeInfo" class="route-info hidden"></div>
+                </div>
+
+                <!-- Локомотивы -->
+                <div class="calc-section">
+                    <h3>🚂 Локомотивы</h3>
+                    <div class="traction-btns">
+                        <button class="traction-btn active" data-type="electric">⚡ Электровозы</button>
+                        <button class="traction-btn" data-type="diesel">⛽ Тепловозы</button>
+                    </div>
+                    <div class="loco-list" id="locomotiveContainer"></div>
+                    <div class="calc-row" style="margin-top: 8px;">
+                        <button onclick="addLocomotive(false)" style="flex:1;">+ Локомотив</button>
+                        <button onclick="addLocomotive(true)" style="flex:1;">+ Холодный</button>
+                    </div>
+                </div>
+
+                <!-- Параметры -->
+                <div class="calc-section">
+                    <h3>📊 Параметры</h3>
+                    <div class="calc-row">
+                        <div class="calc-input">
+                            <label>Вес (т)</label>
+                            <input type="number" id="trainWeight" min="100" max="10000" step="1" value="8085">
+                        </div>
+                        <div class="calc-input">
+                            <label>Оси</label>
+                            <input type="number" id="axleCount" min="10" max="500" step="1" value="250">
+                        </div>
+                    </div>
+                    <div class="calc-row">
+                        <div class="calc-input">
+                            <label>Факт. вагоны</label>
+                            <input type="number" id="actualWagons" min="0" max="1000" step="1" value="56">
+                        </div>
+                        <div class="calc-input">
+                            <label>Условн. вагоны</label>
+                            <input type="number" id="conditionalWagons" min="0" max="1000" step="1" value="79">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Топливо -->
+                <div class="calc-section hidden" id="fuelSection">
+                    <h3>⛽ Топливо</h3>
+                    <table class="fuel-table">
+                        <thead>
+                            <tr>
+                                <th>Коэфф.</th>
+                                <th colspan="2">Секция А</th>
+                                <th colspan="2">Секция Б</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <input type="number" id="fuelCoeff" value="0.842" step="0.001" min="0" max="2">
+                                </td>
+                                <td><input type="number" id="fuelA1" placeholder="Бак 1" min="0"></td>
+                                <td><input type="number" id="fuelA2" placeholder="Бак 2" min="0"></td>
+                                <td><input type="number" id="fuelB1" placeholder="Бак 1" min="0"></td>
+                                <td><input type="number" id="fuelB2" placeholder="Бак 2" min="0"></td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td colspan="2" id="fuelAResult">0 л</td>
+                                <td colspan="2" id="fuelBResult">0 л</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Результаты -->
+                <div class="calc-section">
+                    <h3>📈 Результаты</h3>
+                    <div class="calc-results">
+                        <div class="result-box">
+                            <div class="label">Норма расхода</div>
+                            <div class="value main" id="consumptionResult">0</div>
+                        </div>
+                        <div class="result-box">
+                            <div class="label">Нагрузка на ось</div>
+                            <div class="value" id="axleLoadResult">0 т</div>
+                        </div>
+                        <div class="result-box">
+                            <div class="label">Длина состава</div>
+                            <div class="value" id="trainLengthResult">0 м</div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
+
     <script src="profile-renderer.js"></script>
+    <script>
+        // === ДАННЫЕ КАЛЬКУЛЯТОРА ===
+        const LOCOMOTIVE_DATA = {
+            vl10: { name: 'ВЛ10', length: 32 },
+            vl10u: { name: 'ВЛ10У', length: 32 },
+            vl10k: { name: 'ВЛ10К', length: 30 },
+            vl10uk: { name: 'ВЛ10УК', length: 32 },
+            '2es6': { name: '2ЭС6', length: 34 },
+            '2te10m': { name: '2ТЭ10М', length: 34 },
+            '2te25km': { name: '2ТЭ25КМ', length: 34 },
+            'tep70bs': { name: 'ТЭП70БС', length: 21 },
+            '3te10m': { name: '3ТЭ10М', length: 51 }
+        };
+
+        const WAGON_LENGTH = 14;
+        const FUEL_DENSITY = 0.85;
+
+        const STANDARD_COEFFICIENTS = {
+            vl10u: { 6: 89.5, 7: 83.41, 8: 78.85, 9: 75.29, 10: 72.45, 11: 70.13, 12: 68.19, 13: 66.55, 14: 65.15 },
+            '2es6': { 6: 82.0, 7: 76.43, 8: 72.26, 9: 69.01, 10: 66.41, 11: 64.29, 12: 62.52, 13: 61.02, 14: 59.73 },
+            vl10: { 6: 89.5, 7: 83.41, 8: 78.85, 9: 75.29, 10: 72.45, 11: 70.13, 12: 68.19, 13: 66.55, 14: 65.15 },
+            vl10k: { 6: 89.5, 7: 83.41, 8: 78.85, 9: 75.29, 10: 72.45, 11: 70.13, 12: 68.19, 13: 66.55, 14: 65.15 },
+            vl10uk: { 6: 89.5, 7: 83.41, 8: 78.85, 9: 75.29, 10: 72.45, 11: 70.13, 12: 68.19, 13: 66.55, 14: 65.15 }
+        };
+
+        let ROUTE_DATA = {};
+        let locomotiveCounter = 0;
+        let locomotives = {};
+        let currentTraction = 'electric';
+        let currentResult = null;
+
+        // === ЗАГРУЗКА МАРШРУТОВ ===
+        async function loadRoutes() {
+            const routeFiles = [
+                'abdulino-dema.md', 'abdulino-kinel.md', 'abdulino-oktyabrsk-south.md',
+                'abdulino-oktyabrsk.md', 'abdulino-syzran-south.md', 'abdulino-syzran.md',
+                'kinel-abdulino.md', 'oktyabrsk-abdulino-south.md', 'oktyabrsk-abdulino.md',
+                'syzran-abdulino-south.md', 'syzran-abdulino.md'
+            ];
+
+            for (const file of routeFiles) {
+                try {
+                    const response = await fetch(`./data/${file}`);
+                    if (response.ok) {
+                        const content = await response.text();
+                        const route = parseRouteMarkdown(content, file);
+                        if (route) {
+                            const routeId = file.replace('.md', '');
+                            ROUTE_DATA[routeId] = route;
+                        }
+                    }
+                } catch (e) {
+                    console.warn(`Не загружен ${file}:`, e.message);
+                }
+            }
+
+            updateRouteSelect();
+        }
+
+        function parseRouteMarkdown(content, filename) {
+            const lines = content.split('\n');
+            const route = { name: '', distance: 0, travelTime: 0, coefficients: {} };
+
+            for (const line of lines) {
+                const trimmed = line.trim();
+                if (trimmed.startsWith('# ') && !trimmed.startsWith('##')) {
+                    route.name = trimmed.substring(2).trim();
+                } else if (trimmed.startsWith('-')) {
+                    const distMatch = trimmed.match(/-\s*(\d+)\s*км/);
+                    if (distMatch) route.distance = parseInt(distMatch[1]);
+                    const timeMatch = trimmed.match(/-\s*(\d+[,.]\d+)\s*час/);
+                    if (timeMatch) route.travelTime = parseFloat(timeMatch[1].replace(',', '.'));
+                } else if (trimmed.startsWith('|') && trimmed.includes('ВЛ10У')) {
+                    const cells = trimmed.split('|').map(c => c.trim()).filter(c => c);
+                    for (let i = 1; i < cells.length; i++) {
+                        const coeff = parseFloat(cells[i]);
+                        if (!isNaN(coeff)) {
+                            route.coefficients['vl10u'] = route.coefficients['vl10u'] || {};
+                            route.coefficients['vl10u'][i + 5] = coeff;
+                        }
+                    }
+                } else if (trimmed.startsWith('|') && trimmed.includes('2ЭС6')) {
+                    const cells = trimmed.split('|').map(c => c.trim()).filter(c => c);
+                    for (let i = 1; i < cells.length; i++) {
+                        const coeff = parseFloat(cells[i]);
+                        if (!isNaN(coeff)) {
+                            route.coefficients['2es6'] = route.coefficients['2es6'] || {};
+                            route.coefficients['2es6'][i + 5] = coeff;
+                        }
+                    }
+                }
+            }
+
+            return route.name && route.distance ? route : null;
+        }
+
+        function updateRouteSelect() {
+            const select = document.getElementById('route');
+            select.innerHTML = '<option value="">-- Выберите маршрут --</option>';
+            for (const [id, route] of Object.entries(ROUTE_DATA)) {
+                const option = document.createElement('option');
+                option.value = id;
+                option.textContent = `${route.name} (${route.distance} км)`;
+                select.appendChild(option);
+            }
+            select.addEventListener('change', () => {
+                displayRouteInfo();
+                calculate();
+            });
+        }
+
+        function displayRouteInfo() {
+            const select = document.getElementById('route');
+            const infoDiv = document.getElementById('routeInfo');
+            const route = ROUTE_DATA[select.value];
+
+            if (route) {
+                infoDiv.innerHTML = `Расстояние: <strong>${route.distance} км</strong>${route.travelTime ? `, Время: <strong>${route.travelTime} ч</strong>` : ''}`;
+                infoDiv.classList.remove('hidden');
+            } else {
+                infoDiv.classList.add('hidden');
+            }
+        }
+
+        // === ЛОКОМОТИВЫ ===
+        function addLocomotive(isCold = false) {
+            locomotiveCounter++;
+            const id = locomotiveCounter;
+            const container = document.getElementById('locomotiveContainer');
+
+            const defaultType = currentTraction === 'electric' ? 'vl10u' : '2te10m';
+
+            const locoDiv = document.createElement('div');
+            locoDiv.className = 'loco-item';
+            locoDiv.dataset.id = id;
+
+            let options = '';
+            for (const [key, value] of Object.entries(LOCOMOTIVE_DATA)) {
+                if (currentTraction === 'electric' && key.includes('теп') || 
+                    currentTraction === 'diesel' && !key.includes('теп') && !key.includes('vl') && !key.includes('es')) {
+                    // Пропускаем неподходящие
+                }
+                const selected = key === defaultType ? 'selected' : '';
+                options += `<option value="${key}" ${selected}>${value.name}</option>`;
+            }
+
+            locoDiv.innerHTML = `
+                <select class="loco-type">${options}</select>
+                <button onclick="removeLocomotive(${id})">✕</button>
+            `;
+
+            container.appendChild(locoDiv);
+
+            locomotives[id] = { type: defaultType, isCold };
+
+            locoDiv.querySelector('.loco-type').addEventListener('change', (e) => {
+                locomotives[id].type = e.target.value;
+                calculate();
+            });
+
+            calculate();
+        }
+
+        function removeLocomotive(id) {
+            const item = document.querySelector(`.loco-item[data-id="${id}"]`);
+            if (item) item.remove();
+            delete locomotives[id];
+            calculate();
+        }
+
+        // === ТЯГА ===
+        document.querySelectorAll('.traction-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.traction-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentTraction = btn.dataset.type;
+                document.getElementById('fuelSection').classList.toggle('hidden', currentTraction === 'electric');
+                locomotives = {};
+                document.getElementById('locomotiveContainer').innerHTML = '';
+                calculate();
+            });
+        });
+
+        // === РАСЧЕТ ===
+        function calculate() {
+            const weight = parseFloat(document.getElementById('trainWeight').value) || 0;
+            const axles = parseFloat(document.getElementById('axleCount').value) || 0;
+            const actualWagons = parseFloat(document.getElementById('actualWagons').value) || 0;
+            const conditionalWagons = parseFloat(document.getElementById('conditionalWagons').value) || 0;
+            const routeId = document.getElementById('route').value;
+
+            // Длина
+            let totalLength = 0;
+            for (const loco of Object.values(locomotives)) {
+                totalLength += LOCOMOTIVE_DATA[loco.type]?.length || 0;
+            }
+            totalLength += actualWagons * WAGON_LENGTH;
+
+            // Нагрузка на ось
+            const axleLoad = axles > 0 ? weight / axles : 0;
+
+            // Коэффициент
+            let coefficient = 0;
+            if (routeId && ROUTE_DATA[routeId]) {
+                const route = ROUTE_DATA[routeId];
+                const locoTypes = Object.values(locomotives).map(l => l.type);
+                
+                for (const locoType of locoTypes) {
+                    const coeffs = route.coefficients[locoType] || route.coefficients['vl10u'];
+                    if (coeffs) {
+                        const axleKey = Math.round(axleLoad);
+                        const keys = Object.keys(coeffs).map(Number);
+                        const closestKey = keys.reduce((prev, curr) => 
+                            Math.abs(curr - axleKey) < Math.abs(prev - axleKey) ? curr : prev
+                        );
+                        coefficient = Math.max(coefficient, coeffs[closestKey]);
+                    }
+                }
+            }
+
+            // Расход
+            const consumption = coefficient > 0 ? (weight * coefficient) / 1000 : 0;
+
+            // Отображение
+            document.getElementById('consumptionResult').textContent = consumption.toFixed(1) + ' кВт⋅ч';
+            document.getElementById('axleLoadResult').textContent = axleLoad.toFixed(2) + ' т/ось';
+            document.getElementById('trainLengthResult').textContent = totalLength.toFixed(0) + ' м';
+
+            // Топливо
+            if (currentTraction === 'diesel') {
+                calculateFuel();
+            }
+
+            currentResult = {
+                consumption,
+                axleLoad,
+                length: totalLength,
+                weight,
+                axles,
+                actualWagons,
+                conditionalWagons,
+                route: routeId,
+                locomotives: { ...locomotives },
+                traction: currentTraction,
+                date: new Date().toISOString()
+            };
+        }
+
+        function calculateFuel() {
+            const coeff = parseFloat(document.getElementById('fuelCoeff').value) || 0;
+            const a1 = parseFloat(document.getElementById('fuelA1').value) || 0;
+            const a2 = parseFloat(document.getElementById('fuelA2').value) || 0;
+            const b1 = parseFloat(document.getElementById('fuelB1').value) || 0;
+            const b2 = parseFloat(document.getElementById('fuelB2').value) || 0;
+
+            const totalA = (a1 + a2) * coeff;
+            const totalB = (b1 + b2) * coeff;
+
+            document.getElementById('fuelAResult').textContent = `${totalA.toFixed(0)} л / ${(totalA * FUEL_DENSITY).toFixed(0)} кг`;
+            document.getElementById('fuelBResult').textContent = `${totalB.toFixed(0)} л / ${(totalB * FUEL_DENSITY).toFixed(0)} кг`;
+        }
+
+        // === СОБЫТИЯ ===
+        ['trainWeight', 'axleCount', 'actualWagons', 'conditionalWagons'].forEach(id => {
+            document.getElementById(id).addEventListener('input', calculate);
+        });
+
+        ['fuelCoeff', 'fuelA1', 'fuelA2', 'fuelB1', 'fuelB2'].forEach(id => {
+            document.getElementById(id).addEventListener('input', calculateFuel);
+        });
+
+        // === ИНИЦИАЛИЗАЦИЯ ===
+        loadRoutes();
+        addLocomotive(false);
+
+        // === ИЗМЕНЕНИЕ РАЗМЕРА КАЛЬКУЛЯТОРА ===
+        const resizer = document.getElementById('resizer');
+        const calculatorPanel = document.getElementById('calculatorPanel');
+        let isResizing = false;
+
+        resizer.addEventListener('mousedown', (e) => {
+            isResizing = true;
+            document.body.style.cursor = 'ns-resize';
+            document.body.style.userSelect = 'none';
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (!isResizing) return;
+            const newHeight = window.innerHeight - e.clientY;
+            if (newHeight >= 200 && newHeight <= window.innerHeight * 0.8) {
+                calculatorPanel.style.height = newHeight + 'px';
+            }
+        });
+
+        document.addEventListener('mouseup', () => {
+            if (isResizing) {
+                isResizing = false;
+                document.body.style.cursor = '';
+                document.body.style.userSelect = '';
+            }
+        });
+    </script>
 </body>
 </html>
