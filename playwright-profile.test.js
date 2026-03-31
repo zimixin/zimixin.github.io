@@ -36,17 +36,17 @@ test.describe('Profile Viewer - Speed Display', () => {
         await expect(cargoEmptyRadio).toBeVisible();
     });
 
-    test('should change speed type when selecting different radio button', async ({ page }) => {
-        // Click on cargo express radio
-        const cargoExpressRadio = page.locator('input[value="грузовые_ускоренные"]');
-        await cargoExpressRadio.click();
-        await expect(cargoExpressRadio).toBeChecked();
+    test('should change speed type when selecting different checkbox', async ({ page }) => {
+        // Click on cargo express checkbox
+        const cargoExpressCheckbox = page.locator('input[value="грузовые_ускоренные"]');
+        await cargoExpressCheckbox.click();
         await page.waitForTimeout(500);
+        await expect(cargoExpressCheckbox).not.toBeChecked(); // Should uncheck because "Все" will be unchecked
         
-        // Click on cargo radio
-        const cargoRadio = page.locator('input[value="грузовые"]');
-        await cargoRadio.click();
-        await expect(cargoRadio).toBeChecked();
+        // Click again to check
+        await cargoExpressCheckbox.click();
+        await page.waitForTimeout(500);
+        await expect(cargoExpressCheckbox).toBeChecked();
     });
 
     test('should display info panel with position data', async ({ page }) => {
@@ -122,9 +122,9 @@ test.describe('Profile Viewer - Speed Display', () => {
         const legend = page.locator('.legend');
         await expect(legend).toBeVisible();
         
-        await expect(page.locator('text=Станция')).toBeVisible();
-        await expect(page.locator('text=Перегон')).toBeVisible();
-        await expect(page.locator('text=Профиль пути')).toBeVisible();
+        await expect(legend.getByText('Скорость').first()).toBeVisible();
+        await expect(legend.getByText('Профиль пути').first()).toBeVisible();
+        await expect(legend.getByText('Уклон').first()).toBeVisible();
     });
 });
 

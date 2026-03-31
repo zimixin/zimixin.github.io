@@ -5,12 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Профиль Пути - КМБУ</title>
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
+        * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
             font-family: 'Consolas', 'Monaco', monospace;
             background: #0a0a0f;
@@ -18,13 +13,7 @@
             height: 100vh;
             overflow: hidden;
         }
-
-        .container {
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
-        }
-
+        .container { display: flex; flex-direction: column; height: 100vh; }
         header {
             background: linear-gradient(180deg, #1a1a2e 0%, #0f0f1a 100%);
             border-bottom: 2px solid #16213e;
@@ -35,13 +24,7 @@
             flex-wrap: wrap;
             gap: 10px;
         }
-
-        .header-left {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-        }
-
+        .header-left { display: flex; align-items: center; gap: 20px; }
         .station-name {
             background: #16213e;
             padding: 8px 16px;
@@ -50,21 +33,8 @@
             font-size: 14px;
             font-weight: bold;
         }
-
-        h1 {
-            font-size: 16px;
-            color: #66fcf1;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-        }
-
-        .controls {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-            align-items: center;
-        }
-
+        h1 { font-size: 16px; color: #66fcf1; text-transform: uppercase; letter-spacing: 2px; }
+        .controls { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
         button {
             background: #16213e;
             border: 1px solid #0f3460;
@@ -76,24 +46,8 @@
             font-size: 12px;
             transition: all 0.2s;
         }
-
-        button:hover {
-            background: #0f3460;
-            border-color: #66fcf1;
-        }
-
-        button:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        .data-selector {
-            display: flex;
-            gap: 8px;
-            align-items: center;
-        }
-
-        .data-selector select {
+        button:hover { background: #0f3460; border-color: #66fcf1; }
+        .data-selector select, .path-selector select, .speed-type-selector select {
             background: #16213e;
             border: 1px solid #0f3460;
             color: #66fcf1;
@@ -102,63 +56,37 @@
             font-family: inherit;
             font-size: 12px;
             cursor: pointer;
-            min-width: 200px;
         }
-
-        .data-selector select:hover {
-            border-color: #66fcf1;
-        }
-
-        .speed-type-selector {
+        .path-selector, .speed-type-selector {
             display: flex;
-            gap: 12px;
+            gap: 6px;
             align-items: center;
             background: rgba(22, 33, 62, 0.95);
-            padding: 8px 12px;
+            padding: 6px 10px;
             border-radius: 4px;
             border: 1px solid #0f3460;
+            flex-wrap: wrap;
         }
-
-        .speed-type-selector label {
+        .path-selector label, .speed-type-selector label {
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 4px;
             cursor: pointer;
-            font-size: 12px;
+            font-size: 11px;
             color: #c5c6c7;
+            white-space: nowrap;
         }
-
-        .speed-type-selector input[type="radio"] {
-            width: 16px;
-            height: 16px;
+        .path-selector input, .speed-type-selector input {
+            width: 14px;
+            height: 14px;
             cursor: pointer;
             accent-color: #66fcf1;
         }
-
-        .speed-type-selector label:hover {
-            color: #66fcf1;
-        }
-
-        main {
-            flex: 1;
-            position: relative;
-            background: #000;
-        }
-
-        #canvas-container {
-            width: 100%;
-            height: 100%;
-            cursor: grab;
-        }
-
-        #canvas-container:active {
-            cursor: grabbing;
-        }
-
-        canvas {
-            display: block;
-        }
-
+        .path-selector label:hover, .speed-type-selector label:hover { color: #66fcf1; }
+        main { flex: 1; position: relative; background: #000; }
+        #canvas-container { width: 100%; height: 100%; cursor: grab; }
+        #canvas-container:active { cursor: grabbing; }
+        canvas { display: block; }
         .info-panel {
             position: absolute;
             top: 10px;
@@ -171,7 +99,6 @@
             max-height: 300px;
             overflow-y: auto;
         }
-
         .info-row {
             display: flex;
             justify-content: space-between;
@@ -179,20 +106,9 @@
             border-bottom: 1px solid #1a1a2e;
             font-size: 12px;
         }
-
-        .info-row:last-child {
-            border-bottom: none;
-        }
-
-        .info-label {
-            color: #888;
-        }
-
-        .info-value {
-            color: #66fcf1;
-            font-weight: bold;
-        }
-
+        .info-row:last-child { border-bottom: none; }
+        .info-label { color: #888; }
+        .info-value { color: #66fcf1; font-weight: bold; }
         .legend {
             position: absolute;
             bottom: 10px;
@@ -206,26 +122,8 @@
             gap: 6px;
             font-size: 11px;
         }
-
-        .legend-item {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .legend-line {
-            width: 24px;
-            height: 3px;
-            border-radius: 1px;
-        }
-
-        .legend-box {
-            width: 16px;
-            height: 16px;
-            border: 2px solid;
-            border-radius: 2px;
-        }
-
+        .legend-item { display: flex; align-items: center; gap: 8px; }
+        .legend-line { width: 24px; height: 3px; border-radius: 1px; }
         .tooltip {
             position: absolute;
             background: rgba(22, 33, 62, 0.98);
@@ -239,35 +137,16 @@
             display: none;
             box-shadow: 0 4px 12px rgba(102, 252, 241, 0.2);
         }
-
         .tooltip-row {
             display: flex;
             justify-content: space-between;
             padding: 3px 0;
             border-bottom: 1px solid #1a1a2e;
         }
-
-        .tooltip-row:last-child {
-            border-bottom: none;
-        }
-
-        .tooltip-label {
-            color: #888;
-            margin-right: 12px;
-        }
-
-        .tooltip-value {
-            color: #66fcf1;
-            font-weight: bold;
-        }
-
-        .tooltip-title {
-            color: #fff;
-            font-weight: bold;
-            margin-bottom: 8px;
-            font-size: 12px;
-        }
-
+        .tooltip-row:last-child { border-bottom: none; }
+        .tooltip-label { color: #888; margin-right: 12px; }
+        .tooltip-value { color: #66fcf1; font-weight: bold; }
+        .tooltip-title { color: #fff; font-weight: bold; margin-bottom: 8px; font-size: 12px; }
         .status-bar {
             background: #1a1a2e;
             border-top: 1px solid #0f3460;
@@ -276,24 +155,10 @@
             justify-content: space-between;
             font-size: 12px;
         }
-
-        .status-left, .status-right {
-            display: flex;
-            gap: 20px;
-        }
-
-        .status-item {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
+        .status-left, .status-right { display: flex; gap: 20px; }
         .loading-overlay {
             position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
+            top: 0; left: 0; right: 0; bottom: 0;
             background: rgba(0, 0, 0, 0.8);
             display: flex;
             flex-direction: column;
@@ -301,45 +166,16 @@
             align-items: center;
             z-index: 100;
         }
-
         .loading-spinner {
-            width: 40px;
-            height: 40px;
+            width: 40px; height: 40px;
             border: 3px solid #16213e;
             border-top-color: #66fcf1;
             border-radius: 50%;
             animation: spin 1s linear infinite;
         }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        .loading-text {
-            margin-top: 16px;
-            color: #66fcf1;
-            font-size: 14px;
-        }
-
-        .error-message {
-            color: #ff5555;
-            margin-top: 16px;
-            font-size: 14px;
-            max-width: 400px;
-            text-align: center;
-        }
-
-        .object-label {
-            position: absolute;
-            background: rgba(255, 102, 102, 0.9);
-            color: #fff;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 11px;
-            white-space: nowrap;
-            pointer-events: none;
-            z-index: 50;
-        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .loading-text { margin-top: 16px; color: #66fcf1; font-size: 14px; }
+        .error-message { color: #ff5555; margin-top: 16px; font-size: 14px; }
     </style>
 </head>
 <body>
@@ -351,1103 +187,54 @@
             </div>
             <div class="controls">
                 <div class="data-selector">
-                    <select id="section-select">
-                        <option value="">Выберите участок</option>
-                    </select>
+                    <select id="section-select"><option value="">Выберите участок</option></select>
                 </div>
-                <div class="speed-type-selector">
-                    <label>
-                        <input type="radio" name="speed-type" value="пассажирские" checked>
-                        Пассажирские
-                    </label>
-                    <label>
-                        <input type="radio" name="speed-type" value="грузовые_ускоренные">
-                        Груз. уск.
-                    </label>
-                    <label>
-                        <input type="radio" name="speed-type" value="грузовые">
-                        Грузовые
-                    </label>
-                    <label>
-                        <input type="radio" name="speed-type" value="грузовые_порожние">
-                        Груз. пор.
-                    </label>
+                <div class="path-selector" id="path-selector">
+                </div>
+                <div class="speed-type-selector" id="speed-type-selector">
+                    <label><input type="checkbox" name="speed-type" value="пассажирские" checked> Пасс</label>
+                    <label><input type="checkbox" name="speed-type" value="грузовые_ускоренные" checked> Груз. уск</label>
+                    <label><input type="checkbox" name="speed-type" value="грузовые" checked> Груз</label>
+                    <label><input type="checkbox" name="speed-type" value="грузовые_порожние" checked> Груз. пор</label>
                 </div>
                 <button onclick="renderer.resetView()">Сброс</button>
                 <button onclick="renderer.zoomIn()">+</button>
                 <button onclick="renderer.zoomOut()">−</button>
             </div>
         </header>
-
         <main>
             <div id="canvas-container">
                 <canvas id="profileCanvas"></canvas>
-                
                 <div class="info-panel" id="info-panel">
-                    <div class="info-row">
-                        <span class="info-label">Позиция:</span>
-                        <span class="info-value" id="pos-value">-- км</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">Скорость:</span>
-                        <span class="info-value" id="speed-value">-- км/ч</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">Разрешенная:</span>
-                        <span class="info-value" id="limit-value">-- км/ч</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">Уклон:</span>
-                        <span class="info-value" id="gradient-value">--‰</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">Масштаб:</span>
-                        <span class="info-value" id="zoom-value">--%</span>
-                    </div>
+                    <div class="info-row"><span class="info-label">Позиция:</span><span class="info-value" id="pos-value">-- км</span></div>
+                    <div class="info-row"><span class="info-label">Скорость:</span><span class="info-value" id="speed-value">-- км/ч</span></div>
+                    <div class="info-row"><span class="info-label">Разрешенная:</span><span class="info-value" id="limit-value">-- км/ч</span></div>
+                    <div class="info-row"><span class="info-label">Уклон:</span><span class="info-value" id="gradient-value">--‰</span></div>
+                    <div class="info-row"><span class="info-label">Масштаб:</span><span class="info-value" id="zoom-value">--%</span></div>
                 </div>
-
                 <div class="legend">
-                    <div class="legend-item">
-                        <div class="legend-box" style="border-color: #ffcc00; background: rgba(255, 204, 0, 0.3);"></div>
-                        <span>Станция</span>
-                    </div>
-                    <div class="legend-item">
-                        <div class="legend-box" style="border-color: #00d2ff; background: rgba(0, 210, 255, 0.3);"></div>
-                        <span>Перегон</span>
-                    </div>
-                    <div class="legend-item">
-                        <div class="legend-line" style="background: #00d2ff;"></div>
-                        <span>Профиль пути</span>
-                    </div>
-                    <div class="legend-item">
-                        <div class="legend-line" style="background: #fff; border-top: 2px dashed #fff; height:0;"></div>
-                        <span>Уклон</span>
-                    </div>
+                    <div class="legend-item"><div class="legend-line" style="background: #ff3333;"></div><span>Скорость</span></div>
+                    <div class="legend-item"><div class="legend-line" style="background: #00d2ff;"></div><span>Профиль пути</span></div>
+                    <div class="legend-item"><div class="legend-line" style="background: #fff; border-top: 2px dashed #fff; height:0;"></div><span>Уклон</span></div>
                 </div>
-
                 <div class="tooltip" id="speed-tooltip"></div>
-
                 <div class="loading-overlay" id="loading">
                     <div class="loading-spinner"></div>
                     <div class="loading-text">Загрузка данных...</div>
                 </div>
             </div>
         </main>
-
         <div class="status-bar">
-            <div class="status-left">
-                <div class="status-item">
-                    <span>ПОЕЗД № 9707</span>
-                </div>
-            </div>
+            <div class="status-left"><div class="status-item"><span>ПОЕЗД № 9707</span></div></div>
             <div class="status-right">
-                <div class="status-item">
-                    <span>1197 м</span>
-                </div>
-                <div class="status-item">
-                    <span>8085 т</span>
-                </div>
-                <div class="status-item">
-                    <span>250 о</span>
-                </div>
-                <div class="status-item">
-                    <span>56 ф</span>
-                </div>
-                <div class="status-item">
-                    <span>79 у</span>
-                </div>
+                <div class="status-item"><span>1197 м</span></div>
+                <div class="status-item"><span>8085 т</span></div>
+                <div class="status-item"><span>250 о</span></div>
+                <div class="status-item"><span>56 ф</span></div>
+                <div class="status-item"><span>79 у</span></div>
             </div>
         </div>
     </div>
-
-    <script>
-        // Глобальное состояние
-        const appState = {
-            jsonData: null,
-            currentSection: null,
-            speedSegments: [],
-            trackProfile: [],
-            objects: [],
-            currentSpeedType: 'пассажирские',
-            config: {
-                startKm: 0,
-                endKm: 10,
-                speedMax: 120,
-                speedMin: 0
-            }
-        };
-
-        // Парсинг строки расстояния вида "1 км 4 пк 0 м"
-        function parseDistance(str) {
-            const match = str.match(/(\d+)\s*км\s*(\d+)\s*пк\s*(\d+)\s*м/);
-            if (match) {
-                return parseInt(match[1]) + parseInt(match[2]) / 10 + parseInt(match[3]) / 1000;
-            }
-            return null;
-        }
-
-        // Загрузка данных из JSON
-        async function loadData() {
-            const loading = document.getElementById('loading');
-            
-            try {
-                const response = await fetch('./data/speed-kbsh.json');
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                appState.jsonData = await response.json();
-                
-                console.log('Данные загружены:', appState.jsonData.metadata);
-                
-                populateSectionSelector();
-                loading.style.display = 'none';
-            } catch (error) {
-                console.error('Ошибка загрузки данных:', error);
-                loading.querySelector('.loading-spinner').style.display = 'none';
-                loading.querySelector('.loading-text').style.display = 'none';
-                
-                const errorDiv = loading.querySelector('.error-message');
-                if (!errorDiv) {
-                    const newError = document.createElement('div');
-                    newError.className = 'error-message';
-                    newError.textContent = 'Ошибка загрузки данных: ' + error.message;
-                    loading.appendChild(newError);
-                } else {
-                    errorDiv.textContent = 'Ошибка загрузки данных: ' + error.message;
-                }
-            }
-        }
-
-        // Заполнение селектора участков
-        function populateSectionSelector() {
-            const select = document.getElementById('section-select');
-            
-            if (!appState.jsonData || !appState.jsonData.участки) {
-                return;
-            }
-
-            appState.jsonData.участки.forEach((участок, index) => {
-                const option = document.createElement('option');
-                option.value = index;
-                option.textContent = участок.название;
-                select.appendChild(option);
-            });
-
-            select.addEventListener('change', (e) => {
-                const sectionIndex = parseInt(e.target.value);
-                if (!isNaN(sectionIndex)) {
-                    loadSection(sectionIndex);
-                }
-            });
-
-            // Обработчик выбора типа скорости
-            document.querySelectorAll('input[name="speed-type"]').forEach(radio => {
-                radio.addEventListener('change', (e) => {
-                    appState.currentSpeedType = e.target.value;
-                    // Сохраняем текущую позицию и масштаб
-                    const savedOffsetX = window.renderer ? window.renderer.offsetX : 0;
-                    const savedScaleX = window.renderer ? window.renderer.scaleX : 80;
-                    
-                    // Перегенерировать сегменты с новым типом скорости
-                    if (appState.currentSection) {
-                        generateProfileData(appState.currentSection);
-                    }
-                    if (window.renderer) {
-                        // Восстанавливаем позицию и масштаб
-                        window.renderer.offsetX = savedOffsetX;
-                        window.renderer.scaleX = savedScaleX;
-                        window.renderer.draw();
-                    }
-                });
-            });
-
-            if (appState.jsonData.участки.length > 0) {
-                select.value = '0';
-                loadSection(0);
-            }
-        }
-
-        // Загрузка участка
-        function loadSection(index) {
-            const участок = appState.jsonData.участки[index];
-            appState.currentSection = участок;
-            
-            document.getElementById('station-display').textContent = участок.название;
-            
-            generateProfileData(участок);
-            
-            if (window.renderer) {
-                window.renderer.resetView();
-            }
-        }
-
-        // Генерация данных профиля из JSON
-        function generateProfileData(участок) {
-            const speedSegments = [];
-            const objects = [];
-            let minKm = Infinity;
-            let maxKm = 0;
-            
-            // Сначала находим минимальный км для начала отсчёта
-            участок.объекты.forEach(объект => {
-                объект.пути?.forEach(путь => {
-                    if (путь.наименование) {
-                        let match = путь.наименование.match(/(\d+)\s*км\s*(\d+)\s*пк\s*(\d+)\s*м\s*-\s*(\d+)\s*км\s*(\d+)\s*пк\s*(\d+)\s*м/);
-                        if (match) {
-                            const startKm = parseInt(match[1]) + parseInt(match[2]) / 10 + parseInt(match[3]) / 1000;
-                            const endKm = parseInt(match[4]) + parseInt(match[5]) / 10 + parseInt(match[6]) / 1000;
-                            minKm = Math.min(minKm, startKm);
-                            maxKm = Math.max(maxKm, endKm);
-                        }
-                        
-                        if (путь.дополнительно) {
-                            путь.дополнительно.forEach(доп => {
-                                const допMatch = доп.наименование.match(/(\d+)\s*км\s*(\d+)\s*пк\s*(\d+)\s*м\s*-\s*(\d+)\s*км\s*(\d+)\s*пк\s*(\d+)\s*м/);
-                                if (допMatch) {
-                                    const допStart = parseInt(допMatch[1]) + parseInt(допMatch[2]) / 10 + parseInt(допMatch[3]) / 1000;
-                                    const допEnd = parseInt(допMatch[4]) + parseInt(допMatch[5]) / 10 + parseInt(допMatch[6]) / 1000;
-                                    minKm = Math.min(minKm, допStart);
-                                    maxKm = Math.max(maxKm, допEnd);
-                                }
-                            });
-                        }
-                    }
-                });
-            });
-            
-            if (minKm === Infinity) {
-                minKm = 0;
-                maxKm = 10;
-            }
-            
-            appState.config.startKm = Math.floor(minKm);
-            const totalDistance = maxKm - minKm;
-            
-            // Собираем все сегменты с скоростями
-            const rawSegments = [];
-            
-            участок.объекты.forEach(объект => {
-                objects.push({
-                    name: объект.название,
-                    type: объект.тип || 'станция'
-                });
-                
-                объект.пути?.forEach(путь => {
-                    if (путь.наименование) {
-                        let match = путь.наименование.match(/(\d+)\s*км\s*(\d+)\s*пк\s*(\d+)\s*м\s*-\s*(\d+)\s*км\s*(\d+)\s*пк\s*(\d+)\s*м/);
-                        
-                        if (match) {
-                            const startKm = parseInt(match[1]) + parseInt(match[2]) / 10 + parseInt(match[3]) / 1000;
-                            const endKm = parseInt(match[4]) + parseInt(match[5]) / 10 + parseInt(match[6]) / 1000;
-                            
-                            const startDist = startKm - appState.config.startKm;
-                            const endDist = endKm - appState.config.startKm;
-                            
-                            const скорости = путь.скорости;
-                            if (скорости) {
-                                let speed = скорости[appState.currentSpeedType] || 0;
-                                
-                                // Для приёмоотправочных путей
-                                if (путь.наименование.includes('Соед. путь') || путь.наименование.includes('П/о') || путь.наименование.includes('выходная')) {
-                                    speed = скорости['пассажирские_приемоотправочные'] || скорости['грузовые_приемоотправочные'] || speed;
-                                }
-                                
-                                if (speed > 0 && endDist > startDist) {
-                                    rawSegments.push({
-                                        start: startDist,
-                                        end: endDist,
-                                        speed: speed,
-                                        object: объект.название,
-                                        note: путь.примечание,
-                                        speeds: скорости
-                                    });
-                                }
-                            }
-                        }
-                        
-                        // Дополнительные ограничения
-                        if (путь.дополнительно) {
-                            путь.дополнительно.forEach(доп => {
-                                const допMatch = доп.наименование.match(/(\d+)\s*км\s*(\d+)\s*пк\s*(\d+)\s*м\s*-\s*(\d+)\s*км\s*(\d+)\s*пк\s*(\d+)\s*м/);
-                                if (допMatch) {
-                                    const допStart = parseInt(допMatch[1]) + parseInt(допMatch[2]) / 10 + parseInt(допMatch[3]) / 1000;
-                                    const допEnd = parseInt(допMatch[4]) + parseInt(допMatch[5]) / 10 + parseInt(допMatch[6]) / 1000;
-                                    
-                                    const допСкорости = доп.скорости;
-                                    let допSpeed = 0;
-                                    
-                                    if (допСкорости) {
-                                        допSpeed = допСкорости[appState.currentSpeedType] || 0;
-                                    }
-                                    
-                                    if (допSpeed > 0) {
-                                        rawSegments.push({
-                                            start: допStart - appState.config.startKm,
-                                            end: допEnd - appState.config.startKm,
-                                            speed: допSpeed,
-                                            object: объект.название,
-                                            note: доп.примечание,
-                                            isAdditional: true,
-                                            speeds: допСкорости
-                                        });
-                                    }
-                                }
-                            });
-                        }
-                    }
-                });
-            });
-            
-            // Сортируем по началу сегмента
-            rawSegments.sort((a, b) => a.start - b.start);
-            
-            // Объединяем смежные сегменты с одинаковой скоростью
-            const mergedSegments = [];
-            for (let i = 0; i < rawSegments.length; i++) {
-                const curr = rawSegments[i];
-                const prev = mergedSegments[mergedSegments.length - 1];
-                
-                if (prev && 
-                    Math.abs(prev.end - curr.start) < 0.001 && 
-                    prev.speed === curr.speed &&
-                    prev.object === curr.object) {
-                    // Объединяем
-                    prev.end = curr.end;
-                } else {
-                    mergedSegments.push({...curr});
-                }
-            }
-            
-            if (mergedSegments.length === 0) {
-                mergedSegments.push({ start: 0, end: 10, speed: 60, speeds: {} });
-            }
-            
-            appState.speedSegments = mergedSegments;
-            appState.objects = objects;
-            appState.config.endKm = appState.config.startKm + Math.ceil(totalDistance) + 1;
-            
-            // Генерируем профиль пути
-            const profilePoints = [];
-            let currentElev = 100;
-            const numPoints = Math.ceil(totalDistance * 10) + 10;
-            
-            for (let i = 0; i <= numPoints; i++) {
-                const dist = i / 10;
-                const gradient = Math.sin(dist * 0.8) * 8 + Math.cos(dist * 2.5) * 4 + Math.sin(dist * 0.3) * 3;
-                currentElev += (gradient / 1000) * 100;
-                
-                profilePoints.push({
-                    dist: dist,
-                    elev: currentElev,
-                    gradient: gradient
-                });
-            }
-            
-            appState.trackProfile = profilePoints;
-            
-            // Фиксированная максимальная скорость 120 км/ч
-            appState.config.speedMax = 120;
-            
-            console.log('Сегменты скоростей:', mergedSegments.length);
-            console.log('Тип скорости:', appState.currentSpeedType);
-            console.log('Диапазон:', appState.config.startKm, '-', appState.config.endKm);
-            console.log('Сегменты:', mergedSegments.map(s => `${s.start.toFixed(2)}-${s.end.toFixed(2)}км:${s.speed}км/ч`));
-        }
-
-        // Рендерер профиля
-        class ProfileRenderer {
-            constructor() {
-                this.canvas = document.getElementById('profileCanvas');
-                this.container = document.getElementById('canvas-container');
-                this.ctx = this.canvas.getContext('2d');
-                
-                this.paddingTop = 40;
-                this.paddingLeft = 70;
-                this.paddingRight = 30;
-                this.paddingBottom = 120;
-                
-                this.zeroLineY = 0;
-                
-                this.scaleX = 80;
-                this.scaleY = 5;
-                this.scaleElev = 25;
-                this.offsetX = 0;
-                this.offsetY = 0;
-                
-                this.isDragging = false;
-                this.lastMouseX = 0;
-                this.lastMouseY = 0;
-                this.hoveredSegment = null;
-                
-                this.init();
-            }
-
-            init() {
-                this.resize();
-                window.addEventListener('resize', () => this.resize());
-                
-                this.container.addEventListener('mousedown', (e) => this.onMouseDown(e));
-                this.container.addEventListener('mousemove', (e) => this.onMouseMove(e));
-                this.container.addEventListener('mouseleave', (e) => this.onMouseLeave(e));
-                window.addEventListener('mouseup', () => this.onMouseUp());
-                this.container.addEventListener('wheel', (e) => this.onWheel(e), { passive: false });
-                
-                this.container.addEventListener('touchstart', (e) => {
-                    this.isDragging = true;
-                    this.lastMouseX = e.touches[0].clientX;
-                    this.lastMouseY = e.touches[0].clientY;
-                }, { passive: false });
-                
-                this.container.addEventListener('touchmove', (e) => {
-                    if (!this.isDragging) return;
-                    e.preventDefault();
-                    // Только горизонтальное движение
-                    this.offsetX += e.touches[0].clientX - this.lastMouseX;
-                    this.lastMouseX = e.touches[0].clientX;
-                    this.lastMouseY = e.touches[0].clientY;
-                    this.draw();
-                }, { passive: false });
-                
-                this.container.addEventListener('touchend', () => this.isDragging = false);
-                
-                this.draw();
-            }
-
-            resize() {
-                this.canvas.width = this.container.clientWidth;
-                this.canvas.height = this.container.clientHeight;
-                this.draw();
-            }
-
-            distToScreenX(dist) {
-                return this.paddingLeft + (dist * this.scaleX) + this.offsetX;
-            }
-
-            speedToScreenY(speed) {
-                const normalized = speed / appState.config.speedMax;
-                const speedChartHeight = this.zeroLineY - this.paddingTop;
-                return this.zeroLineY - (normalized * speedChartHeight) - this.offsetY;
-            }
-
-            elevToScreenY(elev, baseElev) {
-                const normalized = (elev - baseElev) / 15;
-                return this.zeroLineY + (normalized * this.scaleElev) - this.offsetY;
-            }
-
-            screenXToDist(screenX) {
-                return (screenX - this.paddingLeft - this.offsetX) / this.scaleX;
-            }
-
-            getSpeedAtDist(dist) {
-                // Сначала ищем дополнительные ограничения (они имеют приоритет)
-                for (const seg of appState.speedSegments) {
-                    if (seg.isAdditional && dist >= seg.start && dist <= seg.end) {
-                        return seg.speed;
-                    }
-                }
-                // Затем основные сегменты
-                for (const seg of appState.speedSegments) {
-                    if (!seg.isAdditional && dist >= seg.start && dist < seg.end) {
-                        return seg.speed;
-                    }
-                }
-                return 0;
-            }
-
-            getGradientAtDist(dist) {
-                const point = appState.trackProfile.find(p => Math.abs(p.dist - dist) < 0.1);
-                return point ? point.gradient : 0;
-            }
-
-            getObjectAtDist(dist) {
-                for (const seg of appState.speedSegments) {
-                    if (dist >= seg.start && dist <= seg.end) {
-                        return seg.object;
-                    }
-                }
-                return null;
-            }
-
-            draw() {
-                const ctx = this.ctx;
-                const width = this.canvas.width;
-                const height = this.canvas.height;
-                
-                this.zeroLineY = this.paddingTop + (height - this.paddingTop - this.paddingBottom) * 0.55;
-                
-                ctx.clearRect(0, 0, width, height);
-                
-                const gradient = ctx.createLinearGradient(0, 0, 0, height);
-                gradient.addColorStop(0, '#0a0a0f');
-                gradient.addColorStop(1, '#000000');
-                ctx.fillStyle = gradient;
-                ctx.fillRect(0, 0, width, height);
-                
-                const chartLeft = this.paddingLeft;
-                const chartRight = width - this.paddingRight;
-                
-                this.drawGrid(ctx, chartLeft, chartRight);
-                this.drawZeroLine(ctx, chartLeft, chartRight);
-                this.drawSpeedProfile(ctx, chartLeft, chartRight);
-                this.drawTrackProfile(ctx, chartLeft, chartRight);
-                this.drawAxes(ctx, chartLeft, chartRight);
-                
-                this.updateInfoPanel();
-                
-                // Отладка: выводим сегменты в консоль при первой отрисовке
-                if (!this._debugLogged) {
-                    console.log('Сегменты скоростей для отрисовки:');
-                    appState.speedSegments.forEach((s, i) => {
-                        console.log(`  ${i}: start=${s.start.toFixed(3)}, end=${s.end.toFixed(3)}, speed=${s.speed}, object=${s.object}`);
-                    });
-                    this._debugLogged = true;
-                }
-            }
-
-            drawGrid(ctx, left, right) {
-                ctx.strokeStyle = '#1a1a2e';
-                ctx.lineWidth = 1;
-                ctx.beginPath();
-
-                const totalDist = appState.config.endKm - appState.config.startKm;
-                for (let i = 0; i <= totalDist; i += 0.2) {
-                    const x = this.distToScreenX(i);
-                    if (x >= left - 50 && x <= right + 50) {
-                        ctx.moveTo(x, this.paddingTop);
-                        ctx.lineTo(x, this.canvas.height - this.paddingBottom);
-                    }
-                }
-                ctx.stroke();
-
-                // Горизонтальные линии (фиксированно до 120 км/ч)
-                ctx.strokeStyle = '#16213e';
-                ctx.beginPath();
-                for (let s = 20; s <= 120; s += 20) {
-                    const y = this.speedToScreenY(s);
-                    if (y > this.paddingTop && y < this.zeroLineY) {
-                        ctx.moveTo(left, y);
-                        ctx.lineTo(right, y);
-                    }
-                }
-                ctx.stroke();
-            }
-
-            drawZeroLine(ctx, left, right) {
-                ctx.strokeStyle = '#0f3460';
-                ctx.lineWidth = 2;
-                ctx.beginPath();
-                ctx.moveTo(left, this.zeroLineY);
-                ctx.lineTo(right, this.zeroLineY);
-                ctx.stroke();
-            }
-
-            drawSpeedProfile(ctx, left, right) {
-                const sortedSegments = [...appState.speedSegments].sort((a, b) => a.start - b.start);
-                
-                if (sortedSegments.length === 0) return;
-                
-                // Рисуем прямоугольники станций и перегонов в верхней части
-                const objectHeight = 25;
-                const objectY = this.paddingTop + 10;
-                
-                // Собираем уникальные объекты
-                const objects = [];
-                for (const seg of sortedSegments) {
-                    if (seg.object && !objects.find(o => o.name === seg.object)) {
-                        const objSegments = sortedSegments.filter(s => s.object === seg.object);
-                        objects.push({
-                            name: seg.object,
-                            segments: objSegments,
-                            type: seg.object.toLowerCase().includes('перегон') || 
-                                  seg.object.toLowerCase().includes('пп ') ||
-                                  seg.object.includes('-') ? 'перегон' : 'станция'
-                        });
-                    }
-                }
-                
-                // Рисуем объекты
-                objects.forEach(obj => {
-                    obj.segments.forEach(seg => {
-                        const x1 = this.distToScreenX(seg.start);
-                        const x2 = this.distToScreenX(seg.end);
-                        const width = Math.max(x2 - x1, 2);
-                        
-                        if (obj.type === 'станция') {
-                            ctx.fillStyle = 'rgba(255, 204, 0, 0.3)';
-                            ctx.strokeStyle = '#ffcc00';
-                        } else {
-                            ctx.fillStyle = 'rgba(0, 210, 255, 0.3)';
-                            ctx.strokeStyle = '#00d2ff';
-                        }
-                        
-                        ctx.fillRect(x1, objectY, width, objectHeight);
-                        ctx.lineWidth = 1;
-                        ctx.strokeRect(x1, objectY, width, objectHeight);
-                        
-                        // Подпись объекта
-                        ctx.fillStyle = '#fff';
-                        ctx.font = 'bold 10px Consolas';
-                        ctx.textAlign = 'center';
-                        ctx.textBaseline = 'middle';
-                        const centerX = x1 + width / 2;
-                        let label = obj.name;
-                        if (ctx.measureText(label).width > width - 4) {
-                            while (label.length > 3 && ctx.measureText(label + '...').width > width - 4) {
-                                label = label.slice(0, -1);
-                            }
-                            label += '...';
-                        }
-                        ctx.fillText(label, centerX, objectY + objectHeight / 2);
-                    });
-                });
-                
-                // Рисуем ВСЕ сегменты скоростей постоянно
-                sortedSegments.forEach(seg => {
-                    const x1 = this.distToScreenX(seg.start);
-                    const x2 = this.distToScreenX(seg.end);
-                    const y = this.speedToScreenY(seg.speed);
-                    const width = Math.max(x2 - x1, 1);
-                    
-                    // Полупрозрачная область
-                    ctx.fillStyle = 'rgba(255, 51, 51, 0.08)';
-                    ctx.fillRect(x1, y, width, this.zeroLineY - y);
-                    
-                    // Линия скорости
-                    ctx.strokeStyle = 'rgba(255, 51, 51, 0.6)';
-                    ctx.lineWidth = 2;
-                    ctx.lineCap = 'square';
-                    
-                    ctx.beginPath();
-                    ctx.moveTo(x1, y);
-                    ctx.lineTo(x1 + width, y);
-                    ctx.stroke();
-                    
-                    // Подпись скорости (если помещается)
-                    if (width > 30) {
-                        ctx.fillStyle = 'rgba(255, 102, 102, 0.8)';
-                        ctx.font = 'bold 11px Consolas';
-                        ctx.textAlign = 'center';
-                        ctx.textBaseline = 'bottom';
-                        const centerX = x1 + width / 2;
-                        ctx.fillText(seg.speed.toString(), centerX, y - 6);
-                    }
-                });
-                
-                // При наведении подсвечиваем активный сегмент
-                if (this.hoveredSegment) {
-                    const xStart = this.distToScreenX(this.hoveredSegment.start);
-                    const xEnd = this.distToScreenX(this.hoveredSegment.end);
-                    const y = this.speedToScreenY(this.hoveredSegment.speed);
-                    
-                    // Более яркая подсветка
-                    ctx.fillStyle = 'rgba(255, 51, 51, 0.2)';
-                    ctx.fillRect(xStart, y, xEnd - xStart, this.zeroLineY - y);
-                    
-                    // Яркая линия
-                    ctx.strokeStyle = '#ff3333';
-                    ctx.lineWidth = 4;
-                    
-                    ctx.beginPath();
-                    ctx.moveTo(xStart, y);
-                    ctx.lineTo(xEnd, y);
-                    ctx.stroke();
-                    
-                    // Подпись скорости
-                    ctx.fillStyle = '#ff6666';
-                    ctx.font = 'bold 14px Consolas';
-                    ctx.textAlign = 'center';
-                    ctx.textBaseline = 'bottom';
-                    const centerX = xStart + (xEnd - xStart) / 2;
-                    ctx.fillText(this.hoveredSegment.speed.toString(), centerX, y - 8);
-                    
-                    // Вертикальные линии по краям
-                    ctx.strokeStyle = 'rgba(255, 51, 51, 0.5)';
-                    ctx.lineWidth = 1;
-                    ctx.setLineDash([5, 5]);
-                    ctx.beginPath();
-                    ctx.moveTo(xStart, y);
-                    ctx.lineTo(xStart, this.zeroLineY);
-                    ctx.moveTo(xEnd, y);
-                    ctx.lineTo(xEnd, this.zeroLineY);
-                    ctx.stroke();
-                    ctx.setLineDash([]);
-                }
-            }
-
-            drawTrackProfile(ctx, left, right) {
-                if (appState.trackProfile.length === 0) return;
-                
-                const elevs = appState.trackProfile.map(p => p.elev);
-                const minElev = Math.min(...elevs);
-                const maxElev = Math.max(...elevs);
-                const baseElev = minElev - 2;
-                
-                ctx.beginPath();
-                ctx.strokeStyle = '#00d2ff';
-                ctx.lineWidth = 2.5;
-                
-                appState.trackProfile.forEach((p, i) => {
-                    const x = this.distToScreenX(p.dist);
-                    const y = this.elevToScreenY(p.elev, baseElev);
-                    if (i === 0) ctx.moveTo(x, y);
-                    else ctx.lineTo(x, y);
-                });
-                ctx.stroke();
-                
-                ctx.font = '11px Consolas';
-                ctx.textAlign = 'center';
-                for (let i = 0; i < appState.trackProfile.length; i += 5) {
-                    const p = appState.trackProfile[i];
-                    const x = this.distToScreenX(p.dist);
-                    const y = this.elevToScreenY(p.elev, baseElev);
-                    
-                    if (x > left && x < right) {
-                        ctx.fillStyle = p.gradient > 0 ? '#ff5555' : p.gradient < 0 ? '#00ff88' : '#ffffff';
-                        ctx.fillText(p.gradient.toFixed(1), x, y - 10);
-                    }
-                }
-            }
-
-            drawAxes(ctx, left, right) {
-                ctx.strokeStyle = '#0f3460';
-                ctx.lineWidth = 2;
-                ctx.beginPath();
-                ctx.moveTo(left, this.paddingTop);
-                ctx.lineTo(left, this.canvas.height - this.paddingBottom);
-                ctx.stroke();
-                
-                // Подписи скорости (фиксированно до 120 км/ч)
-                ctx.fillStyle = '#666';
-                ctx.font = '11px Consolas';
-                ctx.textAlign = 'right';
-                ctx.textBaseline = 'middle';
-                for (let s = 0; s <= 120; s += 20) {
-                    const y = this.speedToScreenY(s);
-                    ctx.fillText(s.toString(), left - 8, y);
-                }
-                
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'top';
-                
-                const totalDist = appState.config.endKm - appState.config.startKm;
-                for (let km = 0; km <= totalDist; km++) {
-                    const x = this.distToScreenX(km);
-                    if (x > left && x < right) {
-                        ctx.beginPath();
-                        ctx.moveTo(x, this.zeroLineY - 5);
-                        ctx.lineTo(x, this.zeroLineY + 5);
-                        ctx.strokeStyle = '#66fcf1';
-                        ctx.lineWidth = 2;
-                        ctx.stroke();
-                        
-                        ctx.fillStyle = '#fff';
-                        ctx.font = 'bold 13px Consolas';
-                        ctx.fillText((appState.config.startKm + km).toString(), x, this.zeroLineY + 10);
-                        
-                        if (this.scaleX > 60) {
-                            ctx.font = '10px Consolas';
-                            ctx.fillStyle = '#555';
-                            for (let p = 1; p < 10; p++) {
-                                const px = this.distToScreenX(km + p / 10);
-                                if (px > left && px < right) {
-                                    ctx.beginPath();
-                                    ctx.moveTo(px, this.zeroLineY - 3);
-                                    ctx.lineTo(px, this.zeroLineY + 3);
-                                    ctx.strokeStyle = '#333';
-                                    ctx.lineWidth = 1;
-                                    ctx.stroke();
-                                    
-                                    ctx.fillText(p.toString(), px, this.zeroLineY + 10);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-            updateInfoPanel() {
-                const width = this.canvas.width;
-                const centerDist = Math.max(0, this.screenXToDist(width / 2));
-                const absPos = appState.config.startKm + centerDist;
-                const currentSpeed = this.getSpeedAtDist(centerDist);
-                const gradient = this.getGradientAtDist(centerDist);
-                const object = this.getObjectAtDist(centerDist);
-                const zoomPercent = Math.round((this.scaleX / 80) * 100);
-                
-                document.getElementById('pos-value').textContent = absPos.toFixed(3) + ' км';
-                document.getElementById('speed-value').textContent = (currentSpeed || 0) + ' км/ч';
-                document.getElementById('limit-value').textContent = (currentSpeed || 0) + ' км/ч';
-                document.getElementById('gradient-value').textContent = gradient.toFixed(1) + '‰';
-                document.getElementById('gradient-value').style.color = gradient > 0 ? '#ff5555' : gradient < 0 ? '#00ff88' : '#66fcf1';
-                document.getElementById('zoom-value').textContent = zoomPercent + '%';
-                
-                // Обновляем info panel с информацией об объекте и типе скорости
-                const infoPanel = document.getElementById('info-panel');
-                
-                // Находим текущий сегмент
-                const segment = appState.speedSegments.find(s => 
-                    centerDist >= s.start && centerDist <= s.end
-                );
-                
-                let extraInfo = '';
-                
-                // Тип скорости
-                const speedTypeLabels = {
-                    'пассажирские': 'Пассажирские',
-                    'грузовые_ускоренные': 'Груз. ускоренные',
-                    'грузовые': 'Грузовые',
-                    'грузовые_порожние': 'Груз. порожние'
-                };
-                
-                extraInfo += `
-                    <div class="info-row">
-                        <span class="info-label">Тип поезда:</span>
-                        <span class="info-value">${speedTypeLabels[appState.currentSpeedType] || '—'}</span>
-                    </div>
-                `;
-                
-                // Объект
-                if (object) {
-                    extraInfo += `
-                        <div class="info-row">
-                            <span class="info-label">Объект:</span>
-                            <span class="info-value" style="font-size: 11px;">${object}</span>
-                        </div>
-                    `;
-                }
-                
-                // Сегмент
-                if (segment) {
-                    extraInfo += `
-                        <div class="info-row">
-                            <span class="info-label">Сегмент:</span>
-                            <span class="info-value" style="font-size: 10px;">${segment.start.toFixed(3)}-${segment.end.toFixed(3)} км</span>
-                        </div>
-                    `;
-                    if (segment.note) {
-                        extraInfo += `
-                            <div class="info-row">
-                                <span class="info-label">Примечание:</span>
-                                <span class="info-value" style="font-size: 10px; max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${segment.note}</span>
-                            </div>
-                        `;
-                    }
-                }
-                
-                // Вставляем после основных полей
-                const zoomRow = document.getElementById('zoom-value').closest('.info-row');
-                if (zoomRow && extraInfo) {
-                    zoomRow.insertAdjacentHTML('beforebegin', extraInfo);
-                }
-                
-                // Удаляем старые дополнительные строки (кроме основных 5)
-                const allRows = infoPanel.querySelectorAll('.info-row');
-                const basicRows = 5; // Позиция, Скорость, Разрешенная, Уклон, Масштаб
-                for (let i = basicRows; i < allRows.length - 1; i++) {
-                    if (allRows[i] !== zoomRow) {
-                        allRows[i].remove();
-                    }
-                }
-            }
-
-            onMouseDown(e) {
-                this.isDragging = true;
-                this.lastMouseX = e.clientX;
-                this.lastMouseY = e.clientY;
-                this.container.style.cursor = 'grabbing';
-            }
-
-            onMouseMove(e) {
-                if (this.isDragging) {
-                    // Только горизонтальное движение
-                    this.offsetX += e.clientX - this.lastMouseX;
-                    this.lastMouseX = e.clientX;
-                    this.lastMouseY = e.clientY;
-                    this.draw();
-                    return;
-                }
-                
-                // Обработка наведения на сегмент
-                const rect = this.canvas.getBoundingClientRect();
-                const mouseX = e.clientX - rect.left;
-                const mouseY = e.clientY - rect.top;
-                const dist = this.screenXToDist(mouseX);
-                
-                // Ищем сегмент под курсором
-                let foundSegment = null;
-                for (const seg of appState.speedSegments) {
-                    if (dist >= seg.start && dist <= seg.end) {
-                        const segY = this.speedToScreenY(seg.speed);
-                        // Проверяем, находится ли курсор близко к линии скорости (в пределах 20 пикселей)
-                        if (Math.abs(mouseY - segY) < 20) {
-                            foundSegment = seg;
-                            break;
-                        }
-                    }
-                }
-                
-                if (foundSegment !== this.hoveredSegment) {
-                    this.hoveredSegment = foundSegment;
-                    this.draw();
-                    this.updateTooltip(e.clientX, e.clientY, foundSegment);
-                } else if (foundSegment) {
-                    this.updateTooltip(e.clientX, e.clientY, foundSegment);
-                }
-            }
-
-            onMouseUp() {
-                this.isDragging = false;
-                this.container.style.cursor = 'grab';
-            }
-
-            onMouseLeave(e) {
-                this.hoveredSegment = null;
-                const tooltip = document.getElementById('speed-tooltip');
-                tooltip.style.display = 'none';
-                this.draw();
-            }
-
-            updateTooltip(clientX, clientY, segment) {
-                const tooltip = document.getElementById('speed-tooltip');
-                
-                if (!segment) {
-                    tooltip.style.display = 'none';
-                    return;
-                }
-                
-                const speedTypeLabels = {
-                    'пассажирские': 'Пассажирские',
-                    'грузовые_ускоренные': 'Груз. ускоренные',
-                    'грузовые': 'Грузовые',
-                    'грузовые_порожние': 'Груз. порожние'
-                };
-                
-                const currentType = appState.currentSpeedType;
-                const allSpeeds = segment.speeds || {};
-                
-                let speedsHtml = '';
-                Object.entries(allSpeeds).forEach(([type, speed]) => {
-                    if (speed && !type.includes('приемоотправочные')) {
-                        const label = speedTypeLabels[type] || type;
-                        const isCurrent = type === currentType;
-                        speedsHtml += `
-                            <div class="tooltip-row">
-                                <span class="tooltip-label">${label}${isCurrent ? ' *' : ''}</span>
-                                <span class="tooltip-value" style="${isCurrent ? 'color: #fff;' : ''}">${speed} км/ч</span>
-                            </div>
-                        `;
-                    }
-                });
-                
-                const absStart = (appState.config.startKm + segment.start).toFixed(3);
-                const absEnd = (appState.config.startKm + segment.end).toFixed(3);
-                
-                tooltip.innerHTML = `
-                    <div class="tooltip-title">${segment.object || 'Участок'}</div>
-                    <div class="tooltip-row">
-                        <span class="tooltip-label">Диапазон:</span>
-                        <span class="tooltip-value">${absStart} - ${absEnd} км</span>
-                    </div>
-                    <div class="tooltip-row">
-                        <span class="tooltip-label">Длина:</span>
-                        <span class="tooltip-value">${(segment.end - segment.start).toFixed(3)} км</span>
-                    </div>
-                    <div class="tooltip-row">
-                        <span class="tooltip-label">Скорость (${speedTypeLabels[currentType] || currentType}):</span>
-                        <span class="tooltip-value" style="color: #fff;">${segment.speed} км/ч</span>
-                    </div>
-                    ${speedsHtml ? `<div style="margin-top: 8px; border-top: 1px solid #1a1a2e; padding-top: 8px;">
-                        <div class="tooltip-row" style="border-bottom: none;">
-                            <span class="tooltip-label">Все скорости:</span>
-                        </div>
-                        ${speedsHtml}
-                    </div>` : ''}
-                    ${segment.note ? `<div style="margin-top: 8px; border-top: 1px solid #1a1a2e; padding-top: 8px;">
-                        <div class="tooltip-row" style="border-bottom: none;">
-                            <span class="tooltip-label">Примечание:</span>
-                        </div>
-                        <div style="color: #aaa; font-size: 10px; margin-top: 4px;">${segment.note}</div>
-                    </div>` : ''}
-                `;
-                
-                // Позиционирование tooltip
-                const rect = this.canvas.getBoundingClientRect();
-                let left = clientX - rect.left + 15;
-                let top = clientY - rect.top + 15;
-                
-                // Проверка выхода за границы
-                if (left + 220 > rect.width) {
-                    left = clientX - rect.left - 215;
-                }
-                if (top + 200 > rect.height) {
-                    top = clientY - rect.top - 215;
-                }
-                
-                tooltip.style.left = left + 'px';
-                tooltip.style.top = top + 'px';
-                tooltip.style.display = 'block';
-            }
-
-            onWheel(e) {
-                e.preventDefault();
-                const delta = -e.deltaY * 0.001;
-                const newScaleX = Math.max(20, Math.min(this.scaleX * (1 + delta), 400));
-                
-                const rect = this.canvas.getBoundingClientRect();
-                const mouseX = e.clientX - rect.left;
-                
-                // Позиция в мире под курсором до зума
-                const worldXBefore = (mouseX - this.paddingLeft - this.offsetX) / this.scaleX;
-                
-                this.scaleX = newScaleX;
-                
-                // Вычисляем новое смещение так, чтобы позиция под курсором осталась той же
-                this.offsetX = mouseX - this.paddingLeft - worldXBefore * this.scaleX;
-                
-                this.draw();
-            }
-
-            zoomIn() {
-                const newScaleX = Math.min(this.scaleX * 1.3, 400);
-                
-                // Зум к центру видимой области
-                const centerX = this.canvas.width / 2;
-                const worldXBefore = (centerX - this.paddingLeft - this.offsetX) / this.scaleX;
-                
-                this.scaleX = newScaleX;
-                this.offsetX = centerX - this.paddingLeft - worldXBefore * this.scaleX;
-                
-                this.draw();
-            }
-
-            zoomOut() {
-                const newScaleX = Math.max(this.scaleX / 1.3, 20);
-                
-                // Зум к центру видимой области
-                const centerX = this.canvas.width / 2;
-                const worldXBefore = (centerX - this.paddingLeft - this.offsetX) / this.scaleX;
-                
-                this.scaleX = newScaleX;
-                this.offsetX = centerX - this.paddingLeft - worldXBefore * this.scaleX;
-                
-                this.draw();
-            }
-
-            resetView() {
-                this.scaleX = 80;
-                this.offsetX = 0;
-                this.offsetY = 0;
-                this.draw();
-            }
-        }
-
-        // Инициализация
-        document.addEventListener('DOMContentLoaded', () => {
-            loadData();
-            window.renderer = new ProfileRenderer();
-            // Экспортируем appState для тестов
-            window.appState = appState;
-        });
-    </script>
+    <script src="profile-renderer.js"></script>
 </body>
 </html>
